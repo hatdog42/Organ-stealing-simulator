@@ -1,10 +1,7 @@
-using System;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace MiniGameTools
+namespace MiniGameTools.Editor
 {
     public class MazeWallFinder : EditorWindow
     {
