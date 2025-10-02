@@ -42,11 +42,19 @@ namespace MiniGameTools
                         Color newColor = _mazeTexture.GetPixel(x, y);
                         if (_wallColor == newColor)
                         {
-                            Debug.Log("Wall found at: " + x + ", " + y);
-                            GameObject spawnedObj = Instantiate(_wallTest);
-                            spawnedObj.transform.position = new Vector3(_mazeSize.x, _mazeSize.y, 0);
+                            //Debug.Log("Wall found at: " + x + ", " + y);
+                            GameObject spawnedObj = Instantiate(_wallTest, _mazeRenderer.gameObject.transform.GetChild(0), false);
+                            spawnedObj.transform.position = new Vector3(_mazeSize.x - _mazeTexture.width/2 + 0.5f, _mazeSize.y - _mazeTexture.height/2 + 0.5f, 0);
                         }
                     }
+                }
+            }
+
+            if (GUILayout.Button("Delete All Walls"))
+            {
+                for (int i = _mazeRenderer.gameObject.transform.GetChild(0).childCount - 1; i >= 0; i--)
+                {
+                    DestroyImmediate(_mazeRenderer.gameObject.transform.GetChild(0).GetChild(i).gameObject);
                 }
             }
         }
