@@ -7,6 +7,7 @@ class HealthBars : MonoBehaviour
     [Range(0, 100)] public int psyche;
     [Range(0, 100)] public int family;
     [Range(0, 100)] public int reputation;
+    [Min(0)]public int money;
     
     public enum psycheState {Stabel, Unstabel, Broken}
     public enum familyState {Stabel, Unstabel, Broken}
