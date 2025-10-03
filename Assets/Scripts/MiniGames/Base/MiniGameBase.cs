@@ -9,6 +9,7 @@ namespace MiniGames.Base
         protected void GameWin()
         {
             //Send win info
+            print("Game Win!");
         }
 
         protected void GameLose()

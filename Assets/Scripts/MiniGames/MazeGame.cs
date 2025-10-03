@@ -11,12 +11,18 @@ namespace MiniGames
         //The ball we will move through the maze
         [SerializeField] private GameObject ball;
         
+        //Ball components
+        private Collider2D _ballCollider;
         private Rigidbody2D _ballRigidbody;
         [SerializeField] private float _ballSpeed = 5f;
-        [FormerlySerializedAs("_ballMaxSpeed")] [SerializeField] private float _ballMaxVelocity = 10f;
+        [SerializeField] private float _ballMaxVelocity = 10f;
+        
+        //Goal
+        [SerializeField] private Collider2D goalCol;
 
         private void Start()
         {
+            _ballCollider = ball.GetComponent<Collider2D>();
             _ballRigidbody = ball.GetComponent<Rigidbody2D>();
         }
         
@@ -38,7 +44,15 @@ namespace MiniGames
 
             //_ballRigidbody.MovePosition(Vector2.Lerp(_ballRigidbody.position, worldPos, 0.2f));
         }
-        
+
+        private void Update()
+        {
+            if (goalCol.IsTouching(_ballCollider))
+            {
+                GameWin();
+            }
+        }
+
         private void FixedUpdate()
         {
             MoveBall();
