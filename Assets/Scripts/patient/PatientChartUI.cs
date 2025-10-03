@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PatientChartUI : MonoBehaviour
 {
@@ -8,10 +9,12 @@ public class PatientChartUI : MonoBehaviour
     public TMP_Text jobText;
     public TMP_Text traitText;
     public TMP_Text personalityText;
+    public Image patientImage;
+    public Button selectButton; 
     
     private Patient _shownPatient;
 
-    public void Bind(Patient patient)
+    public void Bind(Patient patient, System.Action<Patient> onSelect)
     {
         _shownPatient = patient;
 
@@ -20,5 +23,9 @@ public class PatientChartUI : MonoBehaviour
         jobText.text = patient.job;
         traitText.text = patient.trait;
         personalityText.text = patient.personality.ToString();
+        patientImage.sprite = patient.face;
+        
+        selectButton.onClick.RemoveAllListeners();
+        selectButton.onClick.AddListener(() => onSelect(_shownPatient));
     }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PatientGenerator : MonoBehaviour
 {
@@ -6,17 +7,17 @@ public class PatientGenerator : MonoBehaviour
     public PatientChartUI patient1UI;
     public PatientChartUI patient2UI;
 
-    private Patient patient1;
-    private Patient patient2;
+    private Patient _patient1;
+    private Patient _patient2;
 
 
     void Start()
     {
-        patient1 = GeneratePatient();
-        patient2 = GeneratePatient();
+        _patient1 = GeneratePatient();
+        _patient2 = GeneratePatient();
         
-        patient1UI.Bind(patient1);
-        patient2UI.Bind(patient2);
+        patient1UI.Bind(_patient1, OnPatientSelected);
+        patient2UI.Bind(_patient2, OnPatientSelected);
     }
     public Patient GeneratePatient()
     {
@@ -24,9 +25,16 @@ public class PatientGenerator : MonoBehaviour
         
         bool isMale = Random.value > 0.5f;
         if (isMale)
-            p.firstName = patientData.maleFirstNames[Random.Range(0, patientData.maleFirstNames.Count)];
+        {
+             p.firstName = patientData.maleFirstNames[Random.Range(0, patientData.maleFirstNames.Count)];
+             p.face = patientData.maleFaces[Random.Range(0, patientData.maleFaces.Count)];
+        }
         else
+        {
             p.firstName = patientData.femaleFirstNames[Random.Range(0, patientData.femaleFirstNames.Count)];
+            p.face = patientData.femaleFaces[Random.Range(0, patientData.femaleFaces.Count)];
+        }
+        
         p.lastName = patientData.lastNames[Random.Range(0, patientData.lastNames.Count)];
         p.age = Random.Range(patientData.minAge, patientData.maxAge + 1);
         p.job = patientData.jobs[Random.Range(0, patientData.jobs.Count)];
@@ -34,6 +42,13 @@ public class PatientGenerator : MonoBehaviour
         p.trait = patientData.traits[Random.Range(0, patientData.traits.Count)];
 
         return p;
+    }
+
+    private void OnPatientSelected(Patient chosen)
+    {
+        HealthBars.Instance.SetSelectedPatient(chosen);
+        
+        SceneManager.LoadScene("Surgery test"); 
     }
 }
 
@@ -46,6 +61,6 @@ public class Patient
     public string job;
     public string personality;
     public string trait;
-
+    public Sprite face;
     public string FullName => $"{firstName} {lastName}";
 }

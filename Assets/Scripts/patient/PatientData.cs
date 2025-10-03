@@ -21,4 +21,8 @@ public class PatientData : ScriptableObject
 
     [Header("Traits")]
     public List<string> traits;
+    
+    [Header("Faces")]
+    public List<Sprite> maleFaces;
+    public List<Sprite> femaleFaces;
 }

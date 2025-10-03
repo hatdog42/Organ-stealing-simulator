@@ -2,56 +2,58 @@ using UnityEngine;
 
 class HealthBars : MonoBehaviour
 {
-    public static HealthBars instance { get; private set; }
+    public static HealthBars Instance { get; private set; }
+    public Patient SelectedPatient { get; private set; }
 
+    
     [Range(0, 100)] public int psyche;
     [Range(0, 100)] public int family;
     [Range(0, 100)] public int reputation;
     [Min(0)]public int money;
     
-    public enum psycheState {Stabel, Unstabel, Broken}
-    public enum familyState {Stabel, Unstabel, Broken}
-    public enum reputationState {Stabel, Unstabel, Broken}
+    public enum PsycheState {Stabel, Unstabel, Broken}
+    public enum FamilyState {Stabel, Unstabel, Broken}
+    public enum ReputationState {Stabel, Unstabel, Broken}
 
     void Awake()
     {
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        instance = this;
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
-    public psycheState CurrentPsycheState()
+    public PsycheState CurrentPsycheState()
     {
         return psyche switch
         {
-            > 66 => psycheState.Stabel,
-            > 33 => psycheState.Unstabel,
-            _ => psycheState.Broken
+            > 66 => PsycheState.Stabel,
+            > 33 => PsycheState.Unstabel,
+            _ => PsycheState.Broken
         };
     }
 
-    public familyState CurrentFamilyState()
+    public FamilyState CurrentFamilyState()
     {
         return family switch
         {
-            > 66 => familyState.Stabel,
-            > 33 => familyState.Unstabel,
-            _ => familyState.Broken
+            > 66 => FamilyState.Stabel,
+            > 33 => FamilyState.Unstabel,
+            _ => FamilyState.Broken
         };
     }
 
-    public reputationState CurrentReputationState()
+    public ReputationState CurrentReputationState()
     {
         return reputation switch
         {
-            > 66 => reputationState.Stabel,
-            > 33 => reputationState.Unstabel,
-            _ => reputationState.Broken
+            > 66 => ReputationState.Stabel,
+            > 33 => ReputationState.Unstabel,
+            _ => ReputationState.Broken
         };
     }
     
@@ -68,6 +70,12 @@ class HealthBars : MonoBehaviour
     public void ChangeReputation(int amount)
     {
         reputation = Mathf.Clamp(reputation + amount, 0, 100);
+    }
+    
+    public void SetSelectedPatient(Patient p)
+    {
+        SelectedPatient = p;
+        Debug.Log($"[HealthBars] Selected patient: {p?.FullName}");
     }
 }
 
