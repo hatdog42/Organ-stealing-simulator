@@ -23,6 +23,7 @@ namespace MiniGames.SubGames.CatchTheBall
         [SerializeField] private Transform dropPosMin;
         [SerializeField] private Transform dropPosMax;
         private float _newDropPos;
+        private int _outsideDropCount;
         
         [Header("ChangePos Timer")]
         [SerializeField] private float posChangeTimeMin;
@@ -76,6 +77,19 @@ namespace MiniGames.SubGames.CatchTheBall
             {
                 Instantiate(drop, new Vector3(_newDropPos, dropPosMax.position.y), Quaternion.identity);
                 yield return new WaitForSeconds(dropTimer);
+            }
+        }
+
+        public void OutsideDropCount()
+        {
+            _outsideDropCount++;
+            if (_outsideDropCount < 10)
+            {
+                DisplayWarning(true);
+            }
+            else
+            {
+                GameLose();
             }
         }
     }
