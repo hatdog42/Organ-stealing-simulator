@@ -8,7 +8,6 @@ namespace MiniGames
 {
     public class MazeGame : MiniGameBase
     {
-        [SerializeField] private Camera _camera;
         //The ball we will move through the maze
         [SerializeField] private GameObject ball;
         
@@ -32,7 +31,7 @@ namespace MiniGames
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             
-            Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, _camera.nearClipPlane));
+            Vector3 worldPos = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, cam.nearClipPlane));
             
             worldPos.z = 0;
             

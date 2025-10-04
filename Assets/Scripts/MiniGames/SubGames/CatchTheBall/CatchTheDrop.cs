@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using MiniGames.Base;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 namespace MiniGames.SubGames.CatchTheBall
 {
@@ -8,6 +11,7 @@ namespace MiniGames.SubGames.CatchTheBall
     {
         //Moving Cup
         [Header("Cup"), SerializeField] private GameObject cup;
+        [SerializeField] private float cupSpeed = 1.5f;
         private Rigidbody2D _cupRb;
         private Collider2D _cupCol;
         
@@ -34,6 +38,25 @@ namespace MiniGames.SubGames.CatchTheBall
             _cupCol = cup.GetComponent<Collider2D>();
             StartCoroutine(ChangeDropPos());
             StartCoroutine(WaitForDrop());
+        }
+
+        private void MoveCup()
+        {
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+            
+            Vector3 worldPos = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, cam.nearClipPlane));
+            
+            worldPos.z = 0;
+            
+            Vector2 direction = worldPos - cup.transform.position;
+
+            _cupRb.linearVelocity = direction * cupSpeed;
+            _cupRb.MovePosition(Vector2.Lerp(_cupRb.position, worldPos, 0.2f));
+        }
+
+        private void FixedUpdate()
+        {
+            MoveCup();
         }
 
         private IEnumerator ChangeDropPos()

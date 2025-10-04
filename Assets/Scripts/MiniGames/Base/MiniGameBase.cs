@@ -5,6 +5,7 @@ namespace MiniGames.Base
     public class MiniGameBase : MonoBehaviour
     {
         public bool inFocus;
+        [SerializeField] protected Camera cam;
 
         protected void GameWin()
         {

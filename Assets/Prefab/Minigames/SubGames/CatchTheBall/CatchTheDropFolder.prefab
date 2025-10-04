@@ -354,12 +354,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d8557c20a7b2164f8549e3f7839f23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SubGames.CatchTheDrop
+  inFocus: 1
+  cam: {fileID: 0}
   cup: {fileID: 2291561520870534647}
+  cupSpeed: 10
   drop: {fileID: 5442021719129385136, guid: 9e21dae7b0592c14dad07a43482f4135, type: 3}
   dropPosMin: {fileID: 5218926957430213829}
   dropPosMax: {fileID: 7901989680542062699}
+  posChangeTimeMin: 5
+  posChangeTimeMax: 15
   dropTimer: 1
-  changeDropPosTimer: 5
 --- !u!1 &8650541336183149737
 GameObject:
   m_ObjectHideFlags: 0
