@@ -38,7 +38,7 @@ public class PatientGenerator : MonoBehaviour
         p.lastName = patientData.lastNames[Random.Range(0, patientData.lastNames.Count)];
         p.age = Random.Range(patientData.minAge, patientData.maxAge + 1);
         p.job = patientData.jobs[Random.Range(0, patientData.jobs.Count)];
-        p.personality = patientData.personalities[Random.Range(0, patientData.personalities.Count)];
+        p.personality = patientData.personalities[Random.Range(0, patientData.personalities.Count)].personality;
         p.trait = patientData.traits[Random.Range(0, patientData.traits.Count)];
 
         return p;

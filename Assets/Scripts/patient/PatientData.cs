@@ -17,7 +17,7 @@ public class PatientData : ScriptableObject
     public List<string> jobs;
 
     [Header("Personalities (Nurse Notes)")]
-    public List<string> personalities;
+    public List<PersonalityDialogue> personalities = new();
 
     [Header("Traits")]
     public List<string> traits;
@@ -25,4 +25,21 @@ public class PatientData : ScriptableObject
     [Header("Faces")]
     public List<Sprite> maleFaces;
     public List<Sprite> femaleFaces;
+    
+    public string GetRandomLine(string personality)
+    {
+        var entry = personalities.Find(p => p.personality == personality);
+        if (entry == null || entry.dialogueLines.Count == 0)
+            return "The patient stays silent...";
+    
+        int index = Random.Range(0, entry.dialogueLines.Count);
+        return entry.dialogueLines[index];
+    }
+}
+
+[System.Serializable]
+public class PersonalityDialogue
+{
+    public string personality;
+    [TextArea(2, 5)] public List<string> dialogueLines = new();
 }

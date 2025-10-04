@@ -43,12 +43,24 @@ MonoBehaviour:
   - Grocery Store Clerk
   - Police Officer
   personalities:
-  - Douchebag
-  - Hyperactive
-  - Skeptical
-  - Nice
-  - Shy
-  - Funny
+  - personality: Funny
+    dialogueLines:
+    - "If this goes wrong, at least I\u2019ll die laughing, right?"
+  - personality: Douchebag
+    dialogueLines:
+    - "You sure you know what you\u2019re doing, doc? Last guy made it worse."
+  - personality: Hyperactive
+    dialogueLines:
+    - "Oh wow, all these tools! Can I touch one? No? Okay\u2014but wow, look at that!"
+  - personality: Skeptical
+    dialogueLines:
+    - "I don\u2019t buy it. You call this a \u2018routine\u2019 procedure?"
+  - personality: Nice
+    dialogueLines:
+    - Thank you so much for helping me. I really appreciate it.
+  - personality: Shy
+    dialogueLines:
+    - "Um\u2026 h-hi\u2026 I\u2019ll just\u2026 do whatever you need me to\u2026"
   traits:
   - Smoker
   - Drinker
