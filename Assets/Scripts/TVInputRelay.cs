@@ -10,25 +10,35 @@ public class TVInputRelay : MonoBehaviour
     
     [Header("Cameras")] [SerializeField] private Camera mainCam;
     [SerializeField] private Camera miniGameCam;
-
+    
+    
     private SpriteRenderer _spriteRenderer;
-
+    private Collider2D _tvCollider;
+    
     private bool _dragging;
 
 
     void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _tvCollider = GetComponent<Collider2D>();
         if (!mainCam) mainCam = Camera.main;
+        
     }
 
     public bool TryMapScreenToMiniWorld(Vector2 screenPos, out Vector3 miniWorldPos)
     {
+        if (mainCam == null || miniGameCam == null || _spriteRenderer == null || _tvCollider == null)
+        {
+            miniWorldPos = default;
+            Debug.LogWarning("TryMapScreenToMiniWorld failed");
+            return false;
+        }
         float zToTV = Mathf.Abs(mainCam.transform.position.z - transform.position.z);
         Vector3 worldOnTV = mainCam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, zToTV));
 
         Collider2D hit = Physics2D.OverlapPoint(worldOnTV);
-        if (!hit || hit.gameObject != gameObject)
+        if (!hit || hit != _tvCollider)
         {
             miniWorldPos = default;
             return false;
@@ -67,5 +77,10 @@ public class TVInputRelay : MonoBehaviour
             _dragging = false;
             PointerUp?.Invoke(miniWorld);
         }
+    }
+
+    public void SetMiniGameCam(Camera targetCamera)
+    {
+        miniGameCam = targetCamera;
     }
 }

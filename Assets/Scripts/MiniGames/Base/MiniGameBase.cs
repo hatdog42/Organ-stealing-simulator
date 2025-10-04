@@ -4,9 +4,20 @@ namespace MiniGames.Base
 {
     public class MiniGameBase : MonoBehaviour
     {
-        public bool inFocus;
+        protected bool InFocus {get; private set;}
         [SerializeField] protected Camera cam;
-
+        protected TVInputRelay inputRelay;
+        
+        public virtual void OnFocusGained(TVInputRelay relay)
+        {
+            InFocus = true;
+            inputRelay = relay; // Store so Update/FixedUpdate can query mouse-through-CRT
+        }
+        public virtual void OnFocusLost()
+        {
+            InFocus = false;
+            inputRelay = null;
+        }
         protected void GameWin()
         {
             //Send win info

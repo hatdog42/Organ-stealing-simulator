@@ -56,7 +56,7 @@ namespace MiniGames.SubGames.CatchTheBall
 
         private void FixedUpdate()
         {
-            if (!inFocus) return;
+            if (!InFocus) return;
             if (Mouse.current.leftButton.isPressed) MoveCup();
         }
 

@@ -27,14 +27,9 @@ namespace MiniGames
             _ballRigidbody = ball.GetComponent<Rigidbody2D>();
         }
         
-        private void MoveBall()
+        private void MoveBall(Vector3 worldPos)
         {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            
-            Vector3 worldPos = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, cam.nearClipPlane));
-            
             worldPos.z = 0;
-            
             Vector2 direction = worldPos - ball.transform.position;
 
             _ballRigidbody.linearVelocity = direction * _ballSpeed;
@@ -57,8 +52,16 @@ namespace MiniGames
 
         private void FixedUpdate()
         {
-            if (_gameWon || !inFocus) return;
-            if (Mouse.current.leftButton.isPressed) MoveBall();
+            if (_gameWon || !InFocus) return;
+            if (!Mouse.current.leftButton.isPressed) return;
+            
+            var screen = Mouse.current.position.ReadValue();
+
+            if (inputRelay.TryMapScreenToMiniWorld(screen, out Vector3 miniWorldPos))
+            {
+                MoveBall(miniWorldPos);
+            }
+
         }
     }
 }

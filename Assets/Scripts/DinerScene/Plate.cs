@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(CircleCollider2D))]
-public class Plate : MonoBehaviour
+public class Plate : MonoBehaviour, IClickable
 {
     [SerializeField]private SpriteRenderer foodSprite;
 
@@ -12,6 +12,10 @@ public class Plate : MonoBehaviour
     {
         SetFood(false, applyHappiness:false);
         foodSprite.enabled = false;
+    }
+    public void OnClick(Vector3 worldPos)
+    {
+        ToggleFood();
     }
 
     public void ToggleFood()
@@ -29,6 +33,8 @@ public class Plate : MonoBehaviour
         int delta = HasFood ? 10 : -10;
         HealthBars.Instance.ChangeFamily(delta);
     }
+
+   
 }
 
 
