@@ -6,14 +6,15 @@ class HealthBars : MonoBehaviour
     public Patient SelectedPatient { get; private set; }
 
     
-    [Range(0, 100)] public int psyche;
-    [Range(0, 100)] public int family;
-    [Range(0, 100)] public int reputation;
+    [Range(0, 100)] private int _psyche;
+    [Range(0, 100)] private int _family;
+    [Range(0, 100)] private int _reputation;
+    
     [Min(0)]public int money;
     
-    public enum PsycheState {Stabel, Unstabel, Broken}
-    public enum FamilyState {Stabel, Unstabel, Broken}
-    public enum ReputationState {Stabel, Unstabel, Broken}
+    public enum PsycheState {Stable, Unstable, Broken}
+    public enum FamilyState {Happy, UnHappy, Broken}
+    public enum ReputationState {Stable, Unstable, Broken}
 
     void Awake()
     {
@@ -29,53 +30,52 @@ class HealthBars : MonoBehaviour
 
     public PsycheState CurrentPsycheState()
     {
-        return psyche switch
+        return _psyche switch
         {
-            > 66 => PsycheState.Stabel,
-            > 33 => PsycheState.Unstabel,
+            > 66 => PsycheState.Stable,
+            > 33 => PsycheState.Unstable,
             _ => PsycheState.Broken
         };
     }
 
     public FamilyState CurrentFamilyState()
     {
-        return family switch
+        return _family switch
         {
-            > 66 => FamilyState.Stabel,
-            > 33 => FamilyState.Unstabel,
+            > 66 => FamilyState.Happy,
+            > 33 => FamilyState.UnHappy,
             _ => FamilyState.Broken
         };
     }
 
     public ReputationState CurrentReputationState()
     {
-        return reputation switch
+        return _reputation switch
         {
-            > 66 => ReputationState.Stabel,
-            > 33 => ReputationState.Unstabel,
+            > 66 => ReputationState.Stable,
+            > 33 => ReputationState.Unstable,
             _ => ReputationState.Broken
         };
     }
     
     public void ChangePsych(int amount)
     {
-        psyche = Mathf.Clamp(psyche + amount, 0, 100);
+        _psyche = Mathf.Clamp(_psyche + amount, 0, 100);
     }
 
     public void ChangeFamily(int amount)
     {
-        family = Mathf.Clamp(family + amount, 0, 100);
+        _family = Mathf.Clamp(_family + amount, 0, 100);
     }
 
     public void ChangeReputation(int amount)
     {
-        reputation = Mathf.Clamp(reputation + amount, 0, 100);
+        _reputation = Mathf.Clamp(_reputation + amount, 0, 100);
     }
     
-    public void SetSelectedPatient(Patient p)
+    public void SetSelectedPatient(Patient patient)
     {
-        SelectedPatient = p;
-        Debug.Log($"[HealthBars] Selected patient: {p?.FullName}");
+        SelectedPatient = patient;
     }
 }
 

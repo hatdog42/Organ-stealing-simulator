@@ -77,6 +77,8 @@ Material:
     - _Scan_Lines_Speed: 0.053
     - _Scan_Lines_size: 141.56
     - _VignetteSoftnes: 0.53
+    - _noiseSpeed: 200
+    - _nosieStrngth: 12.29
     - _vignetIntensety: 0.721
     - _vignetteRadius: 0.23
     m_Colors:
