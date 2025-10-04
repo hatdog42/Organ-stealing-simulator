@@ -4,7 +4,7 @@ namespace MiniGames.Base
 {
     public class MiniGameBase : MonoBehaviour
     {
-        //TODO - Make a time limit.
+        public bool inFocus;
 
         protected void GameWin()
         {
@@ -15,6 +15,12 @@ namespace MiniGames.Base
         protected void GameLose()
         {
             //Send lose info
+        }
+
+        protected float RandomizeValues(float minValue, float maxValue)
+        {
+            float newValue = Random.Range(minValue, maxValue);
+            return newValue;
         }
     }
 }

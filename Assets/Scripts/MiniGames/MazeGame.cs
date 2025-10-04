@@ -8,6 +8,7 @@ namespace MiniGames
 {
     public class MazeGame : MiniGameBase
     {
+        [SerializeField] private Camera _camera;
         //The ball we will move through the maze
         [SerializeField] private GameObject ball;
         
@@ -19,6 +20,7 @@ namespace MiniGames
         
         //Goal
         [SerializeField] private Collider2D goalCol;
+        private bool _gameWon;
 
         private void Start()
         {
@@ -30,7 +32,7 @@ namespace MiniGames
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
+            Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, _camera.nearClipPlane));
             
             worldPos.z = 0;
             
@@ -50,11 +52,13 @@ namespace MiniGames
             if (goalCol.IsTouching(_ballCollider))
             {
                 GameWin();
+                _gameWon = true;
             }
         }
 
         private void FixedUpdate()
         {
+            if (_gameWon || !inFocus) return;
             MoveBall();
         }
     }
