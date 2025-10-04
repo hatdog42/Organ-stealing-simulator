@@ -58,7 +58,7 @@ namespace MiniGames
         private void FixedUpdate()
         {
             if (_gameWon || !inFocus) return;
-            MoveBall();
+            if (Mouse.current.leftButton.isPressed) MoveBall();
         }
     }
 }

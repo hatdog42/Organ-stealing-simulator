@@ -11,7 +11,7 @@ namespace MiniGames.SubGames.CatchTheBall
     {
         //Moving Cup
         [Header("Cup"), SerializeField] private GameObject cup;
-        [SerializeField] private float cupSpeed = 1.5f;
+        [SerializeField] private float cupSpeed = 50f;
         private Rigidbody2D _cupRb;
         private Collider2D _cupCol;
         
@@ -56,7 +56,8 @@ namespace MiniGames.SubGames.CatchTheBall
 
         private void FixedUpdate()
         {
-            MoveCup();
+            if (!inFocus) return;
+            if (Mouse.current.leftButton.isPressed) MoveCup();
         }
 
         private IEnumerator ChangeDropPos()
