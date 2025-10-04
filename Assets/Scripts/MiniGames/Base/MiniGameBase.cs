@@ -18,6 +18,15 @@ namespace MiniGames.Base
             //Send lose info
         }
 
+        protected void DisplayWarning(bool warning)
+        {
+            if (warning)
+            {
+                print("Warning!");
+            }
+            
+        }
+
         protected float RandomizeValues(float minValue, float maxValue)
         {
             float newValue = Random.Range(minValue, maxValue);
