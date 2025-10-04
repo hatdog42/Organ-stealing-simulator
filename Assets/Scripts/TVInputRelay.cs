@@ -1,17 +1,20 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class TVInputRelay : MonoBehaviour
 {
-    [Header("Cameras")] 
-    public Camera mainCam;       
-    public Camera miniGameCam;
+    public event Action<Vector3> PointerDown;
+    public event Action<Vector3> PointerDrag;
+    public event Action<Vector3> PointerUp;
+    
+    [Header("Cameras")] [SerializeField] private Camera mainCam;
+    [SerializeField] private Camera miniGameCam;
 
-    [Header("Target inside mini-game world")]
-    public Transform dragTarget;
+    private SpriteRenderer _spriteRenderer;
 
     private bool _dragging;
-    private SpriteRenderer _spriteRenderer;
+
 
     void Awake()
     {
@@ -19,29 +22,50 @@ public class TVInputRelay : MonoBehaviour
         if (!mainCam) mainCam = Camera.main;
     }
 
-    void Update()
+    public bool TryMapScreenToMiniWorld(Vector2 screenPos, out Vector3 miniWorldPos)
     {
-        Vector2 m = Mouse.current.position.ReadValue();
         float zToTV = Mathf.Abs(mainCam.transform.position.z - transform.position.z);
-        Vector3 worldOnTV = mainCam.ScreenToWorldPoint(new Vector3(m.x, m.y, zToTV));
-        
-        var col = Physics2D.OverlapPoint(worldOnTV);
-        if (Mouse.current.leftButton.wasPressedThisFrame)
-            _dragging = (col && col.gameObject == gameObject);
-        if (Mouse.current.leftButton.wasReleasedThisFrame)
-            _dragging = false;
+        Vector3 worldOnTV = mainCam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, zToTV));
 
-        if (!_dragging) return;
-        
-        Bounds wb = _spriteRenderer.bounds; 
+        Collider2D hit = Physics2D.OverlapPoint(worldOnTV);
+        if (!hit || hit.gameObject != gameObject)
+        {
+            miniWorldPos = default;
+            return false;
+        }
+
+        Bounds wb = _spriteRenderer.bounds;
         float u = Mathf.InverseLerp(wb.min.x, wb.max.x, worldOnTV.x);
         float v = Mathf.InverseLerp(wb.min.y, wb.max.y, worldOnTV.y);
 
-        Vector3 miniWorld = miniGameCam.ViewportToWorldPoint(new Vector3(u, v, 0));
-        miniWorld.z = 0;
-        
-        if (dragTarget.TryGetComponent<Rigidbody2D>(out var rb) && rb.bodyType == RigidbodyType2D.Dynamic) 
-            rb.MovePosition(miniWorld);
-        else dragTarget.position = miniWorld;
+        miniWorldPos = miniGameCam.ViewportToWorldPoint(new Vector3(u, v, 0));
+        miniWorldPos.z = 0;
+        return true;
+    }
+    void Update()
+    {
+        var screen = Mouse.current.position.ReadValue();
+        if (!TryMapScreenToMiniWorld(screen, out var miniWorld))
+        {
+            if (Mouse.current.leftButton.wasReleasedThisFrame && _dragging)
+                PointerUp?.Invoke(miniWorld);
+            _dragging = false;
+            return;
+        }
+
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            _dragging = true;
+            PointerDown?.Invoke(miniWorld);
+        }
+        else if (_dragging && Mouse.current.leftButton.isPressed)
+        {
+            PointerDrag?.Invoke(miniWorld);
+        }
+        else if (_dragging && Mouse.current.leftButton.wasReleasedThisFrame)
+        {
+            _dragging = false;
+            PointerUp?.Invoke(miniWorld);
+        }
     }
 }

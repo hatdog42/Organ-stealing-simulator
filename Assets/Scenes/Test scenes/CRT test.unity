@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 632208308}
   - component: {fileID: 632208307}
   - component: {fileID: 632208309}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -566,6 +566,7 @@ GameObject:
   - component: {fileID: 1837548829}
   - component: {fileID: 1837548828}
   - component: {fileID: 1837548830}
+  - component: {fileID: 1837548831}
   m_Layer: 0
   m_Name: Screen
   m_TagString: Untagged
@@ -706,7 +707,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TVInputRelay
   mainCam: {fileID: 992156036}
   miniGameCam: {fileID: 650399951}
-  dragTarget: {fileID: 632208308}
+--- !u!114 &1837548831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1837548826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be59b94ae6140c9459e556e54ab3f79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGameDragHandler
+  draggableMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &1959833724
 GameObject:
   m_ObjectHideFlags: 0
