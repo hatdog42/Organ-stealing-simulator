@@ -5,8 +5,6 @@ namespace MiniGames.SubGames.CatchTheBall
 {
     public class DropLogic : MonoBehaviour
     {
-        [SerializeField] private Collider2D cupCol;
-
         private Collider2D _col;
 
         private void Start()
@@ -14,11 +12,11 @@ namespace MiniGames.SubGames.CatchTheBall
             _col = GetComponent<Collider2D>();
         }
 
-        private void Update()
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            if (_col.IsTouching(cupCol))
+            if (other.CompareTag("Cup"))
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
     }
