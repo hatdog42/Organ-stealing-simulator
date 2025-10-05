@@ -32,6 +32,7 @@ namespace MiniGames.SubGames.CatchTheBall
         
         //Timer
         [Header("Drop Timer"), SerializeField] private float dropTimer;
+        [SerializeField] private int maxDropCount = 10;
 
         private void Start()
         {
@@ -83,7 +84,7 @@ namespace MiniGames.SubGames.CatchTheBall
         public void OutsideDropCount()
         {
             _outsideDropCount++;
-            if (_outsideDropCount < 10)
+            if (_outsideDropCount < maxDropCount)
             {
                 DisplayWarning(true);
             }

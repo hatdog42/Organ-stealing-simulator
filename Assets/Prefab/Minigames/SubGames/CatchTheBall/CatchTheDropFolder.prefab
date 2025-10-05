@@ -390,6 +390,7 @@ MonoBehaviour:
   posChangeTimeMin: 5
   posChangeTimeMax: 15
   dropTimer: 1
+  maxDropCount: 10
 --- !u!1 &8650541336183149737
 GameObject:
   m_ObjectHideFlags: 0
