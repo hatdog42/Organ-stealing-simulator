@@ -28,11 +28,13 @@ public class PatientGenerator : MonoBehaviour
         {
              p.firstName = patientData.maleFirstNames[Random.Range(0, patientData.maleFirstNames.Count)];
              p.face = patientData.maleFaces[Random.Range(0, patientData.maleFaces.Count)];
+             p.sex = "M";
         }
         else
         {
             p.firstName = patientData.femaleFirstNames[Random.Range(0, patientData.femaleFirstNames.Count)];
             p.face = patientData.femaleFaces[Random.Range(0, patientData.femaleFaces.Count)];
+            p.sex = "F";
         }
         
         p.lastName = patientData.lastNames[Random.Range(0, patientData.lastNames.Count)];
@@ -61,6 +63,7 @@ public class Patient
     public string job;
     public string personality;
     public string trait;
+    public string sex;
     public Sprite face;
     public string FullName => $"{firstName} {lastName}";
 }

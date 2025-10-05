@@ -9,6 +9,7 @@ public class PatientChartUI : MonoBehaviour
     public TMP_Text jobText;
     public TMP_Text traitText;
     public TMP_Text personalityText;
+    public TMP_Text sexText;
     public Image patientImage;
     public Button selectButton; 
     
@@ -23,6 +24,7 @@ public class PatientChartUI : MonoBehaviour
         jobText.text = patient.job;
         traitText.text = patient.trait;
         personalityText.text = patient.personality.ToString();
+        sexText.text = patient.sex;
         patientImage.sprite = patient.face;
         
         selectButton.onClick.RemoveAllListeners();

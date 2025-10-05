@@ -350,7 +350,7 @@ MonoBehaviour:
   dialogueText: {fileID: 1509712487}
   charDelay: 0.0503
   waitAfterText: 2
-  nextSceneName: 
+  nextSceneName: ChosePatient
   expositionText: 'I got a letter in the mail today-
 
 
