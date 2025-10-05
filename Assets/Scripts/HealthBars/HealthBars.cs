@@ -6,16 +6,16 @@ class HealthBars : MonoBehaviour
     public Patient SelectedPatient { get; private set; }
 
     
-    [Range(0, 100)] private int _psyche;
-    [Range(0, 100)] private int _family;
-    [Range(0, 100)] private int _reputation;
+    [Range(0, 100)] private int _psyche = 100;
+    [Range(0, 100)] private int _family = 100;
+    [Range(0, 100)] private int _reputation = 100;
     
     [Min(0)]public int money;
     public bool bChooseOrganBox;
     
     public enum PsycheState {Stable, Unstable, Broken}
     public enum FamilyState {Happy, UnHappy, Broken, Neutral}
-    public enum ReputationState {Stable, Unstable, Broken}
+    public enum ReputationState {Stable, Unstable, Broken,Neutral}
 
     void Awake()
     {
@@ -55,7 +55,8 @@ class HealthBars : MonoBehaviour
         return _reputation switch
         {
             > 66 => ReputationState.Stable,
-            > 33 => ReputationState.Unstable,
+            > 33 => ReputationState.Neutral,
+            > 1 => ReputationState.Unstable,
             _ => ReputationState.Broken
         };
     }
