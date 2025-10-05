@@ -171,10 +171,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: MazeFolder
       objectReference: {fileID: 0}
-    - target: {fileID: 7154932607185661976, guid: 8b9b359d84c389d4ab453c4a63908a5a, type: 3}
-      propertyPath: m_LinearDamping
-      value: 50
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

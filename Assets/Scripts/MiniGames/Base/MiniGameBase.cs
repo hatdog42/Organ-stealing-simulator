@@ -18,6 +18,7 @@ namespace MiniGames.Base
             InFocus = false;
             inputRelay = null;
         }
+        
         protected void GameWin()
         {
             //Send win info
@@ -29,7 +30,8 @@ namespace MiniGames.Base
             //Send lose info
         }
 
-        protected void DisplayWarning(bool warning)
+        //This will display a warning from the sub mini-games when it needs your attention
+        protected void DisplayWarning(bool warning) 
         {
             if (warning)
             {
