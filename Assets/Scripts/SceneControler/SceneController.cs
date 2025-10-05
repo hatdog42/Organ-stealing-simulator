@@ -10,6 +10,7 @@ public class SceneController : MonoBehaviour
     
     private ScreenFader _fader;
     private bool _isLoading;
+    private int _loopsDone = 0;
     public static SceneController Instance { get; private set; }
     
 
@@ -26,6 +27,19 @@ public class SceneController : MonoBehaviour
         
         EnsureFader(); 
         _fader.gameObject.SetActive(false);
+    }
+
+    public void LoadNextOrLoop()
+    {
+        if (_loopsDone < 3)
+        {
+            _loopsDone++;
+            LoadScene("ChosePatient");
+        }
+        else
+        {
+            LoadScene("OutsideHouse");
+        }
     }
     
     private void EnsureFader()

@@ -48,13 +48,13 @@ public class OrganControler : MonoBehaviour
     {
         HealthBars.Instance.ChangePsych(psyceChangeOrgan);
         HealthBars.Instance.bChooseOrganBox = true;
-        SceneController.Instance.LoadScene(nextScene); 
+        SceneController.Instance.LoadNextOrLoop(); 
     }
 
     private void MopBucketChosen()
     {
         HealthBars.Instance.ChangePsych(psyceChangeIceBox);
         HealthBars.Instance.bChooseOrganBox = false;
-        SceneController.Instance.LoadScene(nextScene); 
+        SceneController.Instance.LoadNextOrLoop(); 
     }
 }

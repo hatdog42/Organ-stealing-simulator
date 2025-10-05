@@ -21,6 +21,8 @@ namespace MiniGames.SubGames.GiveAir
         private SpriteRenderer _fillBar;
         private Vector3 _originalScale;
         private Vector3 _originalPosition;
+        
+        private bool _pressingAir;
 
         private void Start()
         {
@@ -31,12 +33,53 @@ namespace MiniGames.SubGames.GiveAir
             _originalPosition = _fillBar.transform.localPosition;
         }
 
+        public override void OnFocusGained(TVInputRelay relay)
+        {
+            base.OnFocusGained(relay);
+            if (inputRelay != null)
+            {
+                inputRelay.PointerDown += OnPointerDown;
+                inputRelay.PointerDrag += OnPointerDrag;
+                inputRelay.PointerUp   += OnPointerUp;
+            }
+        }
+        public override void OnFocusLost()
+        {
+            if (inputRelay != null)
+            {
+                inputRelay.PointerDown -= OnPointerDown;
+                inputRelay.PointerDrag -= OnPointerDrag;
+                inputRelay.PointerUp   -= OnPointerUp;
+            }
+            _pressingAir = false;
+            base.OnFocusLost();
+        }
+        private void OnPointerDown(Vector3 miniWorld)
+        {
+            _pressingAir = HitAirButton(miniWorld);
+        }
+
+        private void OnPointerDrag(Vector3 miniWorld)
+        {
+            // keep updating if the pointer stays over / leaves the button
+            _pressingAir = HitAirButton(miniWorld);
+        }
+        private bool HitAirButton(Vector3 miniWorld)
+        {
+            if (!airButton) return false;
+            
+            if (airButton.OverlapPoint(miniWorld)) return true;
+ 
+            return false;
+        }
+        private void OnPointerUp(Vector3 miniWorld)
+        {
+            _pressingAir = false;
+        }
+        
         private void AirController()
         {
-            Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-            
-            if (Mouse.current.leftButton.isPressed && hit.collider == airButton)
+            if (_pressingAir)
             {
                 if (_currentTimer > airTimer) return;
                 _currentTimer += airGain * Time.deltaTime;
@@ -77,6 +120,8 @@ namespace MiniGames.SubGames.GiveAir
 
         private void Update()
         {
+            if (!InFocus) return;
+            
             AirController();
             UpdateFillBar();
         }

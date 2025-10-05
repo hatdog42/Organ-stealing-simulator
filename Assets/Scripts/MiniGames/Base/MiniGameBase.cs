@@ -21,13 +21,12 @@ namespace MiniGames.Base
         
         protected void GameWin()
         {
-            //Send win info
-            print("Game Win!");
+            SceneController.Instance.LoadNextOrLoop();
         }
 
         protected void GameLose()
         {
-            //Send lose info
+            SceneController.Instance.LoadScene("OrganSteeling");
         }
 
         //This will display a warning from the sub mini-games when it needs your attention
