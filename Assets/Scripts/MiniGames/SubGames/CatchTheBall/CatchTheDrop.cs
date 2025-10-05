@@ -92,5 +92,11 @@ namespace MiniGames.SubGames.CatchTheBall
                 GameLose();
             }
         }
+
+        public void ResetOutsideDrops()
+        {
+            _outsideDropCount = 0;
+            DisplayWarning(false);
+        }
     }
 }

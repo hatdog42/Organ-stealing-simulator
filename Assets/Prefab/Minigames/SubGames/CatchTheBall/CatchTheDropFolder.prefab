@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5693946395308029078}
   - component: {fileID: 1968072096580508807}
   - component: {fileID: 7626563277773660300}
+  - component: {fileID: 7622490002684257204}
   m_Layer: 0
   m_Name: Cup
   m_TagString: Cup
@@ -165,6 +166,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 6
+--- !u!114 &7622490002684257204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2291561520870534647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0e294646ea053c4abfa97cab81ab204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SubGames.CatchTheBall.DropLogic
+  catchTheDrop: {fileID: 6342956720805502348}
 --- !u!1 &2976946984884253400
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,6 +189,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2903357923560518889}
   - component: {fileID: 3582444671581759086}
+  - component: {fileID: 272648630658064578}
   m_Layer: 0
   m_Name: LostDropCol
   m_TagString: Untagged
@@ -227,7 +242,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -243,6 +258,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &272648630658064578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2976946984884253400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85eb511cd2bebc4fa8a12e9db531568, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SubGames.CatchTheBall.DropFallOutside
 --- !u!1 &3588862181287671832
 GameObject:
   m_ObjectHideFlags: 0
@@ -354,7 +381,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d8557c20a7b2164f8549e3f7839f23d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SubGames.CatchTheDrop
-  inFocus: 1
   cam: {fileID: 0}
   cup: {fileID: 2291561520870534647}
   cupSpeed: 10

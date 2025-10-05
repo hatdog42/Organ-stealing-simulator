@@ -9,7 +9,7 @@ namespace MiniGames.SubGames.CatchTheBall
 
         private void Start()
         {
-            _catchTheDrop = GameObject.Find("CatchTheDrop").GetComponent<CatchTheDrop>();
+            _catchTheDrop = GameObject.Find("CatchTheDropManager").GetComponent<CatchTheDrop>();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
