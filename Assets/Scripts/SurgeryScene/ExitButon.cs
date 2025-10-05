@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(Collider2D))]
 public class ExitButon : MonoBehaviour, IClickable
 {
     public void OnClick(Vector3 worldPos)

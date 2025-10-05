@@ -23,8 +23,7 @@ public class PatientData : ScriptableObject
     public List<string> traits;
     
     [Header("Faces")]
-    public List<Sprite> maleFaces;
-    public List<Sprite> femaleFaces;
+    public PatientSprites sprites;
     
     public string GetRandomLine(string personality)
     {
@@ -42,4 +41,16 @@ public class PersonalityDialogue
 {
     public string personality;
     [TextArea(2, 5)] public List<string> dialogueLines = new();
+}
+
+[System.Serializable]
+public class PatientSprites
+{
+    [Header("Male Sprites")]
+    public List<Sprite> maleFaces;
+    public List<Sprite> maleBodies;
+    
+    [Header("Female Sprites")]
+    public List<Sprite> femaleFaces;
+    public List<Sprite> femaleBodies;
 }

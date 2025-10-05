@@ -26,14 +26,22 @@ public class PatientGenerator : MonoBehaviour
         bool isMale = Random.value > 0.5f;
         if (isMale)
         {
-             p.firstName = patientData.maleFirstNames[Random.Range(0, patientData.maleFirstNames.Count)];
-             p.face = patientData.maleFaces[Random.Range(0, patientData.maleFaces.Count)];
-             p.sex = "M";
+            p.firstName = patientData.maleFirstNames[Random.Range(0, patientData.maleFirstNames.Count)];
+            
+            int index = Random.Range(0, patientData.sprites.maleBodies.Count);
+            p.face = patientData.sprites.maleFaces[index];
+            p.body = patientData.sprites.maleBodies[index];
+            
+            p.sex = "M";
         }
         else
         {
             p.firstName = patientData.femaleFirstNames[Random.Range(0, patientData.femaleFirstNames.Count)];
-            p.face = patientData.femaleFaces[Random.Range(0, patientData.femaleFaces.Count)];
+            
+            int index = Random.Range(0, patientData.sprites.femaleBodies.Count);
+            p.face = patientData.sprites.femaleFaces[index];
+            p.body = patientData.sprites.femaleBodies[index];
+           
             p.sex = "F";
         }
         
@@ -50,7 +58,7 @@ public class PatientGenerator : MonoBehaviour
     {
         HealthBars.Instance.SetSelectedPatient(chosen);
         
-        SceneManager.LoadScene("Surgery test"); 
+        SceneController.Instance.LoadScene("TalkToPatient");
     }
 }
 
@@ -65,5 +73,6 @@ public class Patient
     public string trait;
     public string sex;
     public Sprite face;
+    public Sprite body;
     public string FullName => $"{firstName} {lastName}";
 }

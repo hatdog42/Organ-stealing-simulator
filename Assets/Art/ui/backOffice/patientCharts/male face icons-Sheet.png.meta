@@ -1,25 +1,10 @@
 fileFormatVersion: 2
-guid: 9caa62bdb164e2b4cbe263f839bd91d8
+guid: 520ab444de56b35488b007d29f36e03a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6080899195003168738
-    second: males_0
-  - first:
-      213: 1420341303131029787
-    second: males_1
-  - first:
-      213: 3351891941003920701
-    second: males_2
-  - first:
-      213: -5485157077691297805
-    second: males_3
-  - first:
-      213: -7322964626584279536
-    second: males_4
-  - first:
-      213: 8208290260915822208
-    second: males_5
+      213: 5988995955048105371
+    second: male face icons-Sheet_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -115,133 +100,133 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: males_0
+      name: male face icons-Sheet_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 12
-        width: 81
-        height: 237
+        x: 0
+        y: 0
+        width: 34
+        height: 38
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e1890ee666e4c9ba0800000000000000
-      internalID: -6080899195003168738
+      spriteID: b95c4ed07103d1350800000000000000
+      internalID: 5988995955048105371
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: males_1
+      name: male face icons-Sheet_1
       rect:
         serializedVersion: 2
-        x: 105
-        y: 14
-        width: 188
-        height: 230
+        x: 34
+        y: 0
+        width: 34
+        height: 38
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: b11c0f0d3e016b310800000000000000
-      internalID: 1420341303131029787
+      spriteID: bddf9d968a81bef469e8d2e15965dfe3
+      internalID: 317470508
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: males_2
+      name: male face icons-Sheet_2
       rect:
         serializedVersion: 2
-        x: 311
-        y: 15
-        width: 145
-        height: 230
+        x: 68
+        y: 0
+        width: 34
+        height: 38
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d35880516ff448e20800000000000000
-      internalID: 3351891941003920701
+      spriteID: 8fc08c5c6a2cf3049a6a827b33e177fa
+      internalID: -417545232
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: males_3
+      name: male face icons-Sheet_3
       rect:
         serializedVersion: 2
-        x: 483
-        y: 21
-        width: 102
-        height: 237
+        x: 102
+        y: 0
+        width: 34
+        height: 38
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 3ff8dfe03bec0e3b0800000000000000
-      internalID: -5485157077691297805
+      spriteID: 6df7cc83f090b1347ac9c8d56685907e
+      internalID: 593547028
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: males_4
+      name: male face icons-Sheet_4
       rect:
         serializedVersion: 2
-        x: 617
-        y: 14
-        width: 91
-        height: 227
+        x: 136
+        y: 0
+        width: 34
+        height: 38
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 01661b9887a9f5a90800000000000000
-      internalID: -7322964626584279536
+      spriteID: 477b98164ae759043b35e911562752b8
+      internalID: -1882678606
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: males_5
+      name: male face icons-Sheet_5
       rect:
         serializedVersion: 2
-        x: 738
-        y: 14
-        width: 114
-        height: 230
+        x: 170
+        y: 0
+        width: 34
+        height: 38
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 08e9f2fb084b9e170800000000000000
-      internalID: 8208290260915822208
+      spriteID: 46b985b20366b3148be87116be536c7d
+      internalID: -1787509353
       vertices: []
       indices: 
       edges: []
@@ -250,7 +235,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e2fc601f3f8583e4683f2d5ef17f48e5
     internalID: 0
     vertices: []
     indices: 
@@ -258,14 +243,16 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":1.0},"gridSpriteSize":{"x":34.0,"y":38.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      males_0: -6080899195003168738
-      males_1: 1420341303131029787
-      males_2: 3351891941003920701
-      males_3: -5485157077691297805
-      males_4: -7322964626584279536
-      males_5: 8208290260915822208
+      male face icons-Sheet_0: 5988995955048105371
+      male face icons-Sheet_1: 317470508
+      male face icons-Sheet_2: -417545232
+      male face icons-Sheet_3: 593547028
+      male face icons-Sheet_4: -1882678606
+      male face icons-Sheet_5: -1787509353
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

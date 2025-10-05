@@ -68,17 +68,32 @@ MonoBehaviour:
   - Healthy
   - Workaholic
   - Couch Potato
-  maleFaces:
-  - {fileID: -6080899195003168738, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
-  - {fileID: 1420341303131029787, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
-  - {fileID: 3351891941003920701, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
-  - {fileID: -5485157077691297805, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
-  - {fileID: -7322964626584279536, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
-  - {fileID: 8208290260915822208, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
-  femaleFaces:
-  - {fileID: -7897342152544798287, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
-  - {fileID: 7280916055125077504, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
-  - {fileID: -3861155102952690930, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
-  - {fileID: -4676056663649167587, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
-  - {fileID: -2489812725431947215, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
-  - {fileID: 84646082046939917, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
+  sprites:
+    maleFaces:
+    - {fileID: 5988995955048105371, guid: 520ab444de56b35488b007d29f36e03a, type: 3}
+    - {fileID: 317470508, guid: 520ab444de56b35488b007d29f36e03a, type: 3}
+    - {fileID: -417545232, guid: 520ab444de56b35488b007d29f36e03a, type: 3}
+    - {fileID: 593547028, guid: 520ab444de56b35488b007d29f36e03a, type: 3}
+    - {fileID: -1882678606, guid: 520ab444de56b35488b007d29f36e03a, type: 3}
+    - {fileID: -1787509353, guid: 520ab444de56b35488b007d29f36e03a, type: 3}
+    maleBodies:
+    - {fileID: -6080899195003168738, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
+    - {fileID: 1420341303131029787, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
+    - {fileID: 3351891941003920701, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
+    - {fileID: -5485157077691297805, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
+    - {fileID: -7322964626584279536, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
+    - {fileID: 8208290260915822208, guid: 9caa62bdb164e2b4cbe263f839bd91d8, type: 3}
+    femaleFaces:
+    - {fileID: -5609034809748954395, guid: 149ccd68823f4b94fbc78fb2fa115cfa, type: 3}
+    - {fileID: 203526570, guid: 149ccd68823f4b94fbc78fb2fa115cfa, type: 3}
+    - {fileID: -1344270698, guid: 149ccd68823f4b94fbc78fb2fa115cfa, type: 3}
+    - {fileID: -1818862860, guid: 149ccd68823f4b94fbc78fb2fa115cfa, type: 3}
+    - {fileID: -1254100259, guid: 149ccd68823f4b94fbc78fb2fa115cfa, type: 3}
+    - {fileID: 1966944234, guid: 149ccd68823f4b94fbc78fb2fa115cfa, type: 3}
+    femaleBodies:
+    - {fileID: -7897342152544798287, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
+    - {fileID: 7280916055125077504, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
+    - {fileID: -3861155102952690930, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
+    - {fileID: -4676056663649167587, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
+    - {fileID: -2489812725431947215, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
+    - {fileID: 84646082046939917, guid: a9cddb1b7add8594485e5775b9942bd6, type: 3}
