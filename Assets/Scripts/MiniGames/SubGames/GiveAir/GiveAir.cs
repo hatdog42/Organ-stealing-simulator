@@ -40,6 +40,7 @@ namespace MiniGames.SubGames.GiveAir
             {
                 if (_currentTimer > airTimer) return;
                 _currentTimer += airGain * Time.deltaTime;
+                DisplayWarning(false);
             }
             else
             {

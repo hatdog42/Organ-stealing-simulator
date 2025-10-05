@@ -18,19 +18,31 @@ namespace MiniGameTools.Editor
             GetWindow(typeof(MazeWallFinder));
         }
 
-        private void OnEnable()
-        {
-            _wallColor = Color.black;
-            _mazeTexture = _mazeRenderer.sprite.texture;
-        }
-
         private void OnGUI()
         {
+            GUILayout.Label("Maze Wall Generator", EditorStyles.boldLabel);
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Maze Renderer");
             _mazeRenderer = (SpriteRenderer)EditorGUILayout.ObjectField(_mazeRenderer, typeof(SpriteRenderer), true);
+            GUILayout.EndHorizontal();
+            
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Wall Object");
             _wallTest = (GameObject)EditorGUILayout.ObjectField(_wallTest, typeof(GameObject), true);
+            GUILayout.EndHorizontal();
+            
+            _wallColor = Color.black;
+
+            if (_mazeRenderer != null) _mazeTexture = _mazeRenderer.sprite.texture; 
             
             if (GUILayout.Button("Generate Walls"))
             {
+                if (_wallTest == null)
+                {
+                    Debug.Log("No wall object found");
+                    return;
+                }
                 for (int y = 0; y < _mazeTexture.height; y++)
                 {
                     for (int x = 0; x < _mazeTexture.width; x++)
@@ -45,6 +57,7 @@ namespace MiniGameTools.Editor
                         }
                     }
                 }
+                Debug.Log(_mazeRenderer.gameObject.transform.GetChild(0).childCount + " walls generated");
             }
 
             if (GUILayout.Button("Delete All Walls"))

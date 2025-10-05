@@ -20,11 +20,16 @@ namespace MiniGames
         //Goal
         [SerializeField] private Collider2D goalCol;
         private bool _gameWon;
+        
+        private SpawnRandomMaze _spawnRandomMaze;
 
         private void Start()
         {
             _ballCollider = ball.GetComponent<Collider2D>();
             _ballRigidbody = ball.GetComponent<Rigidbody2D>();
+            _spawnRandomMaze = gameObject.GetComponent<SpawnRandomMaze>();
+            
+            _spawnRandomMaze.SpawnMaze();
         }
         
         private void MoveBall(Vector3 worldPos)
