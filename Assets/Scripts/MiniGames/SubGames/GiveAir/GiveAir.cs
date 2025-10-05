@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
 using MiniGames.Base;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 namespace MiniGames.SubGames.GiveAir
 {
@@ -98,7 +94,7 @@ namespace MiniGames.SubGames.GiveAir
                 }
                 
             }
-            print(_currentTimer);
+            //print(_currentTimer);
 
             if (_currentTimer < 0)
             {
@@ -120,8 +116,6 @@ namespace MiniGames.SubGames.GiveAir
 
         private void Update()
         {
-            if (!InFocus) return;
-            
             AirController();
             UpdateFillBar();
         }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using MiniGames.Base;
 using UnityEngine;
@@ -28,7 +27,7 @@ namespace MiniGames.SubGames.CatchTheBall
         [Header("ChangePos Timer")]
         [SerializeField] private float posChangeTimeMin;
         [SerializeField] private float posChangeTimeMax;
-        private float _changeDropPosTimer;
+        private float _changeDropPosTimer = 10f;
         
         //Timer
         [Header("Drop Timer"), SerializeField] private float dropTimer;
@@ -59,16 +58,17 @@ namespace MiniGames.SubGames.CatchTheBall
         private void FixedUpdate()
         {
             if (!InFocus) return;
-            if (Mouse.current.leftButton.isPressed) MoveCup();
+            //if (Mouse.current.leftButton.isPressed) MoveCup();
         }
 
         private IEnumerator ChangeDropPos()
         {
+            _newDropPos = cup.transform.position.x;
             while (true)
             {
+                yield return new WaitForSeconds(_changeDropPosTimer);
                 _newDropPos = Random.Range(dropPosMin.position.x, dropPosMax.position.x);
                 _changeDropPosTimer = RandomizeValues(posChangeTimeMin, posChangeTimeMax);
-                yield return new WaitForSeconds(_changeDropPosTimer);
             }
         }
 

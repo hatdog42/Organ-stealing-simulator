@@ -1,4 +1,7 @@
+using System;
 using UnityEngine;
+using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace MiniGames.Base
 {
@@ -7,7 +10,15 @@ namespace MiniGames.Base
         protected bool InFocus {get; private set;}
         [SerializeField] protected Camera cam;
         protected TVInputRelay inputRelay;
-        
+
+        [Header("Warning Sprites"), SerializeField] private GameObject warningFaceScreen;
+        [SerializeField] private GameObject warningFaceOutside;
+
+        private void Awake()
+        {
+            DisplayWarning(false);
+        }
+
         public virtual void OnFocusGained(TVInputRelay relay)
         {
             InFocus = true;
@@ -18,7 +29,7 @@ namespace MiniGames.Base
             InFocus = false;
             inputRelay = null;
         }
-        
+
         protected void GameWin()
         {
             SceneController.Instance.LoadNextOrLoop();
@@ -34,7 +45,14 @@ namespace MiniGames.Base
         {
             if (warning)
             {
-                print("Warning!");
+                //print("Warning");
+                warningFaceScreen.SetActive(true);
+                warningFaceOutside.SetActive(true);
+            }
+            else
+            {
+                warningFaceScreen.SetActive(false);
+                warningFaceOutside.SetActive(false);
             }
             
         }
