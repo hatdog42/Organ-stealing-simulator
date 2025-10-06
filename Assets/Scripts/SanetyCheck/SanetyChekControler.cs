@@ -13,6 +13,7 @@ public class SanetyChekControler : DialogueBase
     
     [Header("Ending Scene")]
     [SerializeField] private string EndingScene;
+    [SerializeField] private string NextScene;
     
     [Header("Lines")]
     [SerializeField] private string lineStable;
@@ -28,19 +29,19 @@ public class SanetyChekControler : DialogueBase
             case HealthBars.PsycheState.Stable:
                 PlayLine(lineStable);
                 yield return new WaitForSecondsRealtime(lineStable.Length * charDelay + 1f);
-                SceneController.Instance.LoadNextOrLoop();
+                SceneController.Instance.LoadScene(NextScene);
                 break;
             
             case HealthBars.PsycheState.Neutral:
                 PlayLine(lineNeutral);
                 yield return new WaitForSecondsRealtime(lineStable.Length * charDelay + 1f);
-                SceneController.Instance.LoadNextOrLoop();
+                SceneController.Instance.LoadScene(NextScene);
                 break;
             
             case HealthBars.PsycheState.Unstable:
                 PlayLine(lineUnstable);
                 yield return new WaitForSecondsRealtime(lineStable.Length * charDelay + 1f);
-                SceneController.Instance.LoadNextOrLoop();
+                SceneController.Instance.LoadScene(NextScene);
                 break;
 
             case HealthBars.PsycheState.Broken:

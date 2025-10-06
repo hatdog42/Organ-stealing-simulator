@@ -11,6 +11,9 @@ class HealthBars : MonoBehaviour
     [Range(0, 100)] private int _reputation = 100;
     
     [Min(0)]public int money;
+    [Min(0)]public int organMoney;
+    
+    
     public bool bChooseOrganBox;
     
     public enum PsycheState {Stable,Neutral, Unstable, Broken }

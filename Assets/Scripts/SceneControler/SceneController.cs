@@ -38,7 +38,7 @@ public class SceneController : MonoBehaviour
         }
         else
         {
-            LoadScene("OutsideHouse");
+            LoadScene("SanetyChek");
         }
     }
     
@@ -56,7 +56,24 @@ public class SceneController : MonoBehaviour
     {
         if (!_isLoading) StartCoroutine(LoadRoutine(sceneName));
     }
-
+    public void OnBedButtonPressed()
+    {
+        var healthBars = HealthBars.Instance;
+        if (healthBars == null)
+        {
+            Debug.LogWarning("HealthBars instance not found!");
+            return;
+        }
+        
+        if (healthBars.CurrentFamilyState() == HealthBars.FamilyState.Broken)
+        {
+            LoadScene("DevorceEnding");
+        }
+        else
+        {
+            LoadScene("ChosePatient");
+        }
+    }
     private IEnumerator LoadRoutine(string sceneName)
     {
         _isLoading = true;

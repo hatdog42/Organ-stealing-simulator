@@ -53,6 +53,7 @@ public class OrganControler : MonoBehaviour
 
     private void MopBucketChosen()
     {
+        HealthBars.Instance.organMoney += 10;
         HealthBars.Instance.ChangePsych(psyceChangeIceBox);
         HealthBars.Instance.bChooseOrganBox = false;
         SceneController.Instance.LoadNextOrLoop(); 

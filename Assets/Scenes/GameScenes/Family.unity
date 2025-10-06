@@ -761,8 +761,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 554, y: 359}
-  m_SizeDelta: {x: 43.75, y: 50}
+  m_AnchoredPosition: {x: 125.7, y: 78}
+  m_SizeDelta: {x: 14, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &523656512
 MonoBehaviour:
@@ -850,8 +850,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 628, y: -331}
-  m_SizeDelta: {x: 131.25, y: 100}
+  m_AnchoredPosition: {x: 136.2, y: -71}
+  m_SizeDelta: {x: 42, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &679222841
 MonoBehaviour:
@@ -899,8 +899,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1329189356}
         m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 5
+        m_MethodName: OnBedButtonPressed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -931,7 +931,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 6159577635397427272, guid: d849f904b56918d4297b1b6db7f70ac6, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1453,8 +1453,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 86.15027, y: 0}
-  m_SizeDelta: {x: 114.3005, y: 50}
+  m_AnchoredPosition: {x: 23.198692, y: 0}
+  m_SizeDelta: {x: 31.89788, y: 16}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1038634349
 MonoBehaviour:
@@ -1503,8 +1503,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1693,10 +1693,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 32
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 320, y: 180}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -2250,7 +2250,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af8ce11e75fe68444bfac5e1b0911a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthBars
+  _family: 0
   money: 30
+  organMoney: 0
   bChooseOrganBox: 0
 --- !u!4 &1591836720
 Transform:
