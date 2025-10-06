@@ -280,6 +280,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGames.MazeGame
   cam: {fileID: 614122521016613575}
+  warningFaceScreen: {fileID: 0}
+  warningFaceOutside: {fileID: 0}
+  warningAudio: {fileID: 0}
   ball: {fileID: 2673122731755468725}
   _ballSpeed: 5
   _ballMaxVelocity: 2
@@ -296,7 +299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a80f20f7ec95c64183a9100f1e70163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SpawnRandomMaze
-  spawnPosition: {x: 0, y: 0, z: 0}
+  spawnPosition: {x: 21.74122, y: 10.41766, z: 0}
   maze:
   - {fileID: 838378286778008629, guid: 7d12d78910721ee4293e04a628c1e10b, type: 3}
   - {fileID: 4744680878639778330, guid: d1e77a882a1e4c1449c525b1aacb0d4e, type: 3}
@@ -345,7 +348,7 @@ Transform:
   m_GameObject: {fileID: 5158639193612618049}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.26878, y: -3.03234, z: 0}
+  m_LocalPosition: {x: -1.26878, y: -2.917, z: 0}
   m_LocalScale: {x: 0.3240127, y: 0.10603952, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -445,7 +448,7 @@ GameObject:
   - component: {fileID: 504672213401990033}
   m_Layer: 0
   m_Name: MazeCam
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -474,8 +477,8 @@ Camera:
   m_GameObject: {fileID: 5834627928391661979}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.16037738, g: 0.16037738, b: 0.16037738, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -493,7 +496,7 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: -0
     width: 1
     height: 1
   near clip plane: 0.3
@@ -501,12 +504,12 @@ Camera:
   field of view: 60
   orthographic: 1
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 2
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
+  m_TargetTexture: {fileID: 8400000, guid: 8eca38a68eb14d442b1a505f56321170, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -539,7 +542,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0

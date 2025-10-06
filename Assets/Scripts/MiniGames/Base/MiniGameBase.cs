@@ -13,6 +13,8 @@ namespace MiniGames.Base
 
         [Header("Warning Sprites"), SerializeField] private GameObject warningFaceScreen;
         [SerializeField] private GameObject warningFaceOutside;
+        
+        [Header("Audio"), SerializeField] private AudioSource warningAudio;
 
         private void Awake()
         {
@@ -48,11 +50,17 @@ namespace MiniGames.Base
                 //print("Warning");
                 warningFaceScreen.SetActive(true);
                 warningFaceOutside.SetActive(true);
+
+                if (!warningAudio.isPlaying)
+                {
+                    warningAudio.Play();
+                }
             }
             else
             {
                 warningFaceScreen.SetActive(false);
                 warningFaceOutside.SetActive(false);
+                warningAudio.Stop();
             }
             
         }

@@ -619,14 +619,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SubGames.CatchTheDrop
   cam: {fileID: 0}
+  warningFaceScreen: {fileID: 0}
+  warningFaceOutside: {fileID: 0}
+  warningAudio: {fileID: 0}
   cup: {fileID: 2291561520870534647}
   cupSpeed: 10
   drop: {fileID: 5442021719129385136, guid: 9e21dae7b0592c14dad07a43482f4135, type: 3}
   dropPosMin: {fileID: 5218926957430213829}
   dropPosMax: {fileID: 7901989680542062699}
-  posChangeTimeMin: 5
-  posChangeTimeMax: 15
-  dropTimer: 1
+  posChangeTimeMin: 7
+  posChangeTimeMax: 25
+  dropTimer: 1.5
   maxDropCount: 10
 --- !u!1 &8650541336183149737
 GameObject:
