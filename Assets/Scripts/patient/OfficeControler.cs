@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class OfficeControler : DialogueBase, IClickable
 {
+    
+    private SpriteRenderer spriteRenderer;
+    [SerializeField] private Sprite baseSprite;
+    [SerializeField] private Sprite hoverSprite;
+    
     [Header("Reputation → Opening line")]
     [SerializeField, TextArea] private string stableLine;
     [SerializeField, TextArea] private string neutralLine;
@@ -26,6 +31,7 @@ public class OfficeControler : DialogueBase, IClickable
 
     private void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
         var repState = HealthBars.Instance.CurrentReputationState();
         string line = LineFor(repState);
         StartCoroutine(TypeCoworkerLine(line));
@@ -36,6 +42,16 @@ public class OfficeControler : DialogueBase, IClickable
         if (dialogueActive) return;
         
         Show(paperCanvas);
+    }
+
+    public void OnHoverEnter()
+    {
+       spriteRenderer.sprite = hoverSprite;
+    }
+
+    public void OnHoverExit()
+    {
+        spriteRenderer.sprite = baseSprite;
     }
 
     private string LineFor(HealthBars.ReputationState state) => state switch

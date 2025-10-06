@@ -34,11 +34,14 @@ namespace MiniGames.Base
 
         protected void GameWin()
         {
+            HealthBars.Instance.ChangePsych(5);
+            HealthBars.Instance.ChangeReputation(5);
             SceneController.Instance.LoadNextOrLoop();
         }
 
         protected void GameLose()
         {
+            HealthBars.Instance.ChangeReputation(-10);
             SceneController.Instance.LoadScene("OrganSteeling");
         }
 

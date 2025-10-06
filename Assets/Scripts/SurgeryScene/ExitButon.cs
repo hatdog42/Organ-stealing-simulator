@@ -7,4 +7,14 @@ public class ExitButon : MonoBehaviour, IClickable
     {
         TVController.Instance.CloseMiniGame();
     }
+
+    public void OnHoverEnter()
+    {
+        
+    }
+
+    public void OnHoverExit()
+    {
+        
+    }
 }

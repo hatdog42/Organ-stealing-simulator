@@ -74,6 +74,11 @@ public class SceneController : MonoBehaviour
             LoadScene("ChosePatient");
         }
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
     private IEnumerator LoadRoutine(string sceneName)
     {
         _isLoading = true;
