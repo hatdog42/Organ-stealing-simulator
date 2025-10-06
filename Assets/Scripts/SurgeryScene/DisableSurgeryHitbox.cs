@@ -19,11 +19,5 @@ namespace SurgeryScene
             collider1.enabled = true;
             collider2.enabled = true;
         }
-
-        private void OnApplicationQuit()
-        {
-            Destroy(collider1.gameObject);
-            Destroy(collider2.gameObject);
-        }
     }
 }
