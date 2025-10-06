@@ -1087,6 +1087,10 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 7757801611735497707, guid: 8b9b359d84c389d4ab453c4a63908a5a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -2.917
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2406,6 +2410,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1959833726}
   - component: {fileID: 1959833725}
+  - component: {fileID: 1959833727}
   m_Layer: 0
   m_Name: CRT test image
   m_TagString: Untagged
@@ -2489,6 +2494,20 @@ Transform:
   - {fileID: 1744583440}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1959833727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1959833724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf4a9e68acc61fc4dbebf303352e8dda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SurgeryScene.DisableSurgeryHitbox
+  collider1: {fileID: 1684269321}
+  collider2: {fileID: 647470495}
 --- !u!1 &1980223038
 GameObject:
   m_ObjectHideFlags: 0
