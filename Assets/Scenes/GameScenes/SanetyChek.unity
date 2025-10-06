@@ -430,9 +430,9 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 8c6c314ce97e14a40a591fe9e25ce1d8, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.6
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -564,7 +564,7 @@ MonoBehaviour:
   BrokenPortrait: {fileID: -1123403039170582646, guid: a035e18d54eb6d64abbfb6b49fa41729, type: 3}
   canvasGroup: {fileID: 216133294}
   EndingScene: Credits
-  NextScene: 
+  NextScene: OutsideHouse
   lineStable: I did a good job today!
   lineNeutral: I'm not sure I made the right choices today...
   lineUnstable: What the hell have I done?
