@@ -962,6 +962,7 @@ GameObject:
   - component: {fileID: 679222843}
   - component: {fileID: 679222842}
   - component: {fileID: 679222841}
+  - component: {fileID: 679222844}
   m_Layer: 5
   m_Name: bed buton
   m_TagString: Untagged
@@ -1018,7 +1019,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 28594418, guid: d849f904b56918d4297b1b6db7f70ac6, type: 3}
-    m_PressedSprite: {fileID: 28594418, guid: d849f904b56918d4297b1b6db7f70ac6, type: 3}
+    m_PressedSprite: {fileID: 0}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -1031,19 +1032,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 679222842}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1329189356}
-        m_TargetAssemblyTypeName: SceneController, Assembly-CSharp
-        m_MethodName: OnBedButtonPressed
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: ChosePatient
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &679222842
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1082,6 +1071,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 679222839}
   m_CullTransparentMesh: 1
+--- !u!114 &679222844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679222839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd49478bb0cb0c145b5953eaed7d850b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BedButon
 --- !u!1 &689370538
 GameObject:
   m_ObjectHideFlags: 0
