@@ -13,9 +13,9 @@ class HealthBars : MonoBehaviour
     [Min(0)]public int money;
     public bool bChooseOrganBox;
     
-    public enum PsycheState {Stable, Unstable, Broken}
-    public enum FamilyState {Happy, UnHappy, Broken, Neutral}
-    public enum ReputationState {Stable, Unstable, Broken,Neutral}
+    public enum PsycheState {Stable,Neutral, Unstable, Broken }
+    public enum FamilyState {Happy, Neutral, UnHappy, Broken}
+    public enum ReputationState {Stable,Neutral, Unstable, Broken}
 
     void Awake()
     {
@@ -34,7 +34,8 @@ class HealthBars : MonoBehaviour
         return _psyche switch
         {
             > 66 => PsycheState.Stable,
-            > 33 => PsycheState.Unstable,
+            > 33 => PsycheState.Neutral,
+            > 1 => PsycheState.Unstable,
             _ => PsycheState.Broken
         };
     }
