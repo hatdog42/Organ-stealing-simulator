@@ -2653,6 +2653,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SurgeryScene.DisableSurgeryHitbox
   collider1: {fileID: 1684269321}
   collider2: {fileID: 647470495}
+  collider3: {fileID: 865350928}
 --- !u!1 &1980223038
 GameObject:
   m_ObjectHideFlags: 0
