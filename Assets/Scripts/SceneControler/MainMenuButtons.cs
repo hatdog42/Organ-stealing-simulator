@@ -41,7 +41,7 @@ public class MainMenuButtons : MonoBehaviour
     {
         if (!button) return;
 
-        button.onClick = new Button.ButtonClickedEvent();
+        button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
     }
 
