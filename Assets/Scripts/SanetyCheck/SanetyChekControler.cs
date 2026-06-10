@@ -1,8 +1,5 @@
-using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SanetyChekControler : DialogueBase
 {
@@ -11,9 +8,14 @@ public class SanetyChekControler : DialogueBase
     [SerializeField] private Sprite BrokenPortrait;
     [SerializeField] private CanvasGroup canvasGroup;
     
-    [Header("Ending Scene")]
-    [SerializeField] private string EndingScene;
+    [Header("Next Scene")]
     [SerializeField] private string NextScene;
+    [SerializeField] private string EndingScene = "Credits";
+
+    [Header("Timing")]
+    [SerializeField, Min(0f)] private float minimumLineHoldSeconds = 4f;
+    [SerializeField, Min(0f)] private float extraLineHoldSeconds = 2f;
+    [SerializeField, Min(0f)] private float brokenPortraitHoldSeconds = 4f;
     
     [Header("Lines")]
     [SerializeField] private string lineStable;
@@ -22,35 +24,30 @@ public class SanetyChekControler : DialogueBase
 
     private IEnumerator Start()
     {
-        var state = HealthBars.Instance.CurrentPsycheState();
+        var healthBars = HealthBars.Instance;
+        var psycheState = healthBars.CurrentPsycheState();
 
-        switch (state)
+        if (psycheState == HealthBars.PsycheState.Broken)
         {
-            case HealthBars.PsycheState.Stable:
-                PlayLine(lineStable);
-                yield return new WaitForSecondsRealtime(lineStable.Length * charDelay + 1f);
-                SceneController.Instance.LoadScene(NextScene);
-                break;
-            
-            case HealthBars.PsycheState.Neutral:
-                PlayLine(lineNeutral);
-                yield return new WaitForSecondsRealtime(lineStable.Length * charDelay + 1f);
-                SceneController.Instance.LoadScene(NextScene);
-                break;
-            
-            case HealthBars.PsycheState.Unstable:
-                PlayLine(lineUnstable);
-                yield return new WaitForSecondsRealtime(lineStable.Length * charDelay + 1f);
-                SceneController.Instance.LoadScene(NextScene);
-                break;
-
-            case HealthBars.PsycheState.Broken:
-                canvasGroup.alpha = 0;
-                portrait.sprite = BrokenPortrait; 
-                yield return new WaitForSecondsRealtime(3f);
-                SceneController.Instance.LoadScene(EndingScene);
-                break;
+            canvasGroup.alpha = 0;
+            portrait.sprite = BrokenPortrait;
+            yield return new WaitForSecondsRealtime(brokenPortraitHoldSeconds);
+            SceneController.Instance.LoadScene(EndingScene);
+            yield break;
         }
+
+        string line = psycheState switch
+        {
+            HealthBars.PsycheState.Stable => lineStable,
+            HealthBars.PsycheState.Neutral => lineNeutral,
+            HealthBars.PsycheState.Unstable => lineUnstable,
+            _ => lineUnstable
+        };
+
+        PlayLine(line);
+        float lineHoldSeconds = Mathf.Max(minimumLineHoldSeconds, line.Length * charDelay + extraLineHoldSeconds);
+        yield return new WaitForSecondsRealtime(lineHoldSeconds);
+        SceneController.Instance.LoadScene(NextScene);
     }
 }
 

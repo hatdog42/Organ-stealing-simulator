@@ -5,10 +5,9 @@ class HealthBars : MonoBehaviour
     public static HealthBars Instance { get; private set; }
     public Patient SelectedPatient { get; private set; }
 
-    
-    [Range(0, 100)] private int _psyche = 100;
-    [Range(0, 100)] private int _family = 100;
-    [Range(0, 100)] private int _reputation = 100;
+    [Range(-100, 100)] private int _psyche = 100;
+    [Range(-100, 100)] private int _family = 100;
+    [Range(-100, 100)] private int _reputation = 100;
     
     [Min(0)]public int money;
     [Min(0)]public int organMoney;
@@ -38,7 +37,7 @@ class HealthBars : MonoBehaviour
         {
             > 66 => PsycheState.Stable,
             > 33 => PsycheState.Neutral,
-            > 1 => PsycheState.Unstable,
+            > 0 => PsycheState.Unstable,
             _ => PsycheState.Broken
         };
     }
@@ -49,7 +48,7 @@ class HealthBars : MonoBehaviour
         {
             > 66 => FamilyState.Happy,
             > 33 => FamilyState.Neutral,
-            > 1 => FamilyState.UnHappy,
+            > 0 => FamilyState.UnHappy,
             _ => FamilyState.Broken
         };
     }
@@ -60,7 +59,7 @@ class HealthBars : MonoBehaviour
         {
             > 66 => ReputationState.Stable,
             > 33 => ReputationState.Neutral,
-            > 1 => ReputationState.Unstable,
+            > 0 => ReputationState.Unstable,
             _ => ReputationState.Broken
         };
     }
@@ -84,5 +83,37 @@ class HealthBars : MonoBehaviour
     {
         SelectedPatient = patient;
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Debug/Force Psyche To Zero")]
+    private void DebugForcePsycheEnding()
+    {
+        ChangePsych(-100);
+        Debug.Log("Forced psyche to zero. Go to the SanetyChek scene to test the psyche ending.");
+    }
+
+    [ContextMenu("Debug/Force Family To Zero")]
+    private void DebugForceFamilyEnding()
+    {
+        ChangeFamily(-100);
+        Debug.Log("Forced family to zero. Use the family/bed check to test the family ending.");
+    }
+
+    [ContextMenu("Debug/Force Reputation To Zero")]
+    private void DebugForceReputationEnding()
+    {
+        ChangeReputation(-100);
+        Debug.Log("Forced reputation to zero. Go to the office/patient choice check to test the reputation ending.");
+    }
+
+    [ContextMenu("Debug/Reset Ending Test Values")]
+    private void DebugResetEndingTestValues()
+    {
+        _psyche = 100;
+        _family = 100;
+        _reputation = 100;
+        Debug.Log("Reset ending test values.");
+    }
+#endif
 }
 

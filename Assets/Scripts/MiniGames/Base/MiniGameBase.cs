@@ -51,19 +51,19 @@ namespace MiniGames.Base
             if (warning)
             {
                 //print("Warning");
-                warningFaceScreen.SetActive(true);
-                warningFaceOutside.SetActive(true);
+                if (warningFaceScreen) warningFaceScreen.SetActive(true);
+                if (warningFaceOutside) warningFaceOutside.SetActive(true);
 
-                if (!warningAudio.isPlaying)
+                if (warningAudio && !warningAudio.isPlaying)
                 {
                     warningAudio.Play();
                 }
             }
             else
             {
-                warningFaceScreen.SetActive(false);
-                warningFaceOutside.SetActive(false);
-                warningAudio.Stop();
+                if (warningFaceScreen) warningFaceScreen.SetActive(false);
+                if (warningFaceOutside) warningFaceOutside.SetActive(false);
+                if (warningAudio) warningAudio.Stop();
             }
             
         }

@@ -1074,7 +1074,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
   faderPrefab: {fileID: 1698258045915958274, guid: dcf213af2ef238d47b42ba8bfbd7d33c, type: 3}
-  fadeDuration: 0.5
+  fadeDuration: 1.2
 --- !u!4 &2109951960
 Transform:
   m_ObjectHideFlags: 0

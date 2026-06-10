@@ -1747,6 +1747,7 @@ MonoBehaviour:
   traitText: {fileID: 611415734}
   personalityText: {fileID: 1556794144}
   sexText: {fileID: 598808932}
+  majorMiniGameText: {fileID: 192993139}
   patientImage: {fileID: 295480767}
   selectButton: {fileID: 428948809}
 --- !u!114 &428948811
@@ -1968,7 +1969,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
   faderPrefab: {fileID: 1698258045915958274, guid: dcf213af2ef238d47b42ba8bfbd7d33c, type: 3}
-  fadeDuration: 0.7
+  fadeDuration: 1.2
 --- !u!4 &540779026
 Transform:
   m_ObjectHideFlags: 0
@@ -4754,6 +4755,12 @@ MonoBehaviour:
   patientData: {fileID: 11400000, guid: cfebb692385c1304b9ef6dbc526d909d, type: 2}
   patient1UI: {fileID: 1565665313}
   patient2UI: {fileID: 428948810}
+  forceDebugMiniGame: 1
+  majorMiniGamePool:
+  - type: 1
+    displayName: Debug Buttons
+  - type: 0
+    displayName: Maze
 --- !u!4 &1532961151
 Transform:
   m_ObjectHideFlags: 0
@@ -5055,6 +5062,7 @@ MonoBehaviour:
   traitText: {fileID: 1581744752}
   personalityText: {fileID: 2091978830}
   sexText: {fileID: 379525521}
+  majorMiniGameText: {fileID: 2019993102}
   patientImage: {fileID: 1511750248}
   selectButton: {fileID: 1565665310}
 --- !u!1 &1571870840

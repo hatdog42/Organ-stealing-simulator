@@ -1,11 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using MiniGames;
 
 public class PatientGenerator : MonoBehaviour
 {
     public PatientData patientData;
     public PatientChartUI patient1UI;
     public PatientChartUI patient2UI;
+
+    [Header("Major MiniGame")]
+    [SerializeField] private bool forceDebugMiniGame = true;
+    [SerializeField] private MajorMiniGameOption[] majorMiniGamePool =
+    {
+        new MajorMiniGameOption(MajorMiniGameType.DebugButtons, "Debug Buttons"),
+        new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze")
+    };
 
     private Patient _patient1;
     private Patient _patient2;
@@ -50,8 +59,27 @@ public class PatientGenerator : MonoBehaviour
         p.job = patientData.jobs[Random.Range(0, patientData.jobs.Count)];
         p.personality = patientData.personalities[Random.Range(0, patientData.personalities.Count)].personality;
         p.trait = patientData.traits[Random.Range(0, patientData.traits.Count)];
+        
+        MajorMiniGameOption majorMiniGame = PickMajorMiniGame();
+        p.majorMiniGame = majorMiniGame.type;
+        p.majorMiniGameName = majorMiniGame.displayName;
 
         return p;
+    }
+
+    private MajorMiniGameOption PickMajorMiniGame()
+    {
+        if (forceDebugMiniGame)
+        {
+            return new MajorMiniGameOption(MajorMiniGameType.DebugButtons, "Debug Buttons");
+        }
+
+        if (majorMiniGamePool == null || majorMiniGamePool.Length == 0)
+        {
+            return new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze");
+        }
+
+        return majorMiniGamePool[Random.Range(0, majorMiniGamePool.Length)];
     }
 
     private void OnPatientSelected(Patient chosen)
@@ -74,5 +102,7 @@ public class Patient
     public string sex;
     public Sprite face;
     public Sprite body;
+    public MiniGames.MajorMiniGameType majorMiniGame;
+    public string majorMiniGameName;
     public string FullName => $"{firstName} {lastName}";
 }

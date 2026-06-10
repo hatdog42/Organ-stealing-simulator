@@ -13,15 +13,12 @@ public class BedButon : MonoBehaviour
     }
     private void HandleButtonClick()
     {
-        var healthBars = HealthBars.Instance;
-        
-        if (healthBars.CurrentFamilyState() == HealthBars.FamilyState.Broken)
+        if (HealthBars.Instance.CurrentFamilyState() == HealthBars.FamilyState.Broken)
         {
             SceneController.Instance.LoadScene("DevorceEnding");
+            return;
         }
-        else
-        {
-            SceneController.Instance.LoadScene("ChosePatient");
-        }
+
+        SceneController.Instance.LoadScene("ChosePatient");
     }
 }

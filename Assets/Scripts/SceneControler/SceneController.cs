@@ -6,7 +6,7 @@ public class SceneController : MonoBehaviour
 {
     [Header("Fade Settings")]
     [SerializeField] private ScreenFader faderPrefab;
-    [SerializeField] private float fadeDuration = 0.7f;
+    [SerializeField, Min(0f)] private float fadeDuration = 1.2f;
     
     private ScreenFader _fader;
     private bool _isLoading;
@@ -46,7 +46,7 @@ public class SceneController : MonoBehaviour
     {
         if (_fader) return;
         
-        _fader = FindFirstObjectByType<ScreenFader>(FindObjectsInactive.Include);
+        _fader = FindAnyObjectByType<ScreenFader>(FindObjectsInactive.Include);
         if (!_fader && faderPrefab) _fader = Instantiate(faderPrefab);
         
         if (_fader) DontDestroyOnLoad(_fader.gameObject);
@@ -56,6 +56,7 @@ public class SceneController : MonoBehaviour
     {
         if (!_isLoading) StartCoroutine(LoadRoutine(sceneName));
     }
+
     public void OnBedButtonPressed()
     {
         var healthBars = HealthBars.Instance;
@@ -68,11 +69,10 @@ public class SceneController : MonoBehaviour
         if (healthBars.CurrentFamilyState() == HealthBars.FamilyState.Broken)
         {
             LoadScene("DevorceEnding");
+            return;
         }
-        else
-        {
-            LoadScene("ChosePatient");
-        }
+
+        LoadScene("ChosePatient");
     }
 
     public void Quit()

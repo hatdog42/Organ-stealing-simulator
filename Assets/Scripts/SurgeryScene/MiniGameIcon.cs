@@ -7,6 +7,7 @@ public class MiniGameIcon : MonoBehaviour, IClickable
     private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite baseSprite;
     [SerializeField] private Sprite hoverSprite;
+    [SerializeField] private bool useSelectedMajorMiniGameCamera;
     [SerializeField] private Camera linkedCamera;
 
     private void Start()
@@ -16,12 +17,19 @@ public class MiniGameIcon : MonoBehaviour, IClickable
 
     public void OnClick(Vector3 worldPos)
     {
-        if (!linkedCamera)
+        Camera cameraToOpen = linkedCamera;
+        if (useSelectedMajorMiniGameCamera && SurgerySceneControler.Instance)
+        {
+            cameraToOpen = SurgerySceneControler.Instance.SelectedMajorMiniGameCameraOrDefault(linkedCamera);
+        }
+
+        if (!cameraToOpen)
         {
             Debug.LogError($"[MiniGameIcon] '{name}' has no linkedCamera.");
             return;
         }
-        TVController.Instance.OpenMiniGame(linkedCamera);
+
+        TVController.Instance.OpenMiniGame(cameraToOpen);
     }
 
     public void OnHoverEnter()

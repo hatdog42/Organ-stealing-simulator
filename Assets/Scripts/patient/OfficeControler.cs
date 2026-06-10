@@ -14,9 +14,6 @@ public class OfficeControler : DialogueBase, IClickable
     [SerializeField, TextArea] private string unstableLine;
     [SerializeField, TextArea] private string brokenLine;
     
-    [Header("PrisonEnding")]
-    [SerializeField] private string brokenPrisonEndingLine;
-    
     [Header("Paper UI (assign your panel)")]
     [SerializeField] private CanvasGroup paperCanvas;
     [SerializeField] private CanvasGroup coworkerCanvas;
@@ -79,10 +76,10 @@ public class OfficeControler : DialogueBase, IClickable
         Hide(coworkerCanvas);
         if (HealthBars.Instance.CurrentReputationState() == HealthBars.ReputationState.Broken)
         {
-            yield return new WaitForSecondsRealtime(1f);
-            SceneController.Instance.LoadScene(brokenPrisonEndingLine);
+            SceneController.Instance.LoadScene("PrisonScene");
             yield break;
         }
+
         dialogueActive = false;
     }
     private static void Show(CanvasGroup cg)
