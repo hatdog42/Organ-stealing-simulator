@@ -604,6 +604,7 @@ GameObject:
   - component: {fileID: 1811295339}
   - component: {fileID: 1811295338}
   - component: {fileID: 1811295337}
+  - component: {fileID: 1811295341}
   m_Layer: 5
   m_Name: MainMenue
   m_TagString: Untagged
@@ -611,6 +612,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1811295341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811295336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f2d7560b6d64f0b9d1e2a7f83453a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuButtons
+  startButton: {fileID: 1177148109}
+  quitButton: {fileID: 1891800268}
+  firstSceneName: Exposition
 --- !u!114 &1811295337
 MonoBehaviour:
   m_ObjectHideFlags: 0

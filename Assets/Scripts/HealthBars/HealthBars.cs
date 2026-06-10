@@ -84,6 +84,17 @@ class HealthBars : MonoBehaviour
         SelectedPatient = patient;
     }
 
+    public void ResetForNewGame()
+    {
+        _psyche = 100;
+        _family = 100;
+        _reputation = 100;
+        money = 0;
+        organMoney = 0;
+        bChooseOrganBox = false;
+        SelectedPatient = null;
+    }
+
 #if UNITY_EDITOR
     [ContextMenu("Debug/Force Psyche To Zero")]
     private void DebugForcePsycheEnding()
@@ -109,11 +120,8 @@ class HealthBars : MonoBehaviour
     [ContextMenu("Debug/Reset Ending Test Values")]
     private void DebugResetEndingTestValues()
     {
-        _psyche = 100;
-        _family = 100;
-        _reputation = 100;
+        ResetForNewGame();
         Debug.Log("Reset ending test values.");
     }
 #endif
 }
-

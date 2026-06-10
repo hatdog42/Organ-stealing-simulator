@@ -7,10 +7,13 @@ public class SceneController : MonoBehaviour
     [Header("Fade Settings")]
     [SerializeField] private ScreenFader faderPrefab;
     [SerializeField, Min(0f)] private float fadeDuration = 1.2f;
+
+    [Header("Loop Settings")]
+    [SerializeField, Min(1)] private int surgeriesBeforeSanetyCheck = 3;
     
     private ScreenFader _fader;
     private bool _isLoading;
-    private int _loopsDone = 0;
+    private int _surgeriesDoneThisCycle;
     public static SceneController Instance { get; private set; }
     
 
@@ -31,15 +34,28 @@ public class SceneController : MonoBehaviour
 
     public void LoadNextOrLoop()
     {
-        if (_loopsDone < 3)
-        {
-            _loopsDone++;
-            LoadScene("ChosePatient");
-        }
-        else
+        _surgeriesDoneThisCycle++;
+
+        if (_surgeriesDoneThisCycle >= surgeriesBeforeSanetyCheck)
         {
             LoadScene("SanetyChek");
+            return;
         }
+
+        LoadScene("ChosePatient");
+    }
+
+    public void StartPatientLoop()
+    {
+        _surgeriesDoneThisCycle = 0;
+        LoadScene("ChosePatient");
+    }
+
+    public void StartNewGame(string firstSceneName = "Exposition")
+    {
+        _surgeriesDoneThisCycle = 0;
+        if (HealthBars.Instance) HealthBars.Instance.ResetForNewGame();
+        LoadScene(firstSceneName);
     }
     
     private void EnsureFader()
@@ -72,7 +88,7 @@ public class SceneController : MonoBehaviour
             return;
         }
 
-        LoadScene("ChosePatient");
+        StartPatientLoop();
     }
 
     public void Quit()

@@ -13,12 +13,6 @@ public class BedButon : MonoBehaviour
     }
     private void HandleButtonClick()
     {
-        if (HealthBars.Instance.CurrentFamilyState() == HealthBars.FamilyState.Broken)
-        {
-            SceneController.Instance.LoadScene("DevorceEnding");
-            return;
-        }
-
-        SceneController.Instance.LoadScene("ChosePatient");
+        SceneController.Instance.OnBedButtonPressed();
     }
 }
