@@ -20,8 +20,10 @@ public class OfficeControler : DialogueBase, IClickable
     
     private bool dialogueActive;
     
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+        
         if (paperCanvas) Hide(paperCanvas);
         if (coworkerCanvas) Hide(coworkerCanvas);
     }
@@ -65,15 +67,15 @@ public class OfficeControler : DialogueBase, IClickable
         dialogueActive = true;
 
         yield return new WaitForSecondsRealtime(1f);
-        
-        Show(coworkerCanvas);
+
+        if (!PrefabDialogueEnabled) Show(coworkerCanvas);
         PlayLine(line);
         
         while (Typing != null) yield return null;
 
         yield return new WaitForSecondsRealtime(1f);
         
-        Hide(coworkerCanvas);
+        if (!PrefabDialogueEnabled) Hide(coworkerCanvas);
         if (HealthBars.Instance.CurrentReputationState() == HealthBars.ReputationState.Broken)
         {
             SceneController.Instance.LoadScene("PrisonScene");

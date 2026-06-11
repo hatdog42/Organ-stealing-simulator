@@ -46,7 +46,13 @@ public class SanetyChekControler : DialogueBase
 
         PlayLine(line);
         float lineHoldSeconds = Mathf.Max(minimumLineHoldSeconds, line.Length * charDelay + extraLineHoldSeconds);
-        yield return new WaitForSecondsRealtime(lineHoldSeconds);
+        float elapsed = 0f;
+        while (elapsed < lineHoldSeconds || Typing != null)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        
         SceneController.Instance.LoadScene(NextScene);
     }
 }

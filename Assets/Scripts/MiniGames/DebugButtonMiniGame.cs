@@ -12,40 +12,60 @@ namespace MiniGames
 
         private void Start()
         {
-            winButton = FindOrCreateButtonCollider(winButton, "WinButton");
-            loseButton = FindOrCreateButtonCollider(loseButton, "LooseButton");
+            EnsureButtonColliders();
         }
 
         public override void OnFocusGained(TVInputRelay relay)
         {
             base.OnFocusGained(relay);
-            if (inputRelay != null) inputRelay.PointerUp += HandlePointerUp;
+            EnsureButtonColliders();
+            _finished = false;
+            if (inputRelay != null)
+            {
+                inputRelay.PointerDown += HandlePointerPress;
+                inputRelay.PointerUp += HandlePointerPress;
+            }
         }
 
         public override void OnFocusLost()
         {
-            if (inputRelay != null) inputRelay.PointerUp -= HandlePointerUp;
+            if (inputRelay != null)
+            {
+                inputRelay.PointerDown -= HandlePointerPress;
+                inputRelay.PointerUp -= HandlePointerPress;
+            }
             base.OnFocusLost();
         }
 
-        private void HandlePointerUp(Vector3 worldPos)
+        private void HandlePointerPress(Vector3 worldPos)
         {
             if (_finished) return;
 
-            Collider2D hit = Physics2D.OverlapPoint(worldPos);
-            if (!hit) return;
-
-            if (hit == winButton)
+            if (IsButtonHit(winButton, worldPos))
             {
                 Finish(true);
             }
-            else if (hit == loseButton)
+            else if (IsButtonHit(loseButton, worldPos))
             {
                 Finish(false);
             }
         }
 
-        private Collider2D FindOrCreateButtonCollider(Collider2D existingCollider, string buttonName)
+        private void EnsureButtonColliders()
+        {
+            winButton = FindButtonCollider(winButton, "WinButton");
+            loseButton = FindButtonCollider(loseButton, "LooseButton");
+        }
+
+        private bool IsButtonHit(Collider2D buttonCollider, Vector3 worldPos)
+        {
+            return buttonCollider &&
+                   buttonCollider.enabled &&
+                   buttonCollider.gameObject.activeInHierarchy &&
+                   buttonCollider.OverlapPoint(worldPos);
+        }
+
+        private Collider2D FindButtonCollider(Collider2D existingCollider, string buttonName)
         {
             if (existingCollider) return existingCollider;
 
@@ -62,10 +82,18 @@ namespace MiniGames
                 }
             }
 
-            if (!button) return null;
+            if (!button)
+            {
+                Debug.LogError($"DebugButtonMiniGame on '{name}' could not find child '{buttonName}'.");
+                return null;
+            }
 
             Collider2D buttonCollider = button.GetComponent<Collider2D>();
-            if (!buttonCollider) buttonCollider = button.gameObject.AddComponent<CircleCollider2D>();
+            if (!buttonCollider)
+            {
+                Debug.LogError($"Debug button '{buttonName}' needs a Collider2D component.");
+                return null;
+            }
 
             return buttonCollider;
         }

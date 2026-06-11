@@ -300,28 +300,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGames.SpawnRandomMaze
   spawnPosition: {x: 21.74122, y: 10.41766, z: 0}
-  maze:
-  - {fileID: 838378286778008629, guid: 7d12d78910721ee4293e04a628c1e10b, type: 3}
-  - {fileID: 4744680878639778330, guid: d1e77a882a1e4c1449c525b1aacb0d4e, type: 3}
-  - {fileID: 5729213124701831051, guid: 5b242d04c957919438704361943884a3, type: 3}
-  - {fileID: 4168734340510030134, guid: ba90e1419eb40ab4bbe204ee4cd3c4f0, type: 3}
-  - {fileID: 1218492746638860781, guid: 30a1523d3995b9c4da0e1180b4be5ca6, type: 3}
-  - {fileID: 5114766360025010484, guid: 225ab716b029133489d7a07a0c01d79a, type: 3}
-  - {fileID: 7525866670201680158, guid: b629ca239fb902c47ab96d7edc3ccf2b, type: 3}
-  - {fileID: 5210302277583600699, guid: c292d582fb205464bac03116bf0eba2a, type: 3}
-  - {fileID: 3719612277271326622, guid: 2845483e6f1f482429d64af438577e00, type: 3}
-  - {fileID: 5269155214646930050, guid: fa54ad71cd33b7a4198455df598f90b3, type: 3}
-  - {fileID: 6067561717347600872, guid: 1a94e0e73e8b7834498adbf1ca4f0a47, type: 3}
-  - {fileID: 5722184511061881803, guid: bd525842bec34d646883e5b691471aa6, type: 3}
-  - {fileID: 7107902575697808137, guid: d7be8e43f79c4ac40a60304cdfa48c9f, type: 3}
-  - {fileID: 6278527706110619861, guid: bec73a23dfe3fd54b913d21703b36528, type: 3}
-  - {fileID: 5701216175270467597, guid: c3d611bce409b2f46854caefad330a5a, type: 3}
-  - {fileID: 8217604147832766004, guid: e5d50bc8752d50d40b18c34c7a153d09, type: 3}
-  - {fileID: 7706955526057799209, guid: 9a5f3d3e81a915c46aa1420527319214, type: 3}
-  - {fileID: 9152409172903536526, guid: bbb3a7508ebabbb4abd4cdc971e37112, type: 3}
-  - {fileID: 5723443851739382148, guid: 567cd49433723db4886864a15a5330dc, type: 3}
-  - {fileID: 2072927074500012472, guid: 0b53ac1110e7beb49b416b2892d82163, type: 3}
-  - {fileID: 6643109548227500858, guid: 0d41b5c810e5485489cbfc1d554e181e, type: 3}
+  mazeResourcePaths:
+  - MazeObjects/20 by 20 orthogonal maze(1)_0
+  - MazeObjects/20 by 20 orthogonal maze(10)_0
+  - MazeObjects/20 by 20 orthogonal maze(11)_0
+  - MazeObjects/20 by 20 orthogonal maze(12)_0
+  - MazeObjects/20 by 20 orthogonal maze(13)_0
+  - MazeObjects/20 by 20 orthogonal maze(14)_0
+  - MazeObjects/20 by 20 orthogonal maze(15)_0
+  - MazeObjects/20 by 20 orthogonal maze(16)_0
+  - MazeObjects/20 by 20 orthogonal maze(17)_0
+  - MazeObjects/20 by 20 orthogonal maze(18)_0
+  - MazeObjects/20 by 20 orthogonal maze(19)_0
+  - MazeObjects/20 by 20 orthogonal maze(2)_0
+  - MazeObjects/20 by 20 orthogonal maze(20)_0
+  - MazeObjects/20 by 20 orthogonal maze(3)_0
+  - MazeObjects/20 by 20 orthogonal maze(4)_0
+  - MazeObjects/20 by 20 orthogonal maze(5)_0
+  - MazeObjects/20 by 20 orthogonal maze(6)_0
+  - MazeObjects/20 by 20 orthogonal maze(7)_0
+  - MazeObjects/20 by 20 orthogonal maze(8)_0
+  - MazeObjects/20 by 20 orthogonal maze(9)_0
+  - MazeObjects/20 by 20 orthogonal maze_0
+  maze: []
 --- !u!1 &5158639193612618049
 GameObject:
   m_ObjectHideFlags: 0

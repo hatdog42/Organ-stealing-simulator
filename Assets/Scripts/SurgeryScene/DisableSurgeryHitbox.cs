@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace SurgeryScene
@@ -11,16 +10,30 @@ namespace SurgeryScene
         
         private void OnEnable()
         {
-            collider1.enabled = false;
-            collider2.enabled = false;
-            collider3.enabled = false;
+            SetColliderEnabled(collider1, false, nameof(collider1));
+            SetColliderEnabled(collider2, false, nameof(collider2));
+            SetColliderEnabled(collider3, false, nameof(collider3));
         }
 
         private void OnDisable()
         {
-            collider1.enabled = true;
-            collider2.enabled = true;
-            collider3.enabled = true;
+            SetColliderEnabled(collider1, true, nameof(collider1));
+            SetColliderEnabled(collider2, true, nameof(collider2));
+            SetColliderEnabled(collider3, true, nameof(collider3));
+        }
+
+        private void SetColliderEnabled(Collider2D targetCollider, bool enabled, string fieldName)
+        {
+            if (targetCollider)
+            {
+                targetCollider.enabled = enabled;
+                return;
+            }
+
+            if (!enabled)
+            {
+                Debug.LogError($"{nameof(DisableSurgeryHitbox)} is missing {fieldName}.", this);
+            }
         }
     }
 }

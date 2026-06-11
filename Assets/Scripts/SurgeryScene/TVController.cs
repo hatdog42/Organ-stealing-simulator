@@ -49,9 +49,34 @@ public class TVController : MonoBehaviour
 
     public void OpenMiniGame(Camera targetCamera)
     {
-        if(!targetCamera) return;
+        if (!targetCamera)
+        {
+            Debug.LogError("Cannot open minigame because the requested camera is missing.");
+            return;
+        }
 
-        targetCamera = ResolveSelectedMajorMiniGameCamera(targetCamera);
+        OpenMiniGameDirect(targetCamera);
+    }
+
+    public void OpenSelectedMajorMiniGame()
+    {
+        Camera targetCamera = ResolveSelectedMajorMiniGameCamera();
+        if (!targetCamera) return;
+
+        OpenMiniGameDirect(targetCamera);
+    }
+
+    private void OpenMiniGameDirect(Camera targetCamera)
+    {
+        if (!targetCamera) return;
+
+        MiniGameBase nextGame = FindMiniGameForCamera(targetCamera);
+        if (!nextGame)
+        {
+            Debug.LogError($"Cannot open minigame for camera '{targetCamera.name}' because no MiniGameBase was found for it.");
+            return;
+        }
+
         RegisterMiniGameCamera(targetCamera);
         
         foreach (var cam in _registeredCameras)
@@ -61,8 +86,6 @@ public class TVController : MonoBehaviour
         }
         
         _activeCamera = targetCamera;
-        
-        var nextGame = targetCamera.GetComponentInParent<MiniGameBase>();
         if (_activeGame != null) _activeGame.OnFocusLost();
         _activeGame = nextGame;
         
@@ -73,44 +96,74 @@ public class TVController : MonoBehaviour
         if (tvRoot) tvRoot.SetActive(true);
     }
 
-    private Camera ResolveSelectedMajorMiniGameCamera(Camera requestedCamera)
+    private MiniGameBase FindMiniGameForCamera(Camera targetCamera)
     {
-        if (!requestedCamera.GetComponentInParent<MazeGame>()) return requestedCamera;
+        if (!targetCamera) return null;
+
+        MiniGameBase game = targetCamera.GetComponentInParent<MiniGameBase>(true);
+        if (game) return game;
+
+        Transform root = targetCamera.transform.root;
+        game = root ? root.GetComponentInChildren<MiniGameBase>(true) : null;
+        if (game)
+        {
+            Debug.LogWarning($"Camera '{targetCamera.name}' is not under its MiniGameBase. Found '{game.name}' from the root instead. Consider moving the minigame script onto a parent of the camera.");
+            return game;
+        }
+
+        Debug.LogError($"No MiniGameBase was found for camera '{targetCamera.name}'.");
+        return null;
+    }
+
+    private Camera ResolveSelectedMajorMiniGameCamera()
+    {
+        if (!HealthBars.Instance)
+        {
+            Debug.LogError("Cannot open selected major minigame because HealthBars.Instance is missing.");
+            return null;
+        }
 
         Patient selectedPatient = HealthBars.Instance?.SelectedPatient;
         if (selectedPatient == null)
         {
-            Camera fallbackDebugCamera = FindDebugButtonsCamera();
-            if (!fallbackDebugCamera)
-            {
-                Debug.LogWarning("Maze opened because no selected patient was found and no DebugButtonsFolder camera exists.");
-                return requestedCamera;
-            }
-
-            Debug.LogWarning("No selected patient was found. Opening Debug Buttons instead of Maze for testing.");
-            return fallbackDebugCamera;
+            Debug.LogError("Cannot open selected major minigame because no patient has been selected. Select a patient before entering Surgery.");
+            return null;
         }
-
-        if (selectedPatient.majorMiniGame == MajorMiniGameType.Maze) return requestedCamera;
 
         Camera selectedCamera = FindMajorMiniGameCamera(selectedPatient.majorMiniGame);
         if (!selectedCamera)
         {
-            Debug.LogWarning($"Maze opened because no camera was found for major minigame '{selectedPatient.majorMiniGameName}'.");
-            return requestedCamera;
+            Debug.LogError($"Cannot open selected major minigame '{selectedPatient.majorMiniGameName}' ({selectedPatient.majorMiniGame}) because no camera was found for it.");
+            return null;
         }
 
-        Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}' instead of Maze.");
+        Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}'.");
         return selectedCamera;
     }
 
     private Camera FindMajorMiniGameCamera(MajorMiniGameType majorMiniGameType)
     {
-        return majorMiniGameType switch
+        switch (majorMiniGameType)
         {
-            MajorMiniGameType.DebugButtons => FindDebugButtonsCamera(),
-            _ => null
-        };
+            case MajorMiniGameType.Maze:
+                return FindMazeCamera();
+            case MajorMiniGameType.DebugButtons:
+                return FindDebugButtonsCamera();
+            default:
+                Debug.LogError($"No camera resolver exists for major minigame type '{majorMiniGameType}'.");
+                return null;
+        }
+    }
+
+    private Camera FindMazeCamera()
+    {
+        foreach (Camera camera in FindObjectsByType<Camera>(FindObjectsInactive.Include))
+        {
+            if (camera && camera.GetComponentInParent<MazeGame>(true)) return camera;
+        }
+
+        Debug.LogError("No MazeGame camera was found in the Surgery scene.");
+        return null;
     }
 
     private Camera FindDebugButtonsCamera()
@@ -118,17 +171,18 @@ public class TVController : MonoBehaviour
         GameObject root = FindSceneObject("DebugButtonsFolder");
         if (!root)
         {
-            Debug.LogWarning("DebugButtonsFolder was not found in the Surgery scene.");
+            Debug.LogError("DebugButtonsFolder was not found in the Surgery scene.");
             return null;
         }
 
         if (!root.GetComponentInChildren<DebugButtonMiniGame>(true))
         {
-            root.AddComponent<DebugButtonMiniGame>();
+            Debug.LogError("DebugButtonsFolder exists, but no DebugButtonMiniGame script was found under it.");
+            return null;
         }
 
         Camera debugCamera = root.GetComponentInChildren<Camera>(true);
-        if (!debugCamera) Debug.LogWarning("DebugButtonsFolder exists, but no child Camera was found.");
+        if (!debugCamera) Debug.LogError("DebugButtonsFolder exists, but no child Camera was found.");
 
         return debugCamera;
     }

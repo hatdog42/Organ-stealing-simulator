@@ -17,19 +17,25 @@ public class MiniGameIcon : MonoBehaviour, IClickable
 
     public void OnClick(Vector3 worldPos)
     {
-        Camera cameraToOpen = linkedCamera;
-        if (useSelectedMajorMiniGameCamera && SurgerySceneControler.Instance)
+        if (!TVController.Instance)
         {
-            cameraToOpen = SurgerySceneControler.Instance.SelectedMajorMiniGameCameraOrDefault(linkedCamera);
+            Debug.LogError($"[MiniGameIcon] '{name}' cannot open a minigame because no TVController exists in the scene.");
+            return;
         }
 
-        if (!cameraToOpen)
+        if (useSelectedMajorMiniGameCamera)
+        {
+            TVController.Instance.OpenSelectedMajorMiniGame();
+            return;
+        }
+
+        if (!linkedCamera)
         {
             Debug.LogError($"[MiniGameIcon] '{name}' has no linkedCamera.");
             return;
         }
 
-        TVController.Instance.OpenMiniGame(cameraToOpen);
+        TVController.Instance.OpenMiniGame(linkedCamera);
     }
 
     public void OnHoverEnter()

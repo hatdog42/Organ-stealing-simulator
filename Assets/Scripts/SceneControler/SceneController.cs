@@ -15,6 +15,7 @@ public class SceneController : MonoBehaviour
     private bool _isLoading;
     private int _surgeriesDoneThisCycle;
     public static SceneController Instance { get; private set; }
+    public bool IsTransitioning => _isLoading;
     
 
     void Awake()
@@ -103,8 +104,9 @@ public class SceneController : MonoBehaviour
         _fader.gameObject.SetActive(true);
         
         yield return _fader.FadeOut(fadeDuration);
-        
+
         yield return SceneManager.LoadSceneAsync(sceneName);
+        yield return null;
         
         yield return _fader.FadeIn(fadeDuration);
         _fader.gameObject.SetActive(false);

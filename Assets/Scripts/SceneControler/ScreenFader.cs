@@ -22,7 +22,7 @@ public class ScreenFader : MonoBehaviour
     private IEnumerator Fade(float from, float to, float duration)
     {
         float t = 0;
-        SetAlpha(0);
+        SetAlpha(from);
         while (t < duration)
         {
             t += Time.unscaledDeltaTime;
