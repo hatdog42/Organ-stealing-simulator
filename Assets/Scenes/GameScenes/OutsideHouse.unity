@@ -351,7 +351,7 @@ MonoBehaviour:
   fadeDuration: 1.2
   moneyStageDelay: 0.5
   addedMoneyFadeDuration: 0.12
-  addedMoneyMoveDuration: 0.45
+  addedMoneyMoveDuration: 0.3
   totalUpdateMoveProgress: 0.7
   moneySound: {fileID: 8300000, guid: 0571706581d34da4e84ab700a4349f71, type: 3}
   moneySoundVolume: 1
@@ -2110,8 +2110,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6.12, y: 0.00000019538}
-  m_SizeDelta: {x: 3.38752, y: 6.3647}
+  m_AnchoredPosition: {x: 6.19, y: 0.00000019538}
+  m_SizeDelta: {x: 6.67017, y: 6.3647}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2063352251
 MonoBehaviour:

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(CircleCollider2D))]
 public class Plate : MonoBehaviour, IClickable
@@ -14,7 +13,7 @@ public class Plate : MonoBehaviour, IClickable
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        SetFood(false, applyHappiness:false);
+        SetFood(false);
         foodSprite.enabled = false;
     }
     public void OnClick(Vector3 worldPos)
@@ -43,24 +42,22 @@ public class Plate : MonoBehaviour, IClickable
             }
         
             HealthBars.Instance.money -= foodCost;
-            SetFood(!HasFood, applyHappiness: false);
+            SetFood(true);
+            HealthBars.Instance.RegisterFamilyMealPurchased();
             foodSprite.enabled = true;
         }
         else
         {
             HealthBars.Instance.money += foodCost;
-            SetFood(false, applyHappiness: true);
+            SetFood(false);
+            HealthBars.Instance.RegisterFamilyMealRemoved();
             foodSprite.enabled = false;
         }
     }
 
-    private void SetFood(bool hasFood, bool applyHappiness)
+    private void SetFood(bool hasFood)
     {
         HasFood = hasFood;
-        if (!applyHappiness) return;
-        
-        int delta = HasFood ? 10 : -10;
-        HealthBars.Instance.ChangeFamily(delta);
     }
 }
 

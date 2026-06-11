@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
 public class OrganControler : MonoBehaviour
 {
@@ -8,11 +7,7 @@ public class OrganControler : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     [SerializeField]private string nextScene;
     [SerializeField]private LayerMask clickableMask;
-    
-    [FormerlySerializedAs("PsyceChange")]
-    [Header("HealthBar stats")]
-    [SerializeField]private int psyceChangeOrgan;
-    [SerializeField]private int psyceChangeIceBox;
+    private bool _choiceMade;
     
     void Start()
     {
@@ -28,9 +23,11 @@ public class OrganControler : MonoBehaviour
         transform.position = world;
 
         if (!Mouse.current.leftButton.wasPressedThisFrame) return;
+        if (_choiceMade) return;
         
         var hit = Physics2D.OverlapPoint(world, clickableMask);
         if (!hit) return;
+        _choiceMade = true;
         _spriteRenderer.enabled = false;
         
         if (hit.CompareTag($"OrganBox"))
@@ -46,15 +43,14 @@ public class OrganControler : MonoBehaviour
     }
     private void OrganBoxChosen()
     {
-        HealthBars.Instance.ChangePsych(psyceChangeOrgan);
+        HealthBars.Instance.ApplyKilledPatient(stoleOrgans: false);
         HealthBars.Instance.bChooseOrganBox = true;
         SceneController.Instance.LoadNextOrLoop(); 
     }
 
     private void MopBucketChosen()
     {
-        HealthBars.Instance.organMoney += 10;
-        HealthBars.Instance.ChangePsych(psyceChangeIceBox);
+        HealthBars.Instance.ApplyKilledPatient(stoleOrgans: true);
         HealthBars.Instance.bChooseOrganBox = false;
         SceneController.Instance.LoadNextOrLoop(); 
     }

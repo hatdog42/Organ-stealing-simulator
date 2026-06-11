@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 class HealthBars : MonoBehaviour
@@ -14,6 +15,31 @@ class HealthBars : MonoBehaviour
     
     
     public bool bChooseOrganBox;
+
+    [Header("Wage Balance")]
+    [SerializeField, Min(0)] private int savedPatientWage = 8;
+    [SerializeField, Min(0)] private int killedPatientWage = 7;
+
+    [Header("Fallback Patient Outcome Balance")]
+    [SerializeField] private int fallbackSavedPsycheChange = 3;
+    [SerializeField] private int fallbackSavedReputationChange = 4;
+    [SerializeField] private int fallbackKilledPsycheChange = -15;
+    [SerializeField] private int fallbackKilledReputationChange = -10;
+    [SerializeField] private int fallbackOrganMoney = 14;
+
+    [Header("Organ Theft Balance")]
+    [SerializeField] private int organTheftPsycheChange = -8;
+    [SerializeField] private int organTheftReputationChange = -3;
+
+    [Header("Family Dinner Balance")]
+    [SerializeField, Min(0)] private int maximumMealsPerDinner = 4;
+    [SerializeField] private int familyChangeWithoutFood = -55;
+    [SerializeField] private int familyChangePerMeal = 13;
+
+    private int _mealsBoughtThisDinner;
+    private bool _familyDinnerApplied;
+    private readonly List<int> _pendingWageMoney = new();
+    private readonly List<int> _pendingOrganMoney = new();
     
     public enum PsycheState {Stable,Neutral, Unstable, Broken }
     public enum FamilyState {Happy, Neutral, UnHappy, Broken}
@@ -78,6 +104,103 @@ class HealthBars : MonoBehaviour
     {
         _reputation = Mathf.Clamp(_reputation + amount, 0, 100);
     }
+
+    public void ApplySavedPatient()
+    {
+        Patient patient = SelectedPatient;
+        ChangePsych(patient?.PsycheChangeWhenSaved ?? fallbackSavedPsycheChange);
+        ChangeReputation(patient?.ReputationChangeWhenSaved ?? fallbackSavedReputationChange);
+        RegisterPatientPayout(savedPatientWage, 0);
+        SelectedPatient = null;
+    }
+
+    public void ApplyKilledPatient(bool stoleOrgans)
+    {
+        Patient patient = SelectedPatient;
+        ChangePsych(patient?.PsycheChangeWhenKilled ?? fallbackKilledPsycheChange);
+        ChangeReputation(patient?.ReputationChangeWhenKilled ?? fallbackKilledReputationChange);
+
+        int earnedOrganMoney = 0;
+        if (stoleOrgans)
+        {
+            ChangePsych(organTheftPsycheChange);
+            ChangeReputation(organTheftReputationChange);
+            earnedOrganMoney = patient?.OrganMoney ?? fallbackOrganMoney;
+            organMoney += earnedOrganMoney;
+        }
+
+        RegisterPatientPayout(killedPatientWage, earnedOrganMoney);
+        SelectedPatient = null;
+    }
+
+    private void RegisterPatientPayout(int wageAmount, int organAmount)
+    {
+        _pendingWageMoney.Add(Mathf.Max(0, wageAmount));
+        _pendingOrganMoney.Add(Mathf.Max(0, organAmount));
+    }
+
+    public int[] CollectWageMoneyStages()
+    {
+        return CollectMoneyStages(_pendingWageMoney);
+    }
+
+    public int[] CollectOrganMoneyStages()
+    {
+        int[] collected = CollectMoneyStages(_pendingOrganMoney);
+        organMoney = 0;
+        return collected;
+    }
+
+    public int CollectOrganMoney()
+    {
+        int collected = 0;
+        for (int i = 0; i < _pendingOrganMoney.Count; i++)
+            collected += _pendingOrganMoney[i];
+
+        if (collected <= 0)
+            collected = organMoney;
+
+        _pendingOrganMoney.Clear();
+        organMoney = 0;
+        return collected;
+    }
+
+    private static int[] CollectMoneyStages(List<int> stages)
+    {
+        int[] collected = stages.ToArray();
+        stages.Clear();
+        return collected;
+    }
+
+    public void BeginFamilyDinner()
+    {
+        _mealsBoughtThisDinner = 0;
+        _familyDinnerApplied = false;
+    }
+
+    public void RegisterFamilyMealPurchased()
+    {
+        if (_familyDinnerApplied) return;
+
+        _mealsBoughtThisDinner = Mathf.Clamp(_mealsBoughtThisDinner + 1, 0, maximumMealsPerDinner);
+    }
+
+    public void RegisterFamilyMealRemoved()
+    {
+        if (_familyDinnerApplied) return;
+
+        _mealsBoughtThisDinner = Mathf.Clamp(_mealsBoughtThisDinner - 1, 0, maximumMealsPerDinner);
+    }
+
+    public void ApplyFamilyDinnerResult()
+    {
+        if (_familyDinnerApplied) return;
+
+        int meals = Mathf.Clamp(_mealsBoughtThisDinner, 0, maximumMealsPerDinner);
+        int familyChange = familyChangeWithoutFood + meals * familyChangePerMeal;
+        ChangeFamily(familyChange);
+        _familyDinnerApplied = true;
+    }
     
     public void SetSelectedPatient(Patient patient)
     {
@@ -93,6 +216,9 @@ class HealthBars : MonoBehaviour
         organMoney = 0;
         bChooseOrganBox = false;
         SelectedPatient = null;
+        _pendingWageMoney.Clear();
+        _pendingOrganMoney.Clear();
+        BeginFamilyDinner();
     }
 
 #if UNITY_EDITOR

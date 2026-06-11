@@ -35,39 +35,76 @@ MonoBehaviour:
   - Dahl
   minAge: 18
   maxAge: 115
+  baseOrganMoney: 14
   jobs:
-  - Politician
-  - Teacher
-  - Office Worker
-  - Unemployed
-  - Grocery Store Clerk
-  - Police Officer
+  - job: Politician
+    reputationChangeWhenSaved: 10
+    reputationChangeWhenKilled: -28
+  - job: Teacher
+    reputationChangeWhenSaved: 6
+    reputationChangeWhenKilled: -16
+  - job: Office Worker
+    reputationChangeWhenSaved: 4
+    reputationChangeWhenKilled: -10
+  - job: Unemployed
+    reputationChangeWhenSaved: 2
+    reputationChangeWhenKilled: -6
+  - job: Grocery Store Clerk
+    reputationChangeWhenSaved: 3
+    reputationChangeWhenKilled: -8
+  - job: Police Officer
+    reputationChangeWhenSaved: 8
+    reputationChangeWhenKilled: -25
   personalities:
   - personality: Funny
+    psycheChangeWhenSaved: 5
+    psycheChangeWhenKilled: -22
     dialogueLines:
     - "If this goes wrong, at least I\u2019ll die laughing, right?"
   - personality: Douchebag
+    psycheChangeWhenSaved: 1
+    psycheChangeWhenKilled: -8
     dialogueLines:
     - "You sure you know what you\u2019re doing, doc? Last guy made it worse."
   - personality: Hyperactive
+    psycheChangeWhenSaved: 4
+    psycheChangeWhenKilled: -17
     dialogueLines:
     - "Oh wow, all these tools! Can I touch one? No? Okay\u2014but wow, look at that!"
   - personality: Skeptical
+    psycheChangeWhenSaved: 2
+    psycheChangeWhenKilled: -12
     dialogueLines:
     - "I don\u2019t buy it. You call this a \u2018routine\u2019 procedure?"
   - personality: Nice
+    psycheChangeWhenSaved: 6
+    psycheChangeWhenKilled: -24
     dialogueLines:
     - Thank you so much for helping me. I really appreciate it.
   - personality: Shy
+    psycheChangeWhenSaved: 5
+    psycheChangeWhenKilled: -20
     dialogueLines:
     - "Um\u2026 h-hi\u2026 I\u2019ll just\u2026 do whatever you need me to\u2026"
   traits:
-  - Smoker
-  - Drinker
-  - Active
-  - Healthy
-  - Workaholic
-  - Couch Potato
+  - trait: Smoker
+    organMoneyMultiplier: 0.65
+    organMoneyBonus: 0
+  - trait: Drinker
+    organMoneyMultiplier: 0.8
+    organMoneyBonus: 0
+  - trait: Active
+    organMoneyMultiplier: 1.15
+    organMoneyBonus: 1
+  - trait: Healthy
+    organMoneyMultiplier: 1.35
+    organMoneyBonus: 2
+  - trait: Workaholic
+    organMoneyMultiplier: 1
+    organMoneyBonus: 2
+  - trait: Couch Potato
+    organMoneyMultiplier: 0.75
+    organMoneyBonus: 0
   sprites:
     maleFaces:
     - {fileID: 5988995955048105371, guid: 520ab444de56b35488b007d29f36e03a, type: 3}

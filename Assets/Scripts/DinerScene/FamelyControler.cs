@@ -22,6 +22,12 @@ public class FamelyControler : MonoBehaviour
         if (!healthBars) healthBars = FindAnyObjectByType<HealthBars>();
     }
 
+    private void Start()
+    {
+        if (!healthBars) healthBars = HealthBars.Instance;
+        healthBars?.BeginFamilyDinner();
+    }
+
     void Update()
     {
         var newState = healthBars.CurrentFamilyState();

@@ -10,6 +10,7 @@ namespace MiniGames.Base
         protected bool InFocus {get; private set;}
         [SerializeField] protected Camera cam;
         protected TVInputRelay inputRelay;
+        private bool _finished;
 
         [Header("Warning Sprites"), SerializeField] private GameObject warningFaceScreen;
         [SerializeField] private GameObject warningFaceOutside;
@@ -34,14 +35,18 @@ namespace MiniGames.Base
 
         protected void GameWin()
         {
-            HealthBars.Instance.ChangePsych(5);
-            HealthBars.Instance.ChangeReputation(5);
+            if (_finished) return;
+            _finished = true;
+
+            HealthBars.Instance.ApplySavedPatient();
             SceneController.Instance.LoadNextOrLoop();
         }
 
         protected void GameLose()
         {
-            HealthBars.Instance.ChangeReputation(-10);
+            if (_finished) return;
+            _finished = true;
+
             SceneController.Instance.LoadScene("OrganSteeling");
         }
 

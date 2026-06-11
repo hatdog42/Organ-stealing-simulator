@@ -58,11 +58,11 @@ public class OutsideControler : MonoBehaviour
         canvasGroup.alpha = 1;
         
         var healthBars = HealthBars.Instance;
-        int fixedIncome = 24;
-        int organIncome = healthBars.organMoney;
+        int[] wageIncomeStages = healthBars.CollectWageMoneyStages();
+        int[] organIncomeStages = healthBars.CollectOrganMoneyStages();
         
-        yield return billFixed.ShowMoneyRoutine(fixedIncome, moneyStageDelay, moneySound, moneySoundVolume, AddMoneyStage);
-        yield return billOrgan.ShowMoneyRoutine(organIncome, moneyStageDelay, moneySound, moneySoundVolume, AddMoneyStage);
+        yield return billFixed.ShowMoneyRoutine(wageIncomeStages, moneyStageDelay, moneySound, moneySoundVolume, AddMoneyStage);
+        yield return billOrgan.ShowMoneyRoutine(organIncomeStages, moneyStageDelay, moneySound, moneySoundVolume, AddMoneyStage);
         
         healthBars.money += _stagedMoneyTotal;
         yield return MoveAddedMoneyToTotalRoutine();

@@ -56,9 +56,14 @@ public class PatientGenerator : MonoBehaviour
         
         p.lastName = patientData.lastNames[Random.Range(0, patientData.lastNames.Count)];
         p.age = Random.Range(patientData.minAge, patientData.maxAge + 1);
-        p.job = patientData.jobs[Random.Range(0, patientData.jobs.Count)];
-        p.personality = patientData.personalities[Random.Range(0, patientData.personalities.Count)].personality;
-        p.trait = patientData.traits[Random.Range(0, patientData.traits.Count)];
+        p.jobProfile = patientData.GetRandomJob();
+        p.personalityProfile = patientData.GetRandomPersonality();
+        p.traitProfile = patientData.GetRandomTrait();
+        p.baseOrganMoney = patientData.baseOrganMoney;
+
+        p.job = p.jobProfile.job;
+        p.personality = p.personalityProfile.personality;
+        p.trait = p.traitProfile.trait;
         
         MajorMiniGameOption majorMiniGame = PickMajorMiniGame();
         p.majorMiniGame = majorMiniGame.type;
@@ -99,10 +104,19 @@ public class Patient
     public string job;
     public string personality;
     public string trait;
+    public PatientJob jobProfile;
+    public PersonalityDialogue personalityProfile;
+    public PatientTrait traitProfile;
+    public int baseOrganMoney;
     public string sex;
     public Sprite face;
     public Sprite body;
     public MiniGames.MajorMiniGameType majorMiniGame;
     public string majorMiniGameName;
     public string FullName => $"{firstName} {lastName}";
+    public int ReputationChangeWhenSaved => jobProfile?.reputationChangeWhenSaved ?? 4;
+    public int ReputationChangeWhenKilled => jobProfile?.reputationChangeWhenKilled ?? -10;
+    public int PsycheChangeWhenSaved => personalityProfile?.psycheChangeWhenSaved ?? 3;
+    public int PsycheChangeWhenKilled => personalityProfile?.psycheChangeWhenKilled ?? -15;
+    public int OrganMoney => Mathf.Max(0, Mathf.RoundToInt(baseOrganMoney * (traitProfile?.organMoneyMultiplier ?? 1f)) + (traitProfile?.organMoneyBonus ?? 0));
 }

@@ -1,12 +1,12 @@
 using System.Collections;
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class bill : MonoBehaviour
 {
     [SerializeField] private TMP_Text _text;   
-    [SerializeField] private int totalMoney;
 
     public void ShowMoney(int total)
     {
@@ -15,8 +15,17 @@ public class bill : MonoBehaviour
         ClearMoney();
 
         int[] parts = GetMoneyParts(total);
-        for (int i = 0; i < parts.Length; i++)
-            _text.text += $"${parts[i]:N0}\n";
+        ShowMoney(parts);
+    }
+
+    public void ShowMoney(IList<int> amounts)
+    {
+        if (!_text || amounts == null) return;
+
+        ClearMoney();
+
+        for (int i = 0; i < amounts.Count; i++)
+            _text.text += $"${amounts[i]:N0}\n";
     }
 
     public IEnumerator ShowMoneyRoutine(
@@ -26,16 +35,26 @@ public class bill : MonoBehaviour
         float soundVolume,
         Action<int> onStageRevealed = null)
     {
-        if (!_text) yield break;
+        int[] parts = GetMoneyParts(total);
+        yield return ShowMoneyRoutine(parts, delayBetweenStages, moneySound, soundVolume, onStageRevealed);
+    }
+
+    public IEnumerator ShowMoneyRoutine(
+        IList<int> amounts,
+        float delayBetweenStages,
+        AudioClip moneySound,
+        float soundVolume,
+        Action<int> onStageRevealed = null)
+    {
+        if (!_text || amounts == null) yield break;
 
         ClearMoney();
         delayBetweenStages = Mathf.Max(0f, delayBetweenStages);
 
-        int[] parts = GetMoneyParts(total);
-        for (int i = 0; i < parts.Length; i++)
+        for (int i = 0; i < amounts.Count; i++)
         {
-            _text.text += $"${parts[i]:N0}\n";
-            onStageRevealed?.Invoke(parts[i]);
+            _text.text += $"${amounts[i]:N0}\n";
+            onStageRevealed?.Invoke(amounts[i]);
             PlayMoneySound(moneySound, soundVolume);
 
             yield return new WaitForSecondsRealtime(delayBetweenStages);
@@ -49,9 +68,8 @@ public class bill : MonoBehaviour
 
     private int[] GetMoneyParts(int total)
     {
-        int displayTotal = totalMoney > 0 ? totalMoney : total;
-        int basePart = displayTotal / 3;
-        int remainder = displayTotal % 3;
+        int basePart = total / 3;
+        int remainder = total % 3;
 
         int[] parts = { basePart, basePart, basePart };
         for (int i = 0; i < remainder; i++)

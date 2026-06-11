@@ -8,8 +8,10 @@ public class SceneController : MonoBehaviour
     [SerializeField] private ScreenFader faderPrefab;
     [SerializeField, Min(0f)] private float fadeDuration = 1.2f;
 
+    private const int MinimumSurgeriesBeforeSanetyCheck = 3;
+
     [Header("Loop Settings")]
-    [SerializeField, Min(1)] private int surgeriesBeforeSanetyCheck = 3;
+    [SerializeField, Min(MinimumSurgeriesBeforeSanetyCheck)] private int surgeriesBeforeSanetyCheck = MinimumSurgeriesBeforeSanetyCheck;
     
     private ScreenFader _fader;
     private bool _isLoading;
@@ -35,10 +37,14 @@ public class SceneController : MonoBehaviour
 
     public void LoadNextOrLoop()
     {
+        if (_isLoading) return;
+
         _surgeriesDoneThisCycle++;
 
-        if (_surgeriesDoneThisCycle >= surgeriesBeforeSanetyCheck)
+        int requiredSurgeries = Mathf.Max(MinimumSurgeriesBeforeSanetyCheck, surgeriesBeforeSanetyCheck);
+        if (_surgeriesDoneThisCycle >= requiredSurgeries)
         {
+            _surgeriesDoneThisCycle = 0;
             LoadScene("SanetyChek");
             return;
         }
@@ -83,6 +89,14 @@ public class SceneController : MonoBehaviour
             return;
         }
         
+        if (healthBars.CurrentFamilyState() == HealthBars.FamilyState.Broken)
+        {
+            LoadScene("DevorceEnding");
+            return;
+        }
+
+        healthBars.ApplyFamilyDinnerResult();
+
         if (healthBars.CurrentFamilyState() == HealthBars.FamilyState.Broken)
         {
             LoadScene("DevorceEnding");
