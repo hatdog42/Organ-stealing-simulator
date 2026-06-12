@@ -72,8 +72,6 @@ public class OfficeControler : DialogueBase, IClickable
         PlayLine(line);
         
         while (Typing != null) yield return null;
-
-        yield return new WaitForSecondsRealtime(1f);
         
         if (!PrefabDialogueEnabled) Hide(coworkerCanvas);
         if (HealthBars.Instance.CurrentReputationState() == HealthBars.ReputationState.Broken)

@@ -16,6 +16,8 @@ public class ClickInputControler : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenueControler.IsPaused) return;
+
         Vector2 mousePos = Mouse.current.position.ReadValue();
         Vector3 world = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Mathf.Abs(cam.transform.position.z)));
         

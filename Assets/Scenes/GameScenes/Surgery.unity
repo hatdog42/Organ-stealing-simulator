@@ -244,6 +244,66 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &314159265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 314159266}
+  - component: {fileID: 314159267}
+  m_Layer: 0
+  m_Name: PatientHealthController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &314159266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314159265}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &314159267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 314159265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cf5d9a62a6d4d3489f94783270fd9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGames.PatientHealthController
+  maxHealth: 100
+  recoveryPerSecond: 1.5
+  dropDamage: 12
+  difficultyIncreasePerMinute: 0.08
+  maxDifficultyMultiplier: 2
+  oxygenDamageMinPerSecond: 2
+  oxygenDamageMaxPerSecond: 18
+  oxygenReportTimeout: 0.25
+  heartBeepSound: {fileID: 8300000, guid: 40c39ba4ca7d6314b87281962a20e200, type: 3}
+  flatlineSound: {fileID: 8300000, guid: 56d3ae4d93b912545a1c4f9e8dd6cbba, type: 3}
+  heartBeepVolume: 0.8
+  flatlineVolume: 1
+  fastestHeartBeepInterval: 0.25
+  slowestHeartBeepInterval: 1.4
+  flatlineHoldBeforeLose: 0.75
+  flatlineFadeOutDuration: 1.2
 --- !u!1 &361476263
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,7 +1422,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: c90e92111f9eeaf4a86782cd4770e1ab, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.3
+  m_Volume: 0.2
   m_Pitch: 0.8
   Loop: 1
   Mute: 0
@@ -1530,6 +1590,54 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e2dc2e80278cd94f94b38aacd68055a, type: 3}
+--- !u!1 &1304109032
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1304109034}
+  - component: {fileID: 1304109033}
+  m_Layer: 0
+  m_Name: SceneController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1304109033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304109032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d7f8d61766be047890ba8239a3b9ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneController
+  faderPrefab: {fileID: 0}
+  fadeDuration: 1.2
+  framesToWaitBeforeFadeIn: 1
+  surgeriesBeforeSanetyCheck: 3
+--- !u!4 &1304109034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304109032}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.22, y: 0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1390304126
 GameObject:
   m_ObjectHideFlags: 0
@@ -1642,7 +1750,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: c90e92111f9eeaf4a86782cd4770e1ab, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.1
+  m_Volume: 0.2
   m_Pitch: 0.8
   Loop: 1
   Mute: 0
@@ -2996,6 +3104,7 @@ MonoBehaviour:
   warningFaceScreen: {fileID: 813542281}
   warningFaceOutside: {fileID: 1825044952}
   warningAudio: {fileID: 1063810261}
+  warningAudioVolume: 0.2
   winButton: {fileID: 806382715909814166}
   loseButton: {fileID: 806382715909814165}
 --- !u!1660057539 &9223372036854775807
@@ -3019,3 +3128,5 @@ SceneRoots:
   - {fileID: 1523773665}
   - {fileID: 1807956983}
   - {fileID: 806382715909814160}
+  - {fileID: 314159266}
+  - {fileID: 1304109034}

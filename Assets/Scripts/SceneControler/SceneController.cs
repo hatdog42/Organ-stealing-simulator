@@ -7,6 +7,7 @@ public class SceneController : MonoBehaviour
     [Header("Fade Settings")]
     [SerializeField] private ScreenFader faderPrefab;
     [SerializeField, Min(0f)] private float fadeDuration = 1.2f;
+    [SerializeField, Min(0)] private int framesToWaitBeforeFadeIn = 1;
 
     private const int MinimumSurgeriesBeforeSanetyCheck = 3;
 
@@ -55,12 +56,13 @@ public class SceneController : MonoBehaviour
     public void StartPatientLoop()
     {
         _surgeriesDoneThisCycle = 0;
-        LoadScene("ChosePatient");
+        LoadScene("DayCounter");
     }
 
     public void StartNewGame(string firstSceneName = "Exposition")
     {
         _surgeriesDoneThisCycle = 0;
+        DayCounterMangager.ResetDayCount();
         if (HealthBars.Instance) HealthBars.Instance.ResetForNewGame();
         LoadScene(firstSceneName);
     }
@@ -120,7 +122,13 @@ public class SceneController : MonoBehaviour
         yield return _fader.FadeOut(fadeDuration);
 
         yield return SceneManager.LoadSceneAsync(sceneName);
-        yield return null;
+        Canvas.ForceUpdateCanvases();
+
+        for (int i = 0; i < framesToWaitBeforeFadeIn; i++)
+        {
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+        }
         
         yield return _fader.FadeIn(fadeDuration);
         _fader.gameObject.SetActive(false);

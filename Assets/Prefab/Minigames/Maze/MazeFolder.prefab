@@ -283,6 +283,7 @@ MonoBehaviour:
   warningFaceScreen: {fileID: 0}
   warningFaceOutside: {fileID: 0}
   warningAudio: {fileID: 0}
+  warningAudioVolume: 0.2
   ball: {fileID: 2673122731755468725}
   _ballSpeed: 5
   _ballMaxVelocity: 2

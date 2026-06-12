@@ -1,6 +1,4 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace MiniGames.Base
@@ -16,9 +14,11 @@ namespace MiniGames.Base
         [SerializeField] private GameObject warningFaceOutside;
         
         [Header("Audio"), SerializeField] private AudioSource warningAudio;
+        [SerializeField, Range(0f, 1f)] private float warningAudioVolume = 0.2f;
 
-        private void Awake()
+        protected virtual void Awake()
         {
+            RegisterWarningAudio();
             DisplayWarning(false);
         }
 
@@ -50,6 +50,11 @@ namespace MiniGames.Base
             SceneController.Instance.LoadScene("OrganSteeling");
         }
 
+        public void ForceGameLose()
+        {
+            GameLose();
+        }
+
         //This will display a warning from the sub mini-games when it needs your attention
         protected void DisplayWarning(bool warning) 
         {
@@ -61,6 +66,7 @@ namespace MiniGames.Base
 
                 if (warningAudio && !warningAudio.isPlaying)
                 {
+                    RegisterWarningAudio();
                     warningAudio.Play();
                 }
             }
@@ -77,6 +83,14 @@ namespace MiniGames.Base
         {
             float newValue = Random.Range(minValue, maxValue);
             return newValue;
+        }
+
+        private void RegisterWarningAudio()
+        {
+            if (!warningAudio) return;
+
+            warningAudio.volume = warningAudioVolume;
+            AudioManager.Instance?.RegisterSource(warningAudio, AudioChannelType.Sfx, warningAudioVolume);
         }
     }
 }

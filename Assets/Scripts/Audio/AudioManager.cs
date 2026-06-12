@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,7 +22,9 @@ public class AudioManager : MonoBehaviour
     private readonly Dictionary<AudioSource, SourceSettings> _sources = new();
     private AudioSource _musicSource;
     private AudioSource _oneShotSource;
+    private Coroutine _musicFadeRoutine;
     private float _currentMusicBaseVolume = 1f;
+    private bool _musicPaused;
 
     public static AudioManager Instance { get; private set; }
 
@@ -109,17 +112,20 @@ public class AudioManager : MonoBehaviour
 
     public void RegisterSource(AudioSource source, AudioChannelType channelType)
     {
+        RegisterSource(source, channelType, source ? source.volume : 1f);
+    }
+
+    public void RegisterSource(AudioSource source, AudioChannelType channelType, float baseVolume)
+    {
         if (!source) return;
 
         if (!_sources.ContainsKey(source))
         {
-            _sources.Add(source, new SourceSettings(source.volume, channelType));
+            _sources.Add(source, new SourceSettings(Mathf.Clamp01(baseVolume), channelType));
         }
         else
         {
-            SourceSettings settings = _sources[source];
-            settings.ChannelType = channelType;
-            _sources[source] = settings;
+            _sources[source] = new SourceSettings(Mathf.Clamp01(baseVolume), channelType);
         }
 
         ApplyVolume(source);
@@ -138,10 +144,28 @@ public class AudioManager : MonoBehaviour
         PlaySfx(clip, defaultButtonClickVolume * volumeScale);
     }
 
+    public void PauseMusic()
+    {
+        if (!_musicSource || !_musicSource.isPlaying) return;
+
+        _musicSource.Pause();
+        _musicPaused = true;
+    }
+
+    public void ResumeMusic()
+    {
+        if (!_musicSource || !_musicPaused) return;
+
+        _musicSource.UnPause();
+        _musicPaused = false;
+    }
+
     public void PlayMusic(AudioClip clip, float baseVolume = 1f, bool loop = true)
     {
         if (!clip) return;
 
+        StopMusicFade();
+        _musicPaused = false;
         _currentMusicBaseVolume = baseVolume;
         _musicSource.loop = loop;
 
@@ -155,6 +179,14 @@ public class AudioManager : MonoBehaviour
         _musicSource.time = 0f;
         ApplyMusicVolume();
         _musicSource.Play();
+    }
+
+    public void FadeOutMusic(float duration)
+    {
+        if (!_musicSource || !_musicSource.isPlaying) return;
+
+        StopMusicFade();
+        _musicFadeRoutine = StartCoroutine(FadeOutMusicRoutine(duration));
     }
 
     private void RegisterSceneSources()
@@ -248,6 +280,32 @@ public class AudioManager : MonoBehaviour
         if (!_musicSource) return;
 
         _musicSource.volume = _currentMusicBaseVolume * MusicVolume;
+    }
+
+    private IEnumerator FadeOutMusicRoutine(float duration)
+    {
+        float startVolume = _musicSource.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float progress = duration <= 0f ? 1f : Mathf.Clamp01(elapsed / duration);
+            _musicSource.volume = Mathf.Lerp(startVolume, 0f, progress);
+            yield return null;
+        }
+
+        _musicSource.volume = 0f;
+        _musicSource.Stop();
+        _musicFadeRoutine = null;
+    }
+
+    private void StopMusicFade()
+    {
+        if (_musicFadeRoutine == null) return;
+
+        StopCoroutine(_musicFadeRoutine);
+        _musicFadeRoutine = null;
     }
 
     private bool IsManagerSource(AudioSource source)

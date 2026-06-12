@@ -1773,6 +1773,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
   faderPrefab: {fileID: 1698258045915958274, guid: dcf213af2ef238d47b42ba8bfbd7d33c, type: 3}
   fadeDuration: 1.2
+  framesToWaitBeforeFadeIn: 1
   surgeriesBeforeSanetyCheck: 3
 --- !u!4 &540779026
 Transform:
@@ -4079,7 +4080,7 @@ MonoBehaviour:
   charDelay: 0.06
   textBoxFadeInDuration: 0.12
   textBoxFadeOutDuration: 0.08
-  holdAfterTyping: 2
+  holdAfterTyping: 1.2
   waitForSceneFade: 1
   hideTextBoxOnAwake: 1
   hideTextBoxAfterLine: 1
@@ -4961,6 +4962,18 @@ MonoBehaviour:
   money: 0
   organMoney: 0
   bChooseOrganBox: 0
+  savedPatientWage: 8
+  killedPatientWage: 7
+  fallbackSavedPsycheChange: 3
+  fallbackSavedReputationChange: 4
+  fallbackKilledPsycheChange: -15
+  fallbackKilledReputationChange: -10
+  fallbackOrganMoney: 14
+  organTheftPsycheChange: -8
+  organTheftReputationChange: -3
+  maximumMealsPerDinner: 4
+  familyChangeWithoutFood: -55
+  familyChangePerMeal: 13
 --- !u!4 &1576279123
 Transform:
   m_ObjectHideFlags: 0
@@ -5665,53 +5678,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1761597943}
   m_CullTransparentMesh: 1
---- !u!1 &1925659246
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1925659248}
-  - component: {fileID: 1925659247}
-  m_Layer: 0
-  m_Name: GameManeger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1925659247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1925659246}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af8ce11e75fe68444bfac5e1b0911a9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthBars
-  money: 0
-  organMoney: 0
-  bChooseOrganBox: 0
---- !u!4 &1925659248
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1925659246}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 749.6954, y: 352.63614, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1944885526
 GameObject:
   m_ObjectHideFlags: 0
@@ -6223,7 +6189,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 363752992}
-  - {fileID: 1925659248}
   - {fileID: 182914568}
   - {fileID: 1532961151}
   - {fileID: 1215950836}

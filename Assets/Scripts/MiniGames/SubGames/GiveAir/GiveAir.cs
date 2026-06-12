@@ -9,6 +9,7 @@ namespace MiniGames.SubGames.GiveAir
         [SerializeField] private float airTimer = 30f;
         [SerializeField] private float airLoss = 1f;
         [SerializeField] private float airGain = 2f;
+        [SerializeField, Range(0f, 1f)] private float alarmThreshold = 0.3f;
         private float _currentTimer;
         
         [Header("Button"), SerializeField] private Collider2D airButton;
@@ -77,29 +78,17 @@ namespace MiniGames.SubGames.GiveAir
         {
             if (_pressingAir)
             {
-                if (_currentTimer > airTimer) return;
-                _currentTimer += airGain * Time.deltaTime;
-                DisplayWarning(false);
+                _currentTimer = Mathf.Min(airTimer, _currentTimer + airGain * Time.deltaTime);
             }
             else
             {
-                _currentTimer -= airLoss * Time.deltaTime;
-                if (_currentTimer < airTimer * 0.3f)
-                {
-                    DisplayWarning(true);
-                }
-                else
-                {
-                    DisplayWarning(false);
-                }
-                
+                _currentTimer = Mathf.Max(0f, _currentTimer - airLoss * Time.deltaTime);
             }
-            //print(_currentTimer);
 
-            if (_currentTimer < 0)
-            {
-                GameLose();
-            }
+            float oxygenNormalized = Mathf.Clamp01(_currentTimer / airTimer);
+            bool oxygenAlarm = oxygenNormalized < alarmThreshold;
+            DisplayWarning(oxygenAlarm);
+            PatientHealthController.Instance?.ReportOxygen(oxygenNormalized, alarmThreshold);
         }
 
         private void UpdateFillBar()

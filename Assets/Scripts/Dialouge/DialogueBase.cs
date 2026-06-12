@@ -28,6 +28,7 @@ public class DialogueBase : MonoBehaviour
     
     protected Coroutine Typing;
     private static DialogueBoxUI SharedDialogueBox;
+    private bool hiddenByPause;
     protected virtual bool UsePrefabDialogue => usePrefabDialogue;
     protected virtual bool ShowTextBoxAtTop => showTextBoxAtTop;
     protected virtual string DialogueSpeakerName => null;
@@ -45,6 +46,17 @@ public class DialogueBase : MonoBehaviour
         }
 
         if (hideTextBoxOnAwake) SetTextBoxVisible(false);
+    }
+
+    protected virtual void OnEnable()
+    {
+        PauseMenueControler.PauseChanged += OnPauseChanged;
+        if (PauseMenueControler.IsPaused) OnPauseChanged(true);
+    }
+
+    protected virtual void OnDisable()
+    {
+        PauseMenueControler.PauseChanged -= OnPauseChanged;
     }
     
     protected Coroutine PlayLine(string line)
@@ -97,16 +109,17 @@ public class DialogueBase : MonoBehaviour
 
         while (i < line.Length)
         {
+            yield return WaitWhilePaused();
             dialogueText.text += line[i];
             
             float delay = charDelay;
             char c = line[i];
 
             i++;
-            yield return new WaitForSecondsRealtime(delay);
+            yield return WaitForSecondsRealtimeRespectingPause(delay);
         }
 
-        if (holdAfterTyping > 0f) yield return new WaitForSecondsRealtime(holdAfterTyping);
+        if (holdAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(holdAfterTyping);
         if (hideTextBoxAfterLine) yield return FadeTextBox(0f, textBoxFadeOutDuration);
     }
 
@@ -192,6 +205,7 @@ public class DialogueBase : MonoBehaviour
 
         while (t < duration)
         {
+            yield return WaitWhilePaused();
             t += Time.unscaledDeltaTime;
             dialogueCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t / duration);
             yield return null;
@@ -209,5 +223,47 @@ public class DialogueBase : MonoBehaviour
         dialogueCanvasGroup.alpha = visible ? 1f : 0f;
         dialogueCanvasGroup.interactable = visible;
         dialogueCanvasGroup.blocksRaycasts = visible;
+    }
+
+    private void OnPauseChanged(bool paused)
+    {
+        if (UsePrefabDialogue) return;
+
+        EnsureDialogueCanvasGroup();
+        if (!dialogueCanvasGroup) return;
+
+        if (paused)
+        {
+            hiddenByPause = dialogueCanvasGroup.alpha > 0.001f;
+            if (hiddenByPause) SetTextBoxVisible(false);
+            return;
+        }
+
+        if (!hiddenByPause) return;
+
+        SetTextBoxVisible(true);
+        hiddenByPause = false;
+    }
+
+    private static IEnumerator WaitWhilePaused()
+    {
+        while (PauseMenueControler.IsPaused)
+        {
+            yield return null;
+        }
+    }
+
+    private static IEnumerator WaitForSecondsRealtimeRespectingPause(float seconds)
+    {
+        float elapsed = 0f;
+        while (elapsed < seconds)
+        {
+            if (!PauseMenueControler.IsPaused)
+            {
+                elapsed += Time.unscaledDeltaTime;
+            }
+
+            yield return null;
+        }
     }
 }

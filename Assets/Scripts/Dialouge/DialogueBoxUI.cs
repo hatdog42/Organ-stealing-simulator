@@ -20,12 +20,24 @@ public class DialogueBoxUI : MonoBehaviour
     private RectTransform speakerNameRect;
     private Vector2 speakerNamePrefabAnchoredPosition;
     private bool hasSpeakerNamePrefabAnchoredPosition;
+    private bool hiddenByPause;
 
     private void Awake()
     {
         EnsureReferences();
         SetSpeakerName(null);
         SetVisible(false);
+    }
+
+    private void OnEnable()
+    {
+        PauseMenueControler.PauseChanged += OnPauseChanged;
+        if (PauseMenueControler.IsPaused) OnPauseChanged(true);
+    }
+
+    private void OnDisable()
+    {
+        PauseMenueControler.PauseChanged -= OnPauseChanged;
     }
 
     public IEnumerator PlayLine(
@@ -47,11 +59,12 @@ public class DialogueBoxUI : MonoBehaviour
 
         foreach (char letter in line ?? string.Empty)
         {
+            yield return WaitWhilePaused();
             dialogueText.text += letter;
-            yield return new WaitForSecondsRealtime(charDelay);
+            yield return WaitForSecondsRealtimeRespectingPause(charDelay);
         }
 
-        if (holdAfterTyping > 0f) yield return new WaitForSecondsRealtime(holdAfterTyping);
+        if (holdAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(holdAfterTyping);
         if (hideAfterLine) yield return FadeTo(0f, fadeOutDuration);
     }
 
@@ -163,6 +176,7 @@ public class DialogueBoxUI : MonoBehaviour
 
         while (t < duration)
         {
+            yield return WaitWhilePaused();
             t += Time.unscaledDeltaTime;
             canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, t / duration);
             yield return null;
@@ -189,5 +203,44 @@ public class DialogueBoxUI : MonoBehaviour
         }
 
         if (graphicRaycaster) graphicRaycaster.enabled = enabled;
+    }
+
+    private void OnPauseChanged(bool paused)
+    {
+        EnsureReferences();
+
+        if (paused)
+        {
+            hiddenByPause = canvasGroup && canvasGroup.alpha > 0.001f;
+            if (hiddenByPause) SetVisible(false);
+            return;
+        }
+
+        if (!hiddenByPause) return;
+
+        SetVisible(true);
+        hiddenByPause = false;
+    }
+
+    private static IEnumerator WaitWhilePaused()
+    {
+        while (PauseMenueControler.IsPaused)
+        {
+            yield return null;
+        }
+    }
+
+    private static IEnumerator WaitForSecondsRealtimeRespectingPause(float seconds)
+    {
+        float elapsed = 0f;
+        while (elapsed < seconds)
+        {
+            if (!PauseMenueControler.IsPaused)
+            {
+                elapsed += Time.unscaledDeltaTime;
+            }
+
+            yield return null;
+        }
     }
 }

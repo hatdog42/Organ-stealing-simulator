@@ -389,6 +389,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &666545192
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 666545194}
+  - component: {fileID: 666545193}
+  m_Layer: 0
+  m_Name: PauseMenueControler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &666545193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666545192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848b1db6d1b17dc4cb21a9775742c4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PauseMenueControler
+  blockedSceneNames:
+  - MainMenue
+  menuCamera: {fileID: 0}
+  pauseMenuPrefab: {fileID: 3503378661559171945, guid: 2dba9e3d327e63e498f7708d983c4d37, type: 3}
+  resourcesPrefabPath: PauseMenue
+  configurePauseCanvas: 1
+  pauseCanvasSortingOrder: 5000
+  canvasScaleFactor: 1
+  canvasReferencePixelsPerUnit: 32
+  resumeButton:
+    buttonName: Resume
+    hoverOutline: {fileID: 0}
+    clickAction: 0
+    onClick:
+      m_PersistentCalls:
+        m_Calls: []
+  quitButton:
+    buttonName: Quit
+    hoverOutline: {fileID: 0}
+    clickAction: 1
+    onClick:
+      m_PersistentCalls:
+        m_Calls: []
+  pauseMenuRoot: {fileID: 0}
+  mainMenuSceneName: MainMenue
+--- !u!4 &666545194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 666545192}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.43166, y: -0.01956, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &767182259
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,6 +697,18 @@ MonoBehaviour:
   money: 0
   organMoney: 0
   bChooseOrganBox: 0
+  savedPatientWage: 8
+  killedPatientWage: 7
+  fallbackSavedPsycheChange: 3
+  fallbackSavedReputationChange: 4
+  fallbackKilledPsycheChange: -15
+  fallbackKilledReputationChange: -10
+  fallbackOrganMoney: 14
+  organTheftPsycheChange: -8
+  organTheftReputationChange: -3
+  maximumMealsPerDinner: 4
+  familyChangeWithoutFood: -55
+  familyChangePerMeal: 13
 --- !u!4 &1174387506
 Transform:
   m_ObjectHideFlags: 0
@@ -1276,6 +1357,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneController
   faderPrefab: {fileID: 1698258045915958274, guid: dcf213af2ef238d47b42ba8bfbd7d33c, type: 3}
   fadeDuration: 1.2
+  framesToWaitBeforeFadeIn: 1
   surgeriesBeforeSanetyCheck: 3
 --- !u!4 &2109951960
 Transform:
@@ -1410,3 +1492,4 @@ SceneRoots:
   - {fileID: 1174387506}
   - {fileID: 2109951960}
   - {fileID: 72234047}
+  - {fileID: 666545194}

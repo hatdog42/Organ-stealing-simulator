@@ -546,8 +546,10 @@ MonoBehaviour:
   warningFaceScreen: {fileID: 0}
   warningFaceOutside: {fileID: 0}
   warningAudio: {fileID: 0}
+  warningAudioVolume: 0.2
   airTimer: 30
   airLoss: 1
   airGain: 3
+  alarmThreshold: 0.3
   airButton: {fileID: 762072938163076459}
   airScaleBar: {fileID: 4076695068261536482}

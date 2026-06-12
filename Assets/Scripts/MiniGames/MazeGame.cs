@@ -57,6 +57,7 @@ namespace MiniGames
 
         private void FixedUpdate()
         {
+            if (PauseMenueControler.IsPaused) return;
             if (_gameWon || !InFocus) return;
             if (!Mouse.current.leftButton.isPressed) return;
             

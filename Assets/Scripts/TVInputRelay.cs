@@ -54,6 +54,12 @@ public class TVInputRelay : MonoBehaviour
     }
     void Update()
     {
+        if (PauseMenueControler.IsPaused)
+        {
+            _dragging = false;
+            return;
+        }
+
         var screen = Mouse.current.position.ReadValue();
         if (!TryMapScreenToMiniWorld(screen, out var miniWorld))
         {

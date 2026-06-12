@@ -16,6 +16,8 @@ public class OrganControler : MonoBehaviour
     }
     private void Update()
     {
+        if (PauseMenueControler.IsPaused) return;
+
         Vector2 mousePos = Mouse.current.position.ReadValue();
         
         Vector3 world = _camera.ScreenToWorldPoint(mousePos);

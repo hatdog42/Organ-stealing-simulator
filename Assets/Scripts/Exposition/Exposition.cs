@@ -7,11 +7,6 @@ public class Exposition : DialogueBase
 {
     [SerializeField] private float waitAfterText = 2f;
     [SerializeField] private string nextSceneName;
-
-    [Header("Letter Formatting")]
-    [SerializeField, Min(1f)] private float letterFontSize = 28f;
-    [SerializeField] private Vector4 letterTextMargin = new(36f, 32f, 36f, 32f);
-    [SerializeField] private TextAlignmentOptions letterAlignment = TextAlignmentOptions.TopLeft;
     
     [TextArea(5, 10)]
     [SerializeField] private string expositionText = 
@@ -26,7 +21,6 @@ public class Exposition : DialogueBase
     protected override void Awake()
     {
         base.Awake();
-        ApplyLetterFormatting();
     }
 
     private void Start()
@@ -42,16 +36,5 @@ public class Exposition : DialogueBase
         yield return new WaitForSecondsRealtime(waitAfterText); 
         
         SceneController.Instance.LoadScene(nextSceneName);
-    }
-
-    private void ApplyLetterFormatting()
-    {
-        if (!dialogueText) return;
-
-        dialogueText.fontSize = letterFontSize;
-        dialogueText.alignment = letterAlignment;
-        dialogueText.margin = letterTextMargin;
-        dialogueText.textWrappingMode = TextWrappingModes.Normal;
-        dialogueText.overflowMode = TextOverflowModes.Overflow;
     }
 }
