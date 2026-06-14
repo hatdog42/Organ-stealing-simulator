@@ -43,6 +43,11 @@ public class DialogueBoxUI : MonoBehaviour
     public IEnumerator PlayLine(
         string line,
         float charDelay,
+        float spaceDelayMultiplier,
+        float commaPause,
+        float sentencePause,
+        float ellipsisPause,
+        float lineBreakPause,
         float fadeInDuration,
         float fadeOutDuration,
         float holdAfterTyping,
@@ -57,11 +62,23 @@ public class DialogueBoxUI : MonoBehaviour
         SetPosition(showAtTop);
         yield return FadeTo(1f, fadeInDuration);
 
-        foreach (char letter in line ?? string.Empty)
+        string text = line ?? string.Empty;
+        for (int i = 0; i < text.Length; i++)
         {
             yield return WaitWhilePaused();
+            char letter = text[i];
             dialogueText.text += letter;
-            yield return WaitForSecondsRealtimeRespectingPause(charDelay);
+
+            float delay = DialogueBase.GetTypingDelay(
+                text,
+                i,
+                charDelay,
+                spaceDelayMultiplier,
+                commaPause,
+                sentencePause,
+                ellipsisPause,
+                lineBreakPause);
+            yield return WaitForSecondsRealtimeRespectingPause(delay);
         }
 
         if (holdAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(holdAfterTyping);

@@ -15,7 +15,7 @@ public class SanetyChekControler : DialogueBase
     [Header("Timing")]
     [SerializeField, Min(0f)] private float minimumLineHoldSeconds = 4f;
     [SerializeField, Min(0f)] private float extraLineHoldSeconds = 2f;
-    [SerializeField, Min(0f)] private float brokenPortraitHoldSeconds = 4f;
+    [SerializeField, Min(0f)] private float brokenPortraitHoldSeconds = 12f;
     
     [Header("Lines")]
     [SerializeField] private string lineStable;

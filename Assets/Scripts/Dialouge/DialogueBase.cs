@@ -17,6 +17,11 @@ public class DialogueBase : MonoBehaviour
     
     [Header("Typing")]
     [SerializeField, Range(0.001f, 0.1f)] protected float charDelay = 0.02f;
+    [SerializeField, Range(0f, 1f)] private float spaceDelayMultiplier = 0.35f;
+    [SerializeField, Min(0f)] private float commaPause = 0.12f;
+    [SerializeField, Min(0f)] private float sentencePause = 0.22f;
+    [SerializeField, Min(0f)] private float ellipsisPause = 0.35f;
+    [SerializeField, Min(0f)] private float lineBreakPause = 0.25f;
 
     [Header("Dialogue Fade")]
     [SerializeField, Min(0f)] private float textBoxFadeInDuration = 0.12f;
@@ -31,6 +36,7 @@ public class DialogueBase : MonoBehaviour
     private bool hiddenByPause;
     protected virtual bool UsePrefabDialogue => usePrefabDialogue;
     protected virtual bool ShowTextBoxAtTop => showTextBoxAtTop;
+    protected virtual bool HideTextBoxAfterLine => hideTextBoxAfterLine;
     protected virtual string DialogueSpeakerName => null;
     protected bool PrefabDialogueEnabled => UsePrefabDialogue;
 
@@ -83,10 +89,15 @@ public class DialogueBase : MonoBehaviour
             yield return dialogueBox.PlayLine(
                 line,
                 charDelay,
+                spaceDelayMultiplier,
+                commaPause,
+                sentencePause,
+                ellipsisPause,
+                lineBreakPause,
                 textBoxFadeInDuration,
                 textBoxFadeOutDuration,
                 holdAfterTyping,
-                hideTextBoxAfterLine,
+                HideTextBoxAfterLine,
                 ShowTextBoxAtTop);
 
             Typing = null;
@@ -111,16 +122,22 @@ public class DialogueBase : MonoBehaviour
         {
             yield return WaitWhilePaused();
             dialogueText.text += line[i];
-            
-            float delay = charDelay;
-            char c = line[i];
 
+            float delay = GetTypingDelay(
+                line,
+                i,
+                charDelay,
+                spaceDelayMultiplier,
+                commaPause,
+                sentencePause,
+                ellipsisPause,
+                lineBreakPause);
             i++;
             yield return WaitForSecondsRealtimeRespectingPause(delay);
         }
 
         if (holdAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(holdAfterTyping);
-        if (hideTextBoxAfterLine) yield return FadeTextBox(0f, textBoxFadeOutDuration);
+        if (HideTextBoxAfterLine) yield return FadeTextBox(0f, textBoxFadeOutDuration);
     }
 
     protected IEnumerator HideTextBox()
@@ -251,6 +268,41 @@ public class DialogueBase : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    public static float GetTypingDelay(
+        string line,
+        int characterIndex,
+        float baseDelay,
+        float spaceMultiplier,
+        float commaPause,
+        float sentencePause,
+        float ellipsisPause,
+        float lineBreakPause)
+    {
+        if (string.IsNullOrEmpty(line) || characterIndex < 0 || characterIndex >= line.Length)
+        {
+            return baseDelay;
+        }
+
+        char current = line[characterIndex];
+        char previous = characterIndex > 0 ? line[characterIndex - 1] : '\0';
+        char next = characterIndex + 1 < line.Length ? line[characterIndex + 1] : '\0';
+
+        if (current == '\n') return lineBreakPause;
+        if (current == ' ') return baseDelay * spaceMultiplier;
+        if (current == ',' || current == ';' || current == ':') return commaPause;
+
+        if (current == '.')
+        {
+            if (next == '.') return baseDelay;
+            if (previous == '.') return ellipsisPause;
+            return sentencePause;
+        }
+
+        if (current == '!' || current == '?') return sentencePause;
+
+        return baseDelay;
     }
 
     private static IEnumerator WaitForSecondsRealtimeRespectingPause(float seconds)

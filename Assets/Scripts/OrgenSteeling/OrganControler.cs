@@ -3,6 +3,13 @@ using UnityEngine.InputSystem;
 
 public class OrganControler : MonoBehaviour
 {
+    private enum OrganContainerChoice
+    {
+        None,
+        OrganBox,
+        MopBucket
+    }
+
     private Camera _camera;
     private SpriteRenderer _spriteRenderer;
     [SerializeField]private string nextScene;
@@ -26,23 +33,49 @@ public class OrganControler : MonoBehaviour
 
         if (!Mouse.current.leftButton.wasPressedThisFrame) return;
         if (_choiceMade) return;
-        
-        var hit = Physics2D.OverlapPoint(world, clickableMask);
-        if (!hit) return;
+
+        OrganContainerChoice choice = GetContainerChoiceAt(world);
+        if (choice == OrganContainerChoice.None) return;
+
         _choiceMade = true;
         _spriteRenderer.enabled = false;
-        
-        if (hit.CompareTag($"OrganBox"))
+
+        if (choice == OrganContainerChoice.OrganBox)
         {
             OrganBoxChosen();
         }
-        else if (hit.CompareTag($"MopBucket"))
+        else if (choice == OrganContainerChoice.MopBucket)
         {
             MopBucketChosen();
         }
-        
-        _spriteRenderer.enabled = false;
     }
+
+    private OrganContainerChoice GetContainerChoiceAt(Vector2 world)
+    {
+        Collider2D[] hits = Physics2D.OverlapPointAll(world, clickableMask);
+
+        foreach (Collider2D hit in hits)
+        {
+            if (!hit || hit.transform.IsChildOf(transform)) continue;
+
+            OrganContainerChoice choice = GetContainerChoice(hit.transform);
+            if (choice != OrganContainerChoice.None) return choice;
+        }
+
+        return OrganContainerChoice.None;
+    }
+
+    private static OrganContainerChoice GetContainerChoice(Transform hitTransform)
+    {
+        for (Transform current = hitTransform; current; current = current.parent)
+        {
+            if (current.CompareTag("OrganBox")) return OrganContainerChoice.OrganBox;
+            if (current.CompareTag("MopBucket")) return OrganContainerChoice.MopBucket;
+        }
+
+        return OrganContainerChoice.None;
+    }
+
     private void OrganBoxChosen()
     {
         HealthBars.Instance.ApplyKilledPatient(stoleOrgans: false);

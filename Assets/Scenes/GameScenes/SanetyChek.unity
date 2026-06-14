@@ -389,7 +389,7 @@ MonoBehaviour:
   EndingScene: Credits
   minimumLineHoldSeconds: 4
   extraLineHoldSeconds: 2
-  brokenPortraitHoldSeconds: 4
+  brokenPortraitHoldSeconds: 12
   lineStable: I did a good job today!
   lineNeutral: I'm not sure I made the right choices today...
   lineUnstable: What the hell have I done?
@@ -488,6 +488,8 @@ MonoBehaviour:
   money: 0
   organMoney: 0
   bChooseOrganBox: 0
+  savedPatientWage: 8
+  killedPatientWage: 7
   fallbackSavedPsycheChange: 3
   fallbackSavedReputationChange: 4
   fallbackKilledPsycheChange: -15

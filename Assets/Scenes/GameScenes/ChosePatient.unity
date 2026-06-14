@@ -4451,6 +4451,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1532961151}
   - component: {fileID: 1532961150}
+  - component: {fileID: 1532961152}
   m_Layer: 0
   m_Name: PatientManeger
   m_TagString: Untagged
@@ -4494,6 +4495,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1532961152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532961149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e4b15dbbbc4d240a41626798c80195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Tutorial
+  dialogueBoxPrefab: {fileID: 0}
+  usePrefabDialogue: 1
+  resourceDialogueBoxPath: DialogueBox
+  showTextBoxAtTop: 0
+  dialogueText: {fileID: 0}
+  dialogueCanvasGroup: {fileID: 0}
+  legacyDialogueRoot: {fileID: 0}
+  charDelay: 0.05
+  textBoxFadeInDuration: 0.12
+  textBoxFadeOutDuration: 0.08
+  holdAfterTyping: 2
+  waitForSceneFade: 1
+  hideTextBoxOnAwake: 1
+  hideTextBoxAfterLine: 0
+  choosePatientSceneName: ChosePatient
+  playOncePerSession: 1
+  waitBeforeFirstLine: 0.5
+  speakerName: Dr. Shad Iman
+  showTutorialTextBoxAtTop: 0
+  hidePatientChoicesDuringTutorial: 1
+  choosePatientLines:
+  - I presume you are the new doctor. I am Dr. Shad Iman. Your first charts are on
+    the desk. Read them closely.
+  - A patient's trait hints at what the inside market might pay for certain... assets.
+  - You have to be wary of important people. Lose a beloved citizen and people whisper.
+    Lose a nobody and fewer doors close.
+  - The nurse's note is a glimpse under the mask. You should not feel too bad if
+    a douchebag has an accident.
 --- !u!1 &1556794142
 GameObject:
   m_ObjectHideFlags: 0
