@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MiniGames;
 using MiniGames.Base;
+using SurgeryScene;
 using UnityEngine;
 
 public class TVController : MonoBehaviour
@@ -15,6 +16,7 @@ public class TVController : MonoBehaviour
     private readonly List<Camera> _registeredCameras = new();
     private MiniGameBase _activeGame;
     private Camera _activeCamera;
+    private bool _isClosing;
     
     void Awake()
     {
@@ -69,6 +71,7 @@ public class TVController : MonoBehaviour
     private void OpenMiniGameDirect(Camera targetCamera)
     {
         if (!targetCamera) return;
+        _isClosing = false;
 
         MiniGameBase nextGame = FindMiniGameForCamera(targetCamera);
         if (!nextGame)
@@ -205,6 +208,23 @@ public class TVController : MonoBehaviour
 
     public void CloseMiniGame()
     {
+        if (_isClosing) return;
+
+        DisableSurgeryHitbox crtAnimation = tvRoot ? tvRoot.GetComponentInChildren<DisableSurgeryHitbox>() : null;
+        if (tvRoot && tvRoot.activeInHierarchy && crtAnimation)
+        {
+            _isClosing = true;
+            crtAnimation.PlayCloseAnimation(FinishCloseMiniGame);
+            return;
+        }
+
+        FinishCloseMiniGame();
+    }
+
+    private void FinishCloseMiniGame()
+    {
+        _isClosing = false;
+
         foreach (var cam in _registeredCameras)
         {
             if (!cam) continue;

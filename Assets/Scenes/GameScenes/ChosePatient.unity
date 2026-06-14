@@ -1319,8 +1319,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1553,7 +1553,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 289.2117, y: -0.7949959}
+  m_AnchoredPosition: {x: 289.2117, y: -0.79638}
   m_SizeDelta: {x: 418.75, y: 559.375}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &428948809
@@ -4078,6 +4078,11 @@ MonoBehaviour:
   dialogueCanvasGroup: {fileID: 0}
   legacyDialogueRoot: {fileID: 0}
   charDelay: 0.06
+  spaceDelayMultiplier: 0.35
+  commaPause: 0.12
+  sentencePause: 0.22
+  ellipsisPause: 0.35
+  lineBreakPause: 0.25
   textBoxFadeInDuration: 0.12
   textBoxFadeOutDuration: 0.08
   holdAfterTyping: 1.2
@@ -4176,8 +4181,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4515,6 +4520,11 @@ MonoBehaviour:
   dialogueCanvasGroup: {fileID: 0}
   legacyDialogueRoot: {fileID: 0}
   charDelay: 0.05
+  spaceDelayMultiplier: 0.35
+  commaPause: 0.12
+  sentencePause: 0.22
+  ellipsisPause: 0.35
+  lineBreakPause: 0.25
   textBoxFadeInDuration: 0.12
   textBoxFadeOutDuration: 0.08
   holdAfterTyping: 2
