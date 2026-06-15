@@ -12,7 +12,8 @@ public class PatientGenerator : MonoBehaviour
     [SerializeField] private bool forceDebugMiniGame;
     [SerializeField] private MajorMiniGameOption[] majorMiniGamePool =
     {
-        new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze")
+        new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze"),
+        new MajorMiniGameOption(MajorMiniGameType.Wordle, "Wordle")
     };
 
     private Patient _patient1;

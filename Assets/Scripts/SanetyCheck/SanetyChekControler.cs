@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SanetyChekControler : DialogueBase
 {
@@ -25,14 +26,20 @@ public class SanetyChekControler : DialogueBase
     private IEnumerator Start()
     {
         var healthBars = HealthBars.Instance;
-        var psycheState = healthBars.CurrentPsycheState();
+        if (!healthBars)
+        {
+            Debug.LogWarning($"{nameof(SanetyChekControler)} could not find {nameof(HealthBars)}. Falling back to stable psyche state.", this);
+        }
+
+        var psycheState = healthBars ? healthBars.CurrentPsycheState() : HealthBars.PsycheState.Stable;
 
         if (psycheState == HealthBars.PsycheState.Broken)
         {
-            canvasGroup.alpha = 0;
-            portrait.sprite = BrokenPortrait;
+            if (canvasGroup) canvasGroup.alpha = 0;
+            if (portrait && BrokenPortrait) portrait.sprite = BrokenPortrait;
+
             yield return new WaitForSecondsRealtime(brokenPortraitHoldSeconds);
-            SceneController.Instance.LoadScene(EndingScene);
+            LoadConfiguredScene(EndingScene);
             yield break;
         }
 
@@ -43,6 +50,7 @@ public class SanetyChekControler : DialogueBase
             HealthBars.PsycheState.Unstable => lineUnstable,
             _ => lineUnstable
         };
+        line ??= string.Empty;
 
         PlayLine(line);
         float lineHoldSeconds = Mathf.Max(minimumLineHoldSeconds, line.Length * charDelay + extraLineHoldSeconds);
@@ -53,8 +61,25 @@ public class SanetyChekControler : DialogueBase
             yield return null;
         }
         
-        SceneController.Instance.LoadScene(NextScene);
+        LoadConfiguredScene(NextScene);
+    }
+
+    private void LoadConfiguredScene(string sceneName)
+    {
+        if (string.IsNullOrWhiteSpace(sceneName))
+        {
+            Debug.LogError($"{nameof(SanetyChekControler)} cannot load a blank scene name.", this);
+            return;
+        }
+
+        if (SceneController.Instance)
+        {
+            SceneController.Instance.LoadScene(sceneName);
+            return;
+        }
+
+        Debug.LogWarning($"{nameof(SanetyChekControler)} could not find {nameof(SceneController)}. Loading '{sceneName}' directly.", this);
+        SceneManager.LoadScene(sceneName);
     }
 }
-
 

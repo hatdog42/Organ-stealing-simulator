@@ -4483,6 +4483,8 @@ MonoBehaviour:
   majorMiniGamePool:
   - type: 0
     displayName: Maze
+  - type: 2
+    displayName: Wordle
 --- !u!4 &1532961151
 Transform:
   m_ObjectHideFlags: 0
@@ -4529,6 +4531,7 @@ MonoBehaviour:
   waitForSceneFade: 1
   hideTextBoxOnAwake: 1
   hideTextBoxAfterLine: 0
+  playTutorial: 0
   choosePatientSceneName: ChosePatient
   playOncePerSession: 1
   waitBeforeFirstLine: 0.5

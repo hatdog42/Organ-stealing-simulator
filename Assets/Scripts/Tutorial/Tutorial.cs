@@ -6,6 +6,7 @@ public class Tutorial : DialogueBase
 {
     private static bool hasPlayedChoosePatientTutorial;
 
+    [SerializeField] private bool playTutorial = true;
     [SerializeField] private string choosePatientSceneName = "ChosePatient";
     [SerializeField] private bool playOncePerSession = true;
     [SerializeField, Min(0f)] private float waitBeforeFirstLine = 0.5f;
@@ -111,6 +112,7 @@ public class Tutorial : DialogueBase
 
     private bool ShouldPlayChoosePatientTutorial()
     {
+        if (!playTutorial) return false;
         if (playOncePerSession && hasPlayedChoosePatientTutorial) return false;
         return SceneManager.GetActiveScene().name == choosePatientSceneName;
     }

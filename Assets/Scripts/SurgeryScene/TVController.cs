@@ -33,9 +33,12 @@ public class TVController : MonoBehaviour
             RegisterMiniGameCamera(cam);
         }
 
+        RegisterSceneMiniGameCameras();
+
         foreach (var cam in _registeredCameras)
         {
             cam.targetTexture = null;
+            cam.enabled = false;
         }
 
         if (tvRoot) tvRoot.SetActive(false);
@@ -47,6 +50,7 @@ public class TVController : MonoBehaviour
 
         _registeredCameras.Add(miniGameCamera);
         miniGameCamera.targetTexture = null;
+        miniGameCamera.enabled = false;
     }
 
     public void OpenMiniGame(Camera targetCamera)
@@ -86,7 +90,9 @@ public class TVController : MonoBehaviour
         foreach (var cam in _registeredCameras)
         {
             if (!cam) continue;
-            cam.targetTexture = (cam == targetCamera) ? screenRT : null;
+            bool isTargetCamera = cam == targetCamera;
+            cam.targetTexture = isTargetCamera ? screenRT : null;
+            cam.enabled = isTargetCamera;
         }
         
         _activeCamera = targetCamera;
@@ -162,6 +168,8 @@ public class TVController : MonoBehaviour
                 return FindMazeCamera();
             case MajorMiniGameType.DebugButtons:
                 return FindDebugButtonsCamera();
+            case MajorMiniGameType.Wordle:
+                return FindWordleCamera();
             default:
                 Debug.LogError($"No camera resolver exists for major minigame type '{majorMiniGameType}'.");
                 return null;
@@ -170,12 +178,37 @@ public class TVController : MonoBehaviour
 
     private Camera FindMazeCamera()
     {
-        foreach (Camera camera in FindObjectsByType<Camera>(FindObjectsInactive.Include))
+        return FindCameraForMiniGame<MazeGame>("MazeFolder", "Maze");
+    }
+
+    private Camera FindWordleCamera()
+    {
+        return FindCameraForMiniGame<WordleManager>("WordleFolder", "Wordle");
+    }
+
+    private Camera FindCameraForMiniGame<TMiniGame>(string rootName, string displayName)
+        where TMiniGame : MiniGameBase
+    {
+        TMiniGame miniGame = null;
+        GameObject root = FindSceneObject(rootName);
+        if (root) miniGame = root.GetComponentInChildren<TMiniGame>(true);
+
+        if (!miniGame)
         {
-            if (camera && camera.GetComponentInParent<MazeGame>(true)) return camera;
+            miniGame = FindAnyObjectByType<TMiniGame>(FindObjectsInactive.Include);
         }
 
-        Debug.LogError("No MazeGame camera was found in the Surgery scene.");
+        if (!miniGame)
+        {
+            Debug.LogError($"No {displayName} minigame was found in the Surgery scene.");
+            return null;
+        }
+
+        Transform miniGameRoot = miniGame.transform.root;
+        Camera miniGameCamera = miniGameRoot ? miniGameRoot.GetComponentInChildren<Camera>(true) : null;
+        if (miniGameCamera) return miniGameCamera;
+
+        Debug.LogError($"{displayName} minigame '{miniGame.name}' exists, but no child Camera was found.");
         return null;
     }
 
@@ -216,6 +249,25 @@ public class TVController : MonoBehaviour
         return null;
     }
 
+    private void RegisterSceneMiniGameCameras()
+    {
+        foreach (Camera miniGameCamera in FindObjectsByType<Camera>(FindObjectsInactive.Include))
+        {
+            if (!IsMiniGameCamera(miniGameCamera)) continue;
+
+            RegisterMiniGameCamera(miniGameCamera);
+        }
+    }
+
+    private static bool IsMiniGameCamera(Camera camera)
+    {
+        if (!camera) return false;
+        if (camera.GetComponentInParent<MiniGameBase>(true)) return true;
+
+        Transform root = camera.transform.root;
+        return root && root.GetComponentInChildren<MiniGameBase>(true);
+    }
+
     public void CloseMiniGame()
     {
         if (_isClosing) return;
@@ -239,6 +291,7 @@ public class TVController : MonoBehaviour
         {
             if (!cam) continue;
             cam.targetTexture = null;
+            cam.enabled = false;
         }
         if (_activeGame != null) _activeGame.OnFocusLost();
         _activeGame = null;

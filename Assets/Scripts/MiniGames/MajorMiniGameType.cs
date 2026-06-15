@@ -4,8 +4,9 @@ namespace MiniGames
 {
     public enum MajorMiniGameType
     {
-        Maze,
-        DebugButtons
+        Maze = 0,
+        DebugButtons = 1,
+        Wordle = 2
     }
 
     [Serializable]

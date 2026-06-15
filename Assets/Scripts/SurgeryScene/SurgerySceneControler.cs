@@ -12,7 +12,9 @@ public class SurgerySceneControler : MonoBehaviour
     [Header("Major MiniGames")]
     [SerializeField] private MajorMiniGameBinding[] majorMiniGames;
 
+    private MajorMiniGameBinding _discoveredMaze;
     private MajorMiniGameBinding _discoveredDebugButtons;
+    private MajorMiniGameBinding _discoveredWordle;
     private Camera _selectedMajorMiniGameCamera;
 
     private void Awake()
@@ -65,24 +67,41 @@ public class SurgerySceneControler : MonoBehaviour
 
     private MajorMiniGameBinding[] GetMajorMiniGames()
     {
+        if (!_discoveredMaze.root)
+        {
+            _discoveredMaze = DiscoverMiniGame<MiniGames.MazeGame>("MazeFolder", MajorMiniGameType.Maze);
+        }
+
         if (!_discoveredDebugButtons.root)
         {
             _discoveredDebugButtons = DiscoverDebugButtons();
         }
 
-        if (majorMiniGames == null || majorMiniGames.Length == 0)
+        if (!_discoveredWordle.root)
         {
-            return _discoveredDebugButtons.root ? new[] { _discoveredDebugButtons } : Array.Empty<MajorMiniGameBinding>();
+            _discoveredWordle = DiscoverWordle();
         }
 
-        if (!_discoveredDebugButtons.root || HasMajorMiniGameBinding(MajorMiniGameType.DebugButtons))
-        {
-            return majorMiniGames;
-        }
+        List<MajorMiniGameBinding> combinedMiniGames = majorMiniGames != null
+            ? new List<MajorMiniGameBinding>(majorMiniGames)
+            : new List<MajorMiniGameBinding>();
 
-        List<MajorMiniGameBinding> combinedMiniGames = new(majorMiniGames);
-        combinedMiniGames.Add(_discoveredDebugButtons);
+        AddDiscoveredMiniGame(combinedMiniGames, _discoveredMaze);
+        AddDiscoveredMiniGame(combinedMiniGames, _discoveredDebugButtons);
+        AddDiscoveredMiniGame(combinedMiniGames, _discoveredWordle);
         return combinedMiniGames.ToArray();
+    }
+
+    private void AddDiscoveredMiniGame(List<MajorMiniGameBinding> miniGames, MajorMiniGameBinding discoveredMiniGame)
+    {
+        if (!discoveredMiniGame.root) return;
+
+        foreach (MajorMiniGameBinding miniGame in miniGames)
+        {
+            if (miniGame.type == discoveredMiniGame.type) return;
+        }
+
+        miniGames.Add(discoveredMiniGame);
     }
 
     private MajorMiniGameBinding DiscoverDebugButtons()
@@ -108,6 +127,47 @@ public class SurgerySceneControler : MonoBehaviour
             root = root,
             camera = root.GetComponentInChildren<Camera>(true)
         };
+    }
+
+    private MajorMiniGameBinding DiscoverWordle()
+    {
+        return DiscoverMiniGame<WordleManager>("WordleFolder", MajorMiniGameType.Wordle);
+    }
+
+    private MajorMiniGameBinding DiscoverMiniGame<TMiniGame>(string rootName, MajorMiniGameType type)
+        where TMiniGame : Component
+    {
+        GameObject root = FindSceneObject(rootName);
+        if (!root)
+        {
+            TMiniGame miniGame = FindAnyObjectByType<TMiniGame>(FindObjectsInactive.Include);
+            if (miniGame) root = miniGame.transform.root.gameObject;
+        }
+
+        if (!root) return default;
+
+        return new MajorMiniGameBinding
+        {
+            type = type,
+            root = root,
+            camera = root.GetComponentInChildren<Camera>(true)
+        };
+    }
+
+    private GameObject FindSceneObject(string objectName)
+    {
+        GameObject root = GameObject.Find(objectName);
+        if (root) return root;
+
+        foreach (GameObject gameObject in Resources.FindObjectsOfTypeAll<GameObject>())
+        {
+            if (gameObject.name == objectName && gameObject.scene.IsValid())
+            {
+                return gameObject;
+            }
+        }
+
+        return null;
     }
 
     private bool HasMajorMiniGameBinding(MajorMiniGameType type)
