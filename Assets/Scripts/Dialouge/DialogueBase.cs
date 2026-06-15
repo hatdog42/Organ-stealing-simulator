@@ -37,6 +37,7 @@ public class DialogueBase : MonoBehaviour
     protected virtual bool UsePrefabDialogue => usePrefabDialogue;
     protected virtual bool ShowTextBoxAtTop => showTextBoxAtTop;
     protected virtual bool HideTextBoxAfterLine => hideTextBoxAfterLine;
+    protected virtual float HoldAfterTyping => holdAfterTyping;
     protected virtual string DialogueSpeakerName => null;
     protected bool PrefabDialogueEnabled => UsePrefabDialogue;
 
@@ -96,7 +97,7 @@ public class DialogueBase : MonoBehaviour
                 lineBreakPause,
                 textBoxFadeInDuration,
                 textBoxFadeOutDuration,
-                holdAfterTyping,
+                HoldAfterTyping,
                 HideTextBoxAfterLine,
                 ShowTextBoxAtTop);
 
@@ -136,7 +137,7 @@ public class DialogueBase : MonoBehaviour
             yield return WaitForSecondsRealtimeRespectingPause(delay);
         }
 
-        if (holdAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(holdAfterTyping);
+        if (HoldAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(HoldAfterTyping);
         if (HideTextBoxAfterLine) yield return FadeTextBox(0f, textBoxFadeOutDuration);
     }
 

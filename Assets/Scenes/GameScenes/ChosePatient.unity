@@ -4479,10 +4479,8 @@ MonoBehaviour:
   patientData: {fileID: 11400000, guid: cfebb692385c1304b9ef6dbc526d909d, type: 2}
   patient1UI: {fileID: 1565665313}
   patient2UI: {fileID: 428948810}
-  forceDebugMiniGame: 1
+  forceDebugMiniGame: 0
   majorMiniGamePool:
-  - type: 1
-    displayName: Debug Buttons
   - type: 0
     displayName: Maze
 --- !u!4 &1532961151
@@ -4534,8 +4532,8 @@ MonoBehaviour:
   choosePatientSceneName: ChosePatient
   playOncePerSession: 1
   waitBeforeFirstLine: 0.5
+  waitBetweenLines: 0.7
   speakerName: Dr. Shad Iman
-  showTutorialTextBoxAtTop: 0
   hidePatientChoicesDuringTutorial: 1
   choosePatientLines:
   - I presume you are the new doctor. I am Dr. Shad Iman. Your first charts are on

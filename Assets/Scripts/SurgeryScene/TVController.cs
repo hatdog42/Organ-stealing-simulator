@@ -80,6 +80,7 @@ public class TVController : MonoBehaviour
             return;
         }
 
+        ActivateHierarchy(nextGame.transform);
         RegisterMiniGameCamera(targetCamera);
         
         foreach (var cam in _registeredCameras)
@@ -97,6 +98,15 @@ public class TVController : MonoBehaviour
 
         
         if (tvRoot) tvRoot.SetActive(true);
+    }
+
+    private static void ActivateHierarchy(Transform child)
+    {
+        while (child)
+        {
+            child.gameObject.SetActive(true);
+            child = child.parent;
+        }
     }
 
     private MiniGameBase FindMiniGameForCamera(Camera targetCamera)

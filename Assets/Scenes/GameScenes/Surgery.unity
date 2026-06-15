@@ -448,9 +448,21 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
+      propertyPath: sfxOxygen
+      value: 
+      objectReference: {fileID: 8300000, guid: 10d485120d4cc7a49a9f78700774e4ec, type: 3}
+    - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
       propertyPath: warningAudio
       value: 
       objectReference: {fileID: 1523773664}
+    - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
+      propertyPath: lowOxygenPitch
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
+      propertyPath: highOxygenPitch
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
       propertyPath: warningFaceScreen
       value: 
@@ -2784,7 +2796,7 @@ MonoBehaviour:
   collider3: {fileID: 865350928}
   animatedRoot: {fileID: 0}
   closedLocalOffset: {x: 0, y: -5, z: 0}
-  slideDuration: 0.18
+  slideDuration: 0.1
 --- !u!1 &1980223038
 GameObject:
   m_ObjectHideFlags: 0

@@ -61,6 +61,7 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         
         selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(SelectPatient);
+        selectButton.interactable = true;
 
         ButtonClickSound buttonClickSound = selectButton.GetComponent<ButtonClickSound>();
         if (buttonClickSound) buttonClickSound.enabled = false;

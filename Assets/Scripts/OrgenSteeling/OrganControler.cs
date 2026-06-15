@@ -1,8 +1,69 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class OrganControler : MonoBehaviour
 {
+    [System.Serializable]
+    private class ContainerFeedback
+    {
+        [SerializeField] private SpriteRenderer spriteRenderer;
+        [SerializeField] private Sprite normalSprite;
+        [SerializeField] private Sprite hoverSprite;
+        [SerializeField] private Sprite clickedSprite;
+        [SerializeField] private AudioClip clickSound;
+        [SerializeField] private AudioSource clickAudioSource;
+        [SerializeField, Range(0f, 1f)] private float clickSoundVolume = 1f;
+
+        public void Initialize()
+        {
+            if (!spriteRenderer) return;
+            if (!normalSprite) normalSprite = spriteRenderer.sprite;
+            if (!clickAudioSource) clickAudioSource = spriteRenderer.GetComponent<AudioSource>();
+            if (clickAudioSource && AudioManager.Instance)
+            {
+                AudioManager.Instance.RegisterSource(clickAudioSource, AudioChannelType.Sfx);
+            }
+
+            ShowNormal();
+        }
+
+        public void ShowNormal()
+        {
+            SetSprite(normalSprite);
+        }
+
+        public void ShowHover()
+        {
+            SetSprite(hoverSprite ? hoverSprite : normalSprite);
+        }
+
+        public void ShowClicked()
+        {
+            SetSprite(clickedSprite ? clickedSprite : hoverSprite ? hoverSprite : normalSprite);
+        }
+
+        public void PlayClickSound()
+        {
+            if (clickSound && AudioManager.Instance)
+            {
+                AudioManager.Instance.PlaySfx(clickSound, clickSoundVolume);
+                return;
+            }
+
+            if (!clickAudioSource) return;
+
+            clickAudioSource.Play();
+        }
+
+        private void SetSprite(Sprite sprite)
+        {
+            if (!spriteRenderer || !sprite) return;
+
+            spriteRenderer.sprite = sprite;
+        }
+    }
+
     private enum OrganContainerChoice
     {
         None,
@@ -14,13 +75,21 @@ public class OrganControler : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     [SerializeField]private string nextScene;
     [SerializeField]private LayerMask clickableMask;
+    [SerializeField] private ContainerFeedback organBoxFeedback;
+    [SerializeField] private ContainerFeedback mopBucketFeedback;
+    [SerializeField, Min(0f)] private float clickFeedbackDuration = 0.15f;
+
     private bool _choiceMade;
+    private OrganContainerChoice _hoveredChoice;
     
     void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         if(!_camera) _camera = Camera.main;
+        organBoxFeedback?.Initialize();
+        mopBucketFeedback?.Initialize();
     }
+
     private void Update()
     {
         if (PauseMenueControler.IsPaused) return;
@@ -31,23 +100,34 @@ public class OrganControler : MonoBehaviour
         world.z = 0f;
         transform.position = world;
 
+        if (!_choiceMade)
+        {
+            SetHoveredChoice(GetContainerChoiceAt(world));
+        }
+
         if (!Mouse.current.leftButton.wasPressedThisFrame) return;
         if (_choiceMade) return;
 
-        OrganContainerChoice choice = GetContainerChoiceAt(world);
+        OrganContainerChoice choice = _hoveredChoice;
         if (choice == OrganContainerChoice.None) return;
 
         _choiceMade = true;
         _spriteRenderer.enabled = false;
+        ApplyClickedFeedback(choice);
 
         if (choice == OrganContainerChoice.OrganBox)
         {
-            OrganBoxChosen();
+            StartCoroutine(ChooseAfterFeedback(OrganBoxChosen));
         }
         else if (choice == OrganContainerChoice.MopBucket)
         {
-            MopBucketChosen();
+            StartCoroutine(ChooseAfterFeedback(MopBucketChosen));
         }
+    }
+
+    private void OnDisable()
+    {
+        SetHoveredChoice(OrganContainerChoice.None);
     }
 
     private OrganContainerChoice GetContainerChoiceAt(Vector2 world)
@@ -63,6 +143,44 @@ public class OrganControler : MonoBehaviour
         }
 
         return OrganContainerChoice.None;
+    }
+
+    private void SetHoveredChoice(OrganContainerChoice choice)
+    {
+        if (_hoveredChoice == choice) return;
+
+        GetFeedback(_hoveredChoice)?.ShowNormal();
+        _hoveredChoice = choice;
+        GetFeedback(_hoveredChoice)?.ShowHover();
+    }
+
+    private void ApplyClickedFeedback(OrganContainerChoice choice)
+    {
+        ContainerFeedback feedback = GetFeedback(choice);
+        if (feedback == null) return;
+
+        feedback.ShowClicked();
+        feedback.PlayClickSound();
+    }
+
+    private ContainerFeedback GetFeedback(OrganContainerChoice choice)
+    {
+        return choice switch
+        {
+            OrganContainerChoice.OrganBox => organBoxFeedback,
+            OrganContainerChoice.MopBucket => mopBucketFeedback,
+            _ => null
+        };
+    }
+
+    private IEnumerator ChooseAfterFeedback(System.Action choose)
+    {
+        if (clickFeedbackDuration > 0f)
+        {
+            yield return new WaitForSeconds(clickFeedbackDuration);
+        }
+
+        choose?.Invoke();
     }
 
     private static OrganContainerChoice GetContainerChoice(Transform hitTransform)

@@ -9,8 +9,8 @@ public class Tutorial : DialogueBase
     [SerializeField] private string choosePatientSceneName = "ChosePatient";
     [SerializeField] private bool playOncePerSession = true;
     [SerializeField, Min(0f)] private float waitBeforeFirstLine = 0.5f;
+    [SerializeField, Min(0f)] private float waitBetweenLines = 0.7f;
     [SerializeField] private string speakerName = "Dr. Shad Iman";
-    [SerializeField] private bool showTutorialTextBoxAtTop;
     [SerializeField] private bool hidePatientChoicesDuringTutorial = true;
 
     [SerializeField, TextArea(2, 4)] private string[] choosePatientLines =
@@ -32,8 +32,9 @@ public class Tutorial : DialogueBase
     private bool patient2WasActive;
 
     protected override string DialogueSpeakerName => speakerName;
-    protected override bool ShowTextBoxAtTop => showTutorialTextBoxAtTop;
+    protected override bool ShowTextBoxAtTop => false;
     protected override bool HideTextBoxAfterLine => false;
+    protected override float HoldAfterTyping => waitBetweenLines;
 
     protected override void Awake()
     {

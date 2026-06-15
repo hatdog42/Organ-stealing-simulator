@@ -9,10 +9,9 @@ public class PatientGenerator : MonoBehaviour
     public PatientChartUI patient2UI;
 
     [Header("Major MiniGame")]
-    [SerializeField] private bool forceDebugMiniGame = true;
+    [SerializeField] private bool forceDebugMiniGame;
     [SerializeField] private MajorMiniGameOption[] majorMiniGamePool =
     {
-        new MajorMiniGameOption(MajorMiniGameType.DebugButtons, "Debug Buttons"),
         new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze")
     };
 

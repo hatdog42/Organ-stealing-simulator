@@ -16,6 +16,8 @@ namespace MiniGames.SubGames.CatchTheBall
         
         //Drops
         [Header("Drop"), SerializeField] private GameObject drop;
+        [SerializeField] private AudioClip sfxDrop;
+        [SerializeField, Range(0f, 1f)] private float dropSoundVolume = 1f;
         
         //Drop Spawners
         [Header("Spawn Positions")]
@@ -85,6 +87,13 @@ namespace MiniGames.SubGames.CatchTheBall
             _outsideDropCount++;
             DisplayWarning(true);
             PatientHealthController.Instance?.ApplyDropDamage();
+        }
+
+        public void PlayDropSound()
+        {
+            if (!InFocus) return;
+
+            AudioManager.Instance?.PlaySfx(sfxDrop, dropSoundVolume);
         }
 
         public void ResetOutsideDrops()

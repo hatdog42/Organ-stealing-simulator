@@ -11,6 +11,7 @@ namespace MiniGames.SubGames.CatchTheBall
         {
             if (other.CompareTag("Drop"))
             {
+                catchTheDrop.PlayDropSound();
                 Destroy(other.gameObject);
                 catchTheDrop.ResetOutsideDrops();
             }

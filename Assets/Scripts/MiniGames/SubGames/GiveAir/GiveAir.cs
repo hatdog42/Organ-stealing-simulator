@@ -21,6 +21,13 @@ namespace MiniGames.SubGames.GiveAir
         
         private bool _pressingAir;
 
+        [Header("Oxygen Audio")]
+        [SerializeField] private AudioClip sfxOxygen;
+        [SerializeField] private AudioSource oxygenAudioSource;
+        [SerializeField, Range(0f, 1f)] private float oxygenSoundVolume = 1f;
+        [SerializeField, Min(0f)] private float lowOxygenPitch = 0.6f;
+        [SerializeField, Min(0f)] private float highOxygenPitch = 1.4f;
+
         private void Start()
         {
             _currentTimer = airTimer;
@@ -28,6 +35,8 @@ namespace MiniGames.SubGames.GiveAir
             _fillBar = airScaleBar.GetComponent<SpriteRenderer>();
             _originalScale = _fillBar.transform.localScale;
             _originalPosition = _fillBar.transform.localPosition;
+
+            SetupOxygenAudio();
         }
 
         public override void OnFocusGained(TVInputRelay relay)
@@ -48,18 +57,18 @@ namespace MiniGames.SubGames.GiveAir
                 inputRelay.PointerDrag -= OnPointerDrag;
                 inputRelay.PointerUp   -= OnPointerUp;
             }
-            _pressingAir = false;
+            SetPressingAir(false);
             base.OnFocusLost();
         }
         private void OnPointerDown(Vector3 miniWorld)
         {
-            _pressingAir = HitAirButton(miniWorld);
+            SetPressingAir(HitAirButton(miniWorld));
         }
 
         private void OnPointerDrag(Vector3 miniWorld)
         {
             // keep updating if the pointer stays over / leaves the button
-            _pressingAir = HitAirButton(miniWorld);
+            SetPressingAir(HitAirButton(miniWorld));
         }
         private bool HitAirButton(Vector3 miniWorld)
         {
@@ -71,7 +80,7 @@ namespace MiniGames.SubGames.GiveAir
         }
         private void OnPointerUp(Vector3 miniWorld)
         {
-            _pressingAir = false;
+            SetPressingAir(false);
         }
         
         private void AirController()
@@ -89,6 +98,7 @@ namespace MiniGames.SubGames.GiveAir
             bool oxygenAlarm = oxygenNormalized < alarmThreshold;
             DisplayWarning(oxygenAlarm);
             PatientHealthController.Instance?.ReportOxygen(oxygenNormalized, alarmThreshold);
+            UpdateOxygenAudioPitch(oxygenNormalized);
         }
 
         private void UpdateFillBar()
@@ -107,6 +117,66 @@ namespace MiniGames.SubGames.GiveAir
         {
             AirController();
             UpdateFillBar();
+        }
+
+        private void SetPressingAir(bool pressing)
+        {
+            if (_pressingAir == pressing) return;
+
+            _pressingAir = pressing;
+
+            if (_pressingAir)
+            {
+                PlayOxygenAudio();
+            }
+            else
+            {
+                StopOxygenAudio();
+            }
+        }
+
+        private void SetupOxygenAudio()
+        {
+            if (!sfxOxygen) return;
+
+            if (!oxygenAudioSource) oxygenAudioSource = GetComponent<AudioSource>();
+            if (!oxygenAudioSource) oxygenAudioSource = gameObject.AddComponent<AudioSource>();
+
+            oxygenAudioSource.playOnAwake = false;
+            oxygenAudioSource.loop = true;
+            oxygenAudioSource.clip = sfxOxygen;
+            oxygenAudioSource.volume = oxygenSoundVolume;
+
+            AudioManager.Instance?.RegisterSource(oxygenAudioSource, AudioChannelType.Sfx, oxygenSoundVolume);
+        }
+
+        private void PlayOxygenAudio()
+        {
+            if (!sfxOxygen) return;
+            if (!oxygenAudioSource) SetupOxygenAudio();
+            if (!oxygenAudioSource) return;
+
+            oxygenAudioSource.clip = sfxOxygen;
+            UpdateOxygenAudioPitch(Mathf.Clamp01(_currentTimer / airTimer));
+
+            if (!oxygenAudioSource.isPlaying)
+            {
+                oxygenAudioSource.Play();
+            }
+        }
+
+        private void StopOxygenAudio()
+        {
+            if (!oxygenAudioSource) return;
+
+            oxygenAudioSource.Stop();
+        }
+
+        private void UpdateOxygenAudioPitch(float oxygenNormalized)
+        {
+            if (!_pressingAir || !oxygenAudioSource) return;
+
+            oxygenAudioSource.pitch = Mathf.Lerp(lowOxygenPitch, highOxygenPitch, oxygenNormalized);
         }
     }
 }
