@@ -6214,7 +6214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caf60a8ce3f56a24da8fd2fe206cc4c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClickInputControler
-  cam: {fileID: 0}
+  cam: {fileID: 363752991}
   clickableMask:
     serializedVersion: 2
     m_Bits: 4294967295

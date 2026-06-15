@@ -23,6 +23,8 @@ public class OfficeControler : DialogueBase, IClickable
     protected override void Awake()
     {
         base.Awake();
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
         
         if (paperCanvas) Hide(paperCanvas);
         if (coworkerCanvas) Hide(coworkerCanvas);
@@ -30,7 +32,6 @@ public class OfficeControler : DialogueBase, IClickable
 
     private void Start()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
         var repState = HealthBars.Instance.CurrentReputationState();
         string line = LineFor(repState);
         StartCoroutine(TypeCoworkerLine(line));
@@ -38,6 +39,7 @@ public class OfficeControler : DialogueBase, IClickable
     
     public void OnClick(Vector3 worldPos)
     {
+        if (!isActiveAndEnabled) return;
         if (dialogueActive) return;
         
         Show(paperCanvas);
@@ -45,12 +47,18 @@ public class OfficeControler : DialogueBase, IClickable
 
     public void OnHoverEnter()
     {
-       spriteRenderer.sprite = hoverSprite;
+        SetSprite(hoverSprite);
     }
 
     public void OnHoverExit()
     {
-        spriteRenderer.sprite = baseSprite;
+        SetSprite(baseSprite);
+    }
+
+    private void SetSprite(Sprite sprite)
+    {
+        if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer && sprite) spriteRenderer.sprite = sprite;
     }
 
     private string LineFor(HealthBars.ReputationState state) => state switch

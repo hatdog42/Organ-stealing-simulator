@@ -22,7 +22,7 @@ public class ClickInputControler : MonoBehaviour
         Vector3 world = cam.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Mathf.Abs(cam.transform.position.z)));
         
         Collider2D hit = Physics2D.OverlapPoint(world, clickableMask);
-        var hoverCandidate = hit ? hit.GetComponentInParent<IClickable>() : null;
+        var hoverCandidate = GetAvailableClickable(hit);
 
         if (hoverCandidate != _hovered)
         {
@@ -35,5 +35,15 @@ public class ClickInputControler : MonoBehaviour
         {
             _hovered.OnClick(world);
         }
+    }
+
+    private static IClickable GetAvailableClickable(Collider2D hit)
+    {
+        if (!hit) return null;
+
+        IClickable clickable = hit.GetComponentInParent<IClickable>();
+        if (clickable is Behaviour behaviour && !behaviour.isActiveAndEnabled) return null;
+
+        return clickable;
     }
 }
