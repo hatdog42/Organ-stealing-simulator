@@ -815,135 +815,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 339089200}
   m_CullTransparentMesh: 1
---- !u!1 &350697179
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 350697181}
-  - component: {fileID: 350697180}
-  m_Layer: 0
-  m_Name: Waiting Music
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!82 &350697180
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350697179}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: a5fa40f31f880f74f93ed68a590f4f28, type: 3}
-  m_PlayOnAwake: 1
-  m_Volume: 0.4
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!4 &350697181
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350697179}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.5516086, y: 1.3391814, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &363752989
 GameObject:
   m_ObjectHideFlags: 0
@@ -1625,8 +1496,8 @@ MonoBehaviour:
   selectDropDistance: 700
   hoverMoveDuration: 0.08
   selectMoveDuration: 0.25
-  hoverSound: {fileID: 8300000, guid: 6e81c62f053f2a343b858897de5d13e2, type: 3}
-  selectSound: {fileID: 8300000, guid: ac3cf90e0b21c7e4d8752b7f5d403e8e, type: 3}
+  hoverSound: 12
+  selectSound: 13
   hoverVolume: 1
   selectVolume: 1
 --- !u!114 &428948811
@@ -4070,24 +3941,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f4e95292ece69a419482f9e9567f3c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OfficeControler
-  dialogueBoxPrefab: {fileID: 0}
-  usePrefabDialogue: 1
-  resourceDialogueBoxPath: DialogueBox
-  showTextBoxAtTop: 1
-  dialogueText: {fileID: 0}
-  dialogueCanvasGroup: {fileID: 0}
-  legacyDialogueRoot: {fileID: 0}
   charDelay: 0.06
   spaceDelayMultiplier: 0.35
   commaPause: 0.12
   sentencePause: 0.22
   ellipsisPause: 0.35
   lineBreakPause: 0.25
+  advancePromptDelay: 0.5
+  dialogueBoxPrefab: {fileID: 0}
+  resourceDialogueBoxPath: DialogueBox
+  showTextBoxAtTop: 1
   textBoxFadeInDuration: 0.12
   textBoxFadeOutDuration: 0.08
-  holdAfterTyping: 1.2
   waitForSceneFade: 1
-  hideTextBoxOnAwake: 1
   hideTextBoxAfterLine: 1
   baseSprite: {fileID: 21300000, guid: 6342cbe0381a4b3408872882a5c53529, type: 3}
   hoverSprite: {fileID: 21300000, guid: 1446aace9feca6f49a5e3c1acf5cde06, type: 3}
@@ -4479,12 +4345,15 @@ MonoBehaviour:
   patientData: {fileID: 11400000, guid: cfebb692385c1304b9ef6dbc526d909d, type: 2}
   patient1UI: {fileID: 1565665313}
   patient2UI: {fileID: 428948810}
-  forceDebugMiniGame: 0
+  forceMiniGame: 1
+  forcedMiniGame: 3
   majorMiniGamePool:
   - type: 0
     displayName: Maze
   - type: 2
     displayName: Wordle
+  - type: 3
+    displayName: Fishing
 --- !u!4 &1532961151
 Transform:
   m_ObjectHideFlags: 0
@@ -4512,30 +4381,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67e4b15dbbbc4d240a41626798c80195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tutorial
-  dialogueBoxPrefab: {fileID: 0}
-  usePrefabDialogue: 1
-  resourceDialogueBoxPath: DialogueBox
-  showTextBoxAtTop: 0
-  dialogueText: {fileID: 0}
-  dialogueCanvasGroup: {fileID: 0}
-  legacyDialogueRoot: {fileID: 0}
   charDelay: 0.05
   spaceDelayMultiplier: 0.35
   commaPause: 0.12
   sentencePause: 0.22
   ellipsisPause: 0.35
   lineBreakPause: 0.25
+  advancePromptDelay: 0.5
+  dialogueBoxPrefab: {fileID: 0}
+  resourceDialogueBoxPath: DialogueBox
+  showTextBoxAtTop: 0
   textBoxFadeInDuration: 0.12
   textBoxFadeOutDuration: 0.08
-  holdAfterTyping: 2
   waitForSceneFade: 1
-  hideTextBoxOnAwake: 1
   hideTextBoxAfterLine: 0
   playTutorial: 0
   choosePatientSceneName: ChosePatient
   playOncePerSession: 1
   waitBeforeFirstLine: 0.5
-  waitBetweenLines: 0.7
   speakerName: Dr. Shad Iman
   hidePatientChoicesDuringTutorial: 1
   choosePatientLines:
@@ -4841,8 +4704,8 @@ MonoBehaviour:
   selectDropDistance: 700
   hoverMoveDuration: 0.08
   selectMoveDuration: 0.25
-  hoverSound: {fileID: 8300000, guid: 6e81c62f053f2a343b858897de5d13e2, type: 3}
-  selectSound: {fileID: 8300000, guid: ac3cf90e0b21c7e4d8752b7f5d403e8e, type: 3}
+  hoverSound: 12
+  selectSound: 13
   hoverVolume: 1
   selectVolume: 1
 --- !u!1 &1571870840
@@ -6249,4 +6112,3 @@ SceneRoots:
   - {fileID: 540779026}
   - {fileID: 1576279123}
   - {fileID: 2144549167}
-  - {fileID: 350697181}

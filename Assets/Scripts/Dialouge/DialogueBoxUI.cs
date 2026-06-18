@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueBoxUI : MonoBehaviour
+public class DialogueBoxUI : TypewriterBase
 {
     [Header("References")]
     [SerializeField] private Canvas uiCanvas;
@@ -11,6 +11,7 @@ public class DialogueBoxUI : MonoBehaviour
     [SerializeField] private RectTransform dialoguePanel;
     [SerializeField] private TMP_Text dialogueText;
     [SerializeField] private TMP_Text speakerNameText;
+    [SerializeField] private TMP_Text nextText;
     [SerializeField] private GraphicRaycaster graphicRaycaster;
 
     [Header("Position")]
@@ -26,6 +27,7 @@ public class DialogueBoxUI : MonoBehaviour
     {
         EnsureReferences();
         SetSpeakerName(null);
+        SetNextTextVisible(false);
         SetVisible(false);
     }
 
@@ -42,15 +44,9 @@ public class DialogueBoxUI : MonoBehaviour
 
     public IEnumerator PlayLine(
         string line,
-        float charDelay,
-        float spaceDelayMultiplier,
-        float commaPause,
-        float sentencePause,
-        float ellipsisPause,
-        float lineBreakPause,
+        TypewriterSettings typewriterSettings,
         float fadeInDuration,
         float fadeOutDuration,
-        float holdAfterTyping,
         bool hideAfterLine,
         bool showAtTop)
     {
@@ -58,35 +54,24 @@ public class DialogueBoxUI : MonoBehaviour
 
         if (!dialogueText || !canvasGroup) yield break;
 
+        SetNextTextVisible(false);
         dialogueText.text = "";
         SetPosition(showAtTop);
         yield return FadeTo(1f, fadeInDuration);
 
         string text = line ?? string.Empty;
-        for (int i = 0; i < text.Length; i++)
-        {
-            yield return WaitWhilePaused();
-            char letter = text[i];
-            dialogueText.text += letter;
+        yield return TypeText(dialogueText, text, typewriterSettings);
+        yield return WaitForAdvancePromptDelay(typewriterSettings.AdvancePromptDelay);
+        SetNextTextVisible(true);
+        yield return WaitForAdvanceClick();
+        SetNextTextVisible(false);
 
-            float delay = DialogueBase.GetTypingDelay(
-                text,
-                i,
-                charDelay,
-                spaceDelayMultiplier,
-                commaPause,
-                sentencePause,
-                ellipsisPause,
-                lineBreakPause);
-            yield return WaitForSecondsRealtimeRespectingPause(delay);
-        }
-
-        if (holdAfterTyping > 0f) yield return WaitForSecondsRealtimeRespectingPause(holdAfterTyping);
         if (hideAfterLine) yield return FadeTo(0f, fadeOutDuration);
     }
 
     public IEnumerator Hide(float fadeOutDuration)
     {
+        SetNextTextVisible(false);
         yield return FadeTo(0f, fadeOutDuration);
     }
 
@@ -116,6 +101,24 @@ public class DialogueBoxUI : MonoBehaviour
     {
         TMP_Text[] textComponents = GetComponentsInChildren<TMP_Text>(true);
 
+        if (!nextText)
+        {
+            foreach (TMP_Text text in textComponents)
+            {
+                if (text.name.Equals("NextText", System.StringComparison.OrdinalIgnoreCase) ||
+                    text.name.Equals("Next", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    nextText = text;
+                    break;
+                }
+            }
+        }
+
+        if (nextText)
+        {
+            nextText.raycastTarget = false;
+        }
+
         if (!speakerNameText)
         {
             foreach (TMP_Text text in textComponents)
@@ -133,7 +136,22 @@ public class DialogueBoxUI : MonoBehaviour
 
         foreach (TMP_Text text in textComponents)
         {
-            if (text != speakerNameText)
+            if (text == speakerNameText || text == nextText)
+            {
+                continue;
+            }
+
+            if (text.name.Equals("Text", System.StringComparison.OrdinalIgnoreCase) ||
+                text.name.Equals("DialogueText", System.StringComparison.OrdinalIgnoreCase))
+            {
+                dialogueText = text;
+                return;
+            }
+        }
+
+        foreach (TMP_Text text in textComponents)
+        {
+            if (text != speakerNameText && text != nextText)
             {
                 dialogueText = text;
                 return;
@@ -220,6 +238,7 @@ public class DialogueBoxUI : MonoBehaviour
         }
 
         if (graphicRaycaster) graphicRaycaster.enabled = enabled;
+        if (nextText) nextText.raycastTarget = false;
     }
 
     private void OnPauseChanged(bool paused)
@@ -239,25 +258,11 @@ public class DialogueBoxUI : MonoBehaviour
         hiddenByPause = false;
     }
 
-    private static IEnumerator WaitWhilePaused()
+    private void SetNextTextVisible(bool visible)
     {
-        while (PauseMenueControler.IsPaused)
-        {
-            yield return null;
-        }
-    }
+        if (!nextText) return;
 
-    private static IEnumerator WaitForSecondsRealtimeRespectingPause(float seconds)
-    {
-        float elapsed = 0f;
-        while (elapsed < seconds)
-        {
-            if (!PauseMenueControler.IsPaused)
-            {
-                elapsed += Time.unscaledDeltaTime;
-            }
-
-            yield return null;
-        }
+        nextText.gameObject.SetActive(visible);
+        nextText.raycastTarget = false;
     }
 }

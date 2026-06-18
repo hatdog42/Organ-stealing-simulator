@@ -4,7 +4,9 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Slider))]
 public class AudioVolumeSlider : MonoBehaviour
 {
+    [SerializeField] private AudioVolumeTargetType targetType = AudioVolumeTargetType.Channel;
     [SerializeField] private AudioChannelType channelType = AudioChannelType.Music;
+    [SerializeField] private SoundId soundId = SoundId.None;
 
     private Slider _slider;
 
@@ -30,6 +32,11 @@ public class AudioVolumeSlider : MonoBehaviour
     {
         if (!AudioManager.Instance) return 1f;
 
+        if (targetType == AudioVolumeTargetType.Sound)
+        {
+            return AudioManager.Instance.GetSoundVolume(soundId);
+        }
+
         return channelType == AudioChannelType.Music
             ? AudioManager.Instance.MusicVolume
             : AudioManager.Instance.SfxVolume;
@@ -38,6 +45,12 @@ public class AudioVolumeSlider : MonoBehaviour
     private void SetVolume(float volume)
     {
         if (!AudioManager.Instance) return;
+
+        if (targetType == AudioVolumeTargetType.Sound)
+        {
+            AudioManager.Instance.SetSoundVolume(soundId, volume);
+            return;
+        }
 
         if (channelType == AudioChannelType.Music)
         {

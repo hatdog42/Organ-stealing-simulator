@@ -14,8 +14,6 @@ public class SanetyChekControler : DialogueBase
     [SerializeField] private string EndingScene = "Credits";
 
     [Header("Timing")]
-    [SerializeField, Min(0f)] private float minimumLineHoldSeconds = 4f;
-    [SerializeField, Min(0f)] private float extraLineHoldSeconds = 2f;
     [SerializeField, Min(0f)] private float brokenPortraitHoldSeconds = 12f;
     
     [Header("Lines")]
@@ -53,11 +51,8 @@ public class SanetyChekControler : DialogueBase
         line ??= string.Empty;
 
         PlayLine(line);
-        float lineHoldSeconds = Mathf.Max(minimumLineHoldSeconds, line.Length * charDelay + extraLineHoldSeconds);
-        float elapsed = 0f;
-        while (elapsed < lineHoldSeconds || Typing != null)
+        while (Typing != null)
         {
-            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
         
@@ -82,4 +77,3 @@ public class SanetyChekControler : DialogueBase
         SceneManager.LoadScene(sceneName);
     }
 }
-

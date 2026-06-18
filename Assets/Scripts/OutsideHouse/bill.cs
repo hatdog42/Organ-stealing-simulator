@@ -31,7 +31,7 @@ public class bill : MonoBehaviour
     public IEnumerator ShowMoneyRoutine(
         int total,
         float delayBetweenStages,
-        AudioClip moneySound,
+        SoundId moneySound,
         float soundVolume,
         Action<int> onStageRevealed = null)
     {
@@ -42,7 +42,7 @@ public class bill : MonoBehaviour
     public IEnumerator ShowMoneyRoutine(
         IList<int> amounts,
         float delayBetweenStages,
-        AudioClip moneySound,
+        SoundId moneySound,
         float soundVolume,
         Action<int> onStageRevealed = null)
     {
@@ -78,9 +78,9 @@ public class bill : MonoBehaviour
         return parts;
     }
 
-    private static void PlayMoneySound(AudioClip moneySound, float soundVolume)
+    private static void PlayMoneySound(SoundId moneySound, float soundVolume)
     {
-        if (!AudioManager.Instance || !moneySound) return;
+        if (!AudioManager.Instance || moneySound == SoundId.None) return;
 
         AudioManager.Instance.PlaySfx(moneySound, soundVolume);
     }

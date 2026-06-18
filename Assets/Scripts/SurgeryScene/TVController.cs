@@ -170,6 +170,8 @@ public class TVController : MonoBehaviour
                 return FindDebugButtonsCamera();
             case MajorMiniGameType.Wordle:
                 return FindWordleCamera();
+            case MajorMiniGameType.Fishing:
+                return FindFishingCamera();
             default:
                 Debug.LogError($"No camera resolver exists for major minigame type '{majorMiniGameType}'.");
                 return null;
@@ -184,6 +186,11 @@ public class TVController : MonoBehaviour
     private Camera FindWordleCamera()
     {
         return FindCameraForMiniGame<WordleManager>("WordleFolder", "Wordle");
+    }
+
+    private Camera FindFishingCamera()
+    {
+        return FindCameraForMiniGame<FishingMiniGame>("FishingFolder", "Fishing");
     }
 
     private Camera FindCameraForMiniGame<TMiniGame>(string rootName, string displayName)

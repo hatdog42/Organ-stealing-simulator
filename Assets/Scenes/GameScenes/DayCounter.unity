@@ -410,7 +410,7 @@ MonoBehaviour:
   pauseAfterTextFade: 1
   waitAfterBell: 2
   musicFadeOutDuration: 1.5
-  bellSound: {fileID: 8300000, guid: a7a1f9c03c8625e41ab240657681dda3, type: 3}
+  bellSound: 2
   bellVolume: 1
   nextSceneName: ChosePatient
 --- !u!1 &536117964

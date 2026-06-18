@@ -1,0 +1,247 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14f5008609e495ea9f63b92fe708977, type: 3}
+  m_Name: DefaultSoundBank
+  m_EditorClassIdentifier: 
+  autoPopulateWhenEmpty: 1
+  musicEntries:
+  - id: 22
+    clip: {fileID: 8300000, guid: 8c6c314ce97e14a40a591fe9e25ce1d8, type: 3}
+    channelType: 0
+    volume: 1
+    pitch: 1
+    loop: 1
+  - id: 23
+    clip: {fileID: 8300000, guid: ea09cb38496e2d04ba1f0f1fb4eceb1a, type: 3}
+    channelType: 0
+    volume: 1
+    pitch: 1
+    loop: 1
+  - id: 24
+    clip: {fileID: 8300000, guid: 9722ea520b33bb349a278f364e48e22f, type: 3}
+    channelType: 0
+    volume: 1
+    pitch: 1
+    loop: 1
+  - id: 25
+    clip: {fileID: 8300000, guid: a5fa40f31f880f74f93ed68a590f4f28, type: 3}
+    channelType: 0
+    volume: 1
+    pitch: 1
+    loop: 1
+  sfxEntries:
+  - id: 1
+    clip: {fileID: 8300000, guid: c90e92111f9eeaf4a86782cd4770e1ab, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 1
+  - id: 2
+    clip: {fileID: 8300000, guid: a7a1f9c03c8625e41ab240657681dda3, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 3
+    clip: {fileID: 8300000, guid: f4603e30a3df86043be430ee5915c004, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 4
+    clip: {fileID: 8300000, guid: 6884cdacaf9b8cb4199f5566ac4c1498, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 5
+    clip: {fileID: 8300000, guid: d6821dd6eed92fa458064ada8fdf2fb5, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 6
+    clip: {fileID: 8300000, guid: 56d3ae4d93b912545a1c4f9e8dd6cbba, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 1
+  - id: 7
+    clip: {fileID: 8300000, guid: 40c39ba4ca7d6314b87281962a20e200, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 8
+    clip: {fileID: 8300000, guid: 3e62f683aa0bbfb4fb9f80564fb13b55, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 9
+    clip: {fileID: 8300000, guid: 0571706581d34da4e84ab700a4349f71, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 10
+    clip: {fileID: 8300000, guid: f27690bfa182f0849b6d508384ce5056, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 11
+    clip: {fileID: 8300000, guid: 10d485120d4cc7a49a9f78700774e4ec, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 1
+  - id: 12
+    clip: {fileID: 8300000, guid: 6e81c62f053f2a343b858897de5d13e2, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 13
+    clip: {fileID: 8300000, guid: ac3cf90e0b21c7e4d8752b7f5d403e8e, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 14
+    clip: {fileID: 8300000, guid: 7764e612dd00d7c419a10e88cb4b51ab, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 15
+    clip: {fileID: 8300000, guid: d330f38bf233fce419e956170fbb4021, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 16
+    clip: {fileID: 8300000, guid: c24f1ffc386eb7b4d8be9720e67517b8, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 17
+    clip: {fileID: 8300000, guid: 801859d1924907646a9ff8283dda9f09, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 18
+    clip: {fileID: 8300000, guid: 1ce54906f6e12e549a3fd8b0f90c7a2c, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 19
+    clip: {fileID: 8300000, guid: be6f7e52aaa445542bc10f3870bc1b76, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 20
+    clip: {fileID: 8300000, guid: f84b95386733774458bd0b7eee457db8, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  - id: 21
+    clip: {fileID: 8300000, guid: 3accf9f374f75da4382a86707150e979, type: 3}
+    channelType: 1
+    volume: 1
+    pitch: 1
+    loop: 0
+  sceneMusicEntries:
+  - scenePath: Assets/Scenes/GameScenes/MainMenue.unity
+    sceneName: MainMenue
+    music: 24
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/ChosePatient.unity
+    sceneName: ChosePatient
+    music: 25
+    volume: 0.4
+    loop: 0
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/Credits.unity
+    sceneName: Credits
+    music: 22
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/Exposition.unity
+    sceneName: Exposition
+    music: 22
+    volume: 0.2
+    loop: 0
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/DayCounter.unity
+    sceneName: DayCounter
+    music: 0
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/Family.unity
+    sceneName: Family
+    music: 22
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/OrganSteeling.unity
+    sceneName: OrganSteeling
+    music: 25
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/OutsideHouse.unity
+    sceneName: OutsideHouse
+    music: 22
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/Endings/PrisonScene.unity
+    sceneName: PrisonScene
+    music: 0
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/Endings/DevorceEnding.unity
+    sceneName: DevorceEnding
+    music: 0
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/SanetyChek.unity
+    sceneName: SanetyChek
+    music: 22
+    volume: 0.6
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/Surgery.unity
+    sceneName: Surgery
+    music: 23
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  - scenePath: Assets/Scenes/GameScenes/TalkToPatient.unity
+    sceneName: TalkToPatient
+    music: 25
+    volume: 0.4
+    loop: 1
+    stopCurrentMusic: 0
+  entries: []

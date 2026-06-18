@@ -28,6 +28,11 @@ public class TVInputRelay : MonoBehaviour
 
     public bool TryMapScreenToMiniWorld(Vector2 screenPos, out Vector3 miniWorldPos)
     {
+        return TryMapScreenToMiniWorld(screenPos, out miniWorldPos, true);
+    }
+
+    private bool TryMapScreenToMiniWorld(Vector2 screenPos, out Vector3 miniWorldPos, bool requireInsideTv)
+    {
         if (mainCam == null || miniGameCam == null || _spriteRenderer == null || _tvCollider == null)
         {
             miniWorldPos = default;
@@ -37,8 +42,7 @@ public class TVInputRelay : MonoBehaviour
         float zToTV = Mathf.Abs(mainCam.transform.position.z - transform.position.z);
         Vector3 worldOnTV = mainCam.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, zToTV));
 
-        Collider2D hit = Physics2D.OverlapPoint(worldOnTV);
-        if (!hit || hit != _tvCollider)
+        if (requireInsideTv && !IsPointOnTv(worldOnTV))
         {
             miniWorldPos = default;
             return false;
@@ -52,6 +56,13 @@ public class TVInputRelay : MonoBehaviour
         miniWorldPos.z = 0;
         return true;
     }
+
+    private bool IsPointOnTv(Vector3 worldOnTV)
+    {
+        Collider2D hit = Physics2D.OverlapPoint(worldOnTV);
+        return hit && hit == _tvCollider;
+    }
+
     void Update()
     {
         if (PauseMenueControler.IsPaused)
@@ -60,28 +71,45 @@ public class TVInputRelay : MonoBehaviour
             return;
         }
 
-        var screen = Mouse.current.position.ReadValue();
-        if (!TryMapScreenToMiniWorld(screen, out var miniWorld))
+        if (Mouse.current == null)
         {
-            if (Mouse.current.leftButton.wasReleasedThisFrame && _dragging)
-                PointerUp?.Invoke(miniWorld);
             _dragging = false;
             return;
         }
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        var screen = Mouse.current.position.ReadValue();
+
+        if (!_dragging)
         {
+            if (!Mouse.current.leftButton.wasPressedThisFrame
+                || !TryMapScreenToMiniWorld(screen, out var miniWorld))
+            {
+                return;
+            }
+
             _dragging = true;
             PointerDown?.Invoke(miniWorld);
+            return;
         }
-        else if (_dragging && Mouse.current.leftButton.isPressed)
-        {
-            PointerDrag?.Invoke(miniWorld);
-        }
-        else if (_dragging && Mouse.current.leftButton.wasReleasedThisFrame)
+
+        if (!TryMapScreenToMiniWorld(screen, out var dragMiniWorld, false))
         {
             _dragging = false;
-            PointerUp?.Invoke(miniWorld);
+            return;
+        }
+
+        if (Mouse.current.leftButton.isPressed)
+        {
+            PointerDrag?.Invoke(dragMiniWorld);
+        }
+        else if (Mouse.current.leftButton.wasReleasedThisFrame)
+        {
+            _dragging = false;
+            PointerUp?.Invoke(dragMiniWorld);
+        }
+        else
+        {
+            _dragging = false;
         }
     }
 

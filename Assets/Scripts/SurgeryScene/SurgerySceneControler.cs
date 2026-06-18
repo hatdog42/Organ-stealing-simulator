@@ -15,6 +15,7 @@ public class SurgerySceneControler : MonoBehaviour
     private MajorMiniGameBinding _discoveredMaze;
     private MajorMiniGameBinding _discoveredDebugButtons;
     private MajorMiniGameBinding _discoveredWordle;
+    private MajorMiniGameBinding _discoveredFishing;
     private Camera _selectedMajorMiniGameCamera;
 
     private void Awake()
@@ -82,6 +83,11 @@ public class SurgerySceneControler : MonoBehaviour
             _discoveredWordle = DiscoverWordle();
         }
 
+        if (!_discoveredFishing.root)
+        {
+            _discoveredFishing = DiscoverFishing();
+        }
+
         List<MajorMiniGameBinding> combinedMiniGames = majorMiniGames != null
             ? new List<MajorMiniGameBinding>(majorMiniGames)
             : new List<MajorMiniGameBinding>();
@@ -89,6 +95,7 @@ public class SurgerySceneControler : MonoBehaviour
         AddDiscoveredMiniGame(combinedMiniGames, _discoveredMaze);
         AddDiscoveredMiniGame(combinedMiniGames, _discoveredDebugButtons);
         AddDiscoveredMiniGame(combinedMiniGames, _discoveredWordle);
+        AddDiscoveredMiniGame(combinedMiniGames, _discoveredFishing);
         return combinedMiniGames.ToArray();
     }
 
@@ -132,6 +139,11 @@ public class SurgerySceneControler : MonoBehaviour
     private MajorMiniGameBinding DiscoverWordle()
     {
         return DiscoverMiniGame<WordleManager>("WordleFolder", MajorMiniGameType.Wordle);
+    }
+
+    private MajorMiniGameBinding DiscoverFishing()
+    {
+        return DiscoverMiniGame<FishingMiniGame>("FishingFolder", MajorMiniGameType.Fishing);
     }
 
     private MajorMiniGameBinding DiscoverMiniGame<TMiniGame>(string rootName, MajorMiniGameType type)

@@ -143,12 +143,12 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100783337}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: a5fa40f31f880f74f93ed68a590f4f28, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.4
   m_Pitch: 1
   Loop: 1
@@ -361,7 +361,7 @@ MonoBehaviour:
     normalSprite: {fileID: -5745716484818945426, guid: a34add2c7c3006045b182738089ee7fb, type: 3}
     hoverSprite: {fileID: -6230400362724371595, guid: 5dde974e8107d894c8a85b7b78e3718e, type: 3}
     clickedSprite: {fileID: -4670606007839516100, guid: b46ef06d9aa4fc744b66f568fece1ebe, type: 3}
-    clickSound: {fileID: 8300000, guid: 3e62f683aa0bbfb4fb9f80564fb13b55, type: 3}
+    clickSound: 8
     clickAudioSource: {fileID: 1439655968}
     clickSoundVolume: 0.7
   mopBucketFeedback:
@@ -369,7 +369,7 @@ MonoBehaviour:
     normalSprite: {fileID: -4541401894508454328, guid: 65e5812a2b83b7044b1d933f1486b203, type: 3}
     hoverSprite: {fileID: 7291680595472324557, guid: e361cf6ba2f9fb947beb42368613779a, type: 3}
     clickedSprite: {fileID: -765637151378060895, guid: ff84464731934a548b003c3f76af7f18, type: 3}
-    clickSound: {fileID: 8300000, guid: f27690bfa182f0849b6d508384ce5056, type: 3}
+    clickSound: 10
     clickAudioSource: {fileID: 1439655968}
     clickSoundVolume: 1
   clickFeedbackDuration: 0.15

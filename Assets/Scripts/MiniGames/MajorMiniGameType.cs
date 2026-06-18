@@ -6,7 +6,8 @@ namespace MiniGames
     {
         Maze = 0,
         DebugButtons = 1,
-        Wordle = 2
+        Wordle = 2,
+        Fishing = 3
     }
 
     [Serializable]

@@ -626,7 +626,7 @@ MonoBehaviour:
   cup: {fileID: 2291561520870534647}
   cupSpeed: 10
   drop: {fileID: 5442021719129385136, guid: 9e21dae7b0592c14dad07a43482f4135, type: 3}
-  sfxDrop: {fileID: 8300000, guid: d6821dd6eed92fa458064ada8fdf2fb5, type: 3}
+  sfxDrop: 5
   dropSoundVolume: 1
   dropPosMin: {fileID: 5218926957430213829}
   dropPosMax: {fileID: 7901989680542062699}

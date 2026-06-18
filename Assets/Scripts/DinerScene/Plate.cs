@@ -6,8 +6,11 @@ public class Plate : MonoBehaviour, IClickable
     private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite baseSprite;
     [SerializeField] private Sprite hoverSprite;
-    [SerializeField]private SpriteRenderer foodSprite;
+    [SerializeField] private SpriteRenderer foodSprite;
     [SerializeField] private int foodCost = 10;
+    [SerializeField] private SoundId plateOn = SoundId.PlateOn;
+    [SerializeField] private SoundId plateOff = SoundId.PlateOff;
+    [SerializeField, Range(0f, 1f)] private float plateSoundVolume = 1f;
     private bool HasFood {get; set;}
 
     private void Start()
@@ -45,6 +48,7 @@ public class Plate : MonoBehaviour, IClickable
             SetFood(true);
             HealthBars.Instance.RegisterFamilyMealPurchased();
             foodSprite.enabled = true;
+            PlayPlateSound(plateOn);
         }
         else
         {
@@ -52,12 +56,18 @@ public class Plate : MonoBehaviour, IClickable
             SetFood(false);
             HealthBars.Instance.RegisterFamilyMealRemoved();
             foodSprite.enabled = false;
+            PlayPlateSound(plateOff);
         }
     }
 
     private void SetFood(bool hasFood)
     {
         HasFood = hasFood;
+    }
+
+    private void PlayPlateSound(SoundId soundId)
+    {
+        AudioManager.Instance?.PlaySfx(soundId, plateSoundVolume);
     }
 }
 

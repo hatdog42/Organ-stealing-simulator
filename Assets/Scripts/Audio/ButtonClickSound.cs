@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ButtonClickSound : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private bool playClickSound = true;
-    [SerializeField] private AudioClip overrideClickSound;
+    [SerializeField] private SoundId overrideClickSound = SoundId.None;
     [SerializeField, Range(0f, 1f)] private float volumeScale = 1f;
 
     private Button _button;

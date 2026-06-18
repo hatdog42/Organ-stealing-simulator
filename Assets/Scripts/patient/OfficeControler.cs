@@ -76,12 +76,10 @@ public class OfficeControler : DialogueBase, IClickable
 
         yield return new WaitForSecondsRealtime(1f);
 
-        if (!PrefabDialogueEnabled) Show(coworkerCanvas);
         PlayLine(line);
         
         while (Typing != null) yield return null;
         
-        if (!PrefabDialogueEnabled) Hide(coworkerCanvas);
         if (HealthBars.Instance.CurrentReputationState() == HealthBars.ReputationState.Broken)
         {
             SceneController.Instance.LoadScene("PrisonScene");

@@ -11,19 +11,14 @@ public class OrganControler : MonoBehaviour
         [SerializeField] private Sprite normalSprite;
         [SerializeField] private Sprite hoverSprite;
         [SerializeField] private Sprite clickedSprite;
-        [SerializeField] private AudioClip clickSound;
-        [SerializeField] private AudioSource clickAudioSource;
+        [SerializeField] private SoundId clickSound = SoundId.None;
         [SerializeField, Range(0f, 1f)] private float clickSoundVolume = 1f;
 
-        public void Initialize()
+        public void Initialize(SoundId fallbackClickSound)
         {
             if (!spriteRenderer) return;
             if (!normalSprite) normalSprite = spriteRenderer.sprite;
-            if (!clickAudioSource) clickAudioSource = spriteRenderer.GetComponent<AudioSource>();
-            if (clickAudioSource && AudioManager.Instance)
-            {
-                AudioManager.Instance.RegisterSource(clickAudioSource, AudioChannelType.Sfx);
-            }
+            if (clickSound == SoundId.None) clickSound = fallbackClickSound;
 
             ShowNormal();
         }
@@ -45,15 +40,9 @@ public class OrganControler : MonoBehaviour
 
         public void PlayClickSound()
         {
-            if (clickSound && AudioManager.Instance)
-            {
-                AudioManager.Instance.PlaySfx(clickSound, clickSoundVolume);
-                return;
-            }
+            if (clickSound == SoundId.None || !AudioManager.Instance) return;
 
-            if (!clickAudioSource) return;
-
-            clickAudioSource.Play();
+            AudioManager.Instance.PlaySfx(clickSound, clickSoundVolume);
         }
 
         private void SetSprite(Sprite sprite)
@@ -86,8 +75,8 @@ public class OrganControler : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         if(!_camera) _camera = Camera.main;
-        organBoxFeedback?.Initialize();
-        mopBucketFeedback?.Initialize();
+        organBoxFeedback?.Initialize(SoundId.Icebox);
+        mopBucketFeedback?.Initialize(SoundId.MopBucket);
     }
 
     private void Update()

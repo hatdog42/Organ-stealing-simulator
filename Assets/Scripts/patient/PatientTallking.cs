@@ -18,7 +18,6 @@ public class PatientTallking : DialogueBase
 
      [Header("Timing")]
      [SerializeField, Min(0f)] private float waitBeforeDialogue = 1f;
-     [SerializeField, Min(0f)] private float waitAfterDialogue = 1f;
 
      private string currentPatientName;
 
@@ -60,15 +59,13 @@ public class PatientTallking : DialogueBase
         PlayLine(line);
 
         while (Typing != null) yield return null;
-        
-        yield return new WaitForSecondsRealtime(waitAfterDialogue);
-        
+
         SceneController.Instance.LoadScene(nextScene);
     }
 
     private void HideLegacyPatientDialogueBackground()
     {
-        if (!PrefabDialogueEnabled || !legacyPatientDialogueRoot) return;
+        if (!legacyPatientDialogueRoot) return;
 
         legacyPatientDialogueRoot.SetActive(false);
     }

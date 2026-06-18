@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MiniGames;
+using UnityEngine.Serialization;
 
 public class PatientGenerator : MonoBehaviour
 {
@@ -9,11 +10,14 @@ public class PatientGenerator : MonoBehaviour
     public PatientChartUI patient2UI;
 
     [Header("Major MiniGame")]
-    [SerializeField] private bool forceDebugMiniGame;
+    [FormerlySerializedAs("forceDebugMiniGame")]
+    [SerializeField] private bool forceMiniGame;
+    [SerializeField] private MajorMiniGameType forcedMiniGame = MajorMiniGameType.DebugButtons;
     [SerializeField] private MajorMiniGameOption[] majorMiniGamePool =
     {
         new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze"),
-        new MajorMiniGameOption(MajorMiniGameType.Wordle, "Wordle")
+        new MajorMiniGameOption(MajorMiniGameType.Wordle, "Wordle"),
+        new MajorMiniGameOption(MajorMiniGameType.Fishing, "Fishing")
     };
 
     private Patient _patient1;
@@ -74,9 +78,9 @@ public class PatientGenerator : MonoBehaviour
 
     private MajorMiniGameOption PickMajorMiniGame()
     {
-        if (forceDebugMiniGame)
+        if (forceMiniGame)
         {
-            return new MajorMiniGameOption(MajorMiniGameType.DebugButtons, "Debug Buttons");
+            return GetMajorMiniGameOption(forcedMiniGame);
         }
 
         if (majorMiniGamePool == null || majorMiniGamePool.Length == 0)
@@ -85,6 +89,39 @@ public class PatientGenerator : MonoBehaviour
         }
 
         return majorMiniGamePool[Random.Range(0, majorMiniGamePool.Length)];
+    }
+
+    private MajorMiniGameOption GetMajorMiniGameOption(MajorMiniGameType type)
+    {
+        if (majorMiniGamePool != null)
+        {
+            foreach (MajorMiniGameOption option in majorMiniGamePool)
+            {
+                if (option != null && option.type == type)
+                {
+                    return option;
+                }
+            }
+        }
+
+        return new MajorMiniGameOption(type, GetDefaultMiniGameDisplayName(type));
+    }
+
+    private static string GetDefaultMiniGameDisplayName(MajorMiniGameType type)
+    {
+        switch (type)
+        {
+            case MajorMiniGameType.Maze:
+                return "Maze";
+            case MajorMiniGameType.DebugButtons:
+                return "Debug Buttons";
+            case MajorMiniGameType.Wordle:
+                return "Wordle";
+            case MajorMiniGameType.Fishing:
+                return "Fishing";
+            default:
+                return type.ToString();
+        }
     }
 
     private void OnPatientSelected(Patient chosen)

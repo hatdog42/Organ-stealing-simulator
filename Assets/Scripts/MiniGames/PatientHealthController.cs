@@ -21,8 +21,8 @@ namespace MiniGames
         [SerializeField, Min(0f)] private float oxygenReportTimeout = 0.25f;
 
         [Header("Heartbeat")]
-        [SerializeField] private AudioClip heartBeepSound;
-        [SerializeField] private AudioClip flatlineSound;
+        [SerializeField] private SoundId heartBeepSound = SoundId.HeartBeep;
+        [SerializeField] private SoundId flatlineSound = SoundId.Flatline;
         [SerializeField, Range(0f, 1f)] private float heartBeepVolume = 0.8f;
         [SerializeField, Range(0f, 1f)] private float flatlineVolume = 1f;
         [SerializeField, Min(0.05f)] private float fastestHeartBeepInterval = 0.25f;
@@ -117,7 +117,7 @@ namespace MiniGames
 
         private void PlayHeartbeat()
         {
-            if (!heartBeepSound || Time.unscaledTime < _nextHeartBeepTime) return;
+            if (heartBeepSound == SoundId.None || Time.unscaledTime < _nextHeartBeepTime) return;
 
             AudioManager.Instance?.PlaySfx(heartBeepSound, heartBeepVolume);
 
@@ -185,19 +185,25 @@ namespace MiniGames
 
         private void CreateFlatlineSource()
         {
-            _flatlineSource = gameObject.AddComponent<AudioSource>();
-            _flatlineSource.playOnAwake = false;
-            _flatlineSource.loop = true;
-            _flatlineSource.clip = flatlineSound;
-            AudioManager.Instance?.RegisterSource(_flatlineSource, AudioChannelType.Sfx, flatlineVolume);
+            if (_flatlineSource || flatlineSound == SoundId.None || !AudioManager.Instance) return;
+
+            _flatlineSource = AudioManager.Instance.CreateSfxSource(
+                flatlineSound,
+                transform,
+                loop: true,
+                baseVolume: flatlineVolume);
         }
 
         private void PlayFlatline()
         {
-            if (!_flatlineSource || !flatlineSound) return;
+            if (!_flatlineSource) CreateFlatlineSource();
+            if (!_flatlineSource || flatlineSound == SoundId.None) return;
 
-            _flatlineSource.clip = flatlineSound;
-            _flatlineSource.volume = AudioManager.Instance ? flatlineVolume * AudioManager.Instance.SfxVolume : flatlineVolume;
+            AudioManager.Instance?.ConfigureSfxSource(
+                _flatlineSource,
+                flatlineSound,
+                flatlineVolume,
+                loop: true);
             _flatlineSource.Play();
         }
     }

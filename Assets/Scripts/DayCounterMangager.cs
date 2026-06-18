@@ -8,7 +8,7 @@ public class DayCounterMangager : MonoBehaviour
     [SerializeField, Min(0f)] private float pauseAfterTextFade = 1f;
     [SerializeField, Min(0f)] private float waitAfterBell = 2f;
     [SerializeField, Min(0f)] private float musicFadeOutDuration = 1.5f;
-    [SerializeField] private AudioClip bellSound;
+    [SerializeField] private SoundId bellSound = SoundId.Bell;
     [SerializeField, Range(0f, 1f)] private float bellVolume = 1f;
     [SerializeField] private string nextSceneName = "ChosePatient";
 

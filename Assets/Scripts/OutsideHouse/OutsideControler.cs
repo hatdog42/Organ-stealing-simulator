@@ -18,7 +18,7 @@ public class OutsideControler : MonoBehaviour
     [SerializeField] private float addedMoneyFadeDuration = 0.12f;
     [SerializeField] private float addedMoneyMoveDuration = 0.45f;
     [SerializeField, Range(0f, 1f)] private float totalUpdateMoveProgress = 0.7f;
-    [SerializeField] private AudioClip moneySound;
+    [SerializeField] private SoundId moneySound = SoundId.Money;
     [SerializeField, Range(0f, 1f)] private float moneySoundVolume = 1f;
     
     [Header("NextScene")]

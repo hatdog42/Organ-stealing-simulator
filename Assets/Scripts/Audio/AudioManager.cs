@@ -1,13 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
+[DefaultExecutionOrder(-1000)]
 public class AudioManager : MonoBehaviour
 {
+    private const string DefaultSoundBankResourcePath = "DefaultSoundBank";
     private const string MusicVolumeKey = "Audio.MusicVolume";
     private const string SfxVolumeKey = "Audio.SfxVolume";
+    private const string SoundVolumeKeyPrefix = "Audio.Sound.";
+
+    [Header("Sound Bank")]
+    [SerializeField] private SoundBank soundBank;
 
     [Header("Default Volumes")]
     [SerializeField, Range(0f, 1f)] private float defaultMusicVolume = 0.5f;
@@ -15,21 +23,40 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private bool rememberVolumeSettings = true;
 
     [Header("UI Sounds")]
-    [SerializeField] private AudioClip defaultButtonClickSound;
+    [SerializeField] private SoundId defaultButtonClickSoundId = SoundId.ButtonAlt;
     [SerializeField, Range(0f, 1f)] private float defaultButtonClickVolume = 1f;
     [SerializeField] private bool addClickSoundToButtons = true;
 
+    [Header("Scene Music")]
+    [FormerlySerializedAs("playDefaultSceneMusic")]
+    [SerializeField] private bool playSceneMusicFromSoundBank = true;
+
+    [Header("Audio Listeners")]
+    [SerializeField] private bool enforceSingleAudioListener = true;
+
+    [Header("Source Priority")]
+    [SerializeField, Range(0, 256)] private int musicPriority = 0;
+    [SerializeField, Range(0, 256)] private int importantSfxPriority = 32;
+    [SerializeField, Range(0, 256)] private int loopingSfxPriority = 48;
+    [SerializeField, Range(0, 256)] private int oneShotSfxPriority = 64;
+    [SerializeField, Min(1)] private int maxOneShotSources = 64;
+
     private readonly Dictionary<AudioSource, SourceSettings> _sources = new();
+    private readonly Dictionary<SoundId, float> _soundVolumeOverrides = new();
+    private readonly List<AudioSource> _oneShotSources = new();
     private AudioSource _musicSource;
-    private AudioSource _oneShotSource;
+    private AudioSource _sfxSource;
     private Coroutine _musicFadeRoutine;
+    private SoundId _currentMusicSoundId = SoundId.None;
     private float _currentMusicBaseVolume = 1f;
     private bool _musicPaused;
+    private bool _musicShouldKeepPlaying;
 
     public static AudioManager Instance { get; private set; }
 
     public float MusicVolume { get; private set; }
     public float SfxVolume { get; private set; }
+    public SoundBank SoundBank => soundBank;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void BootstrapFallback()
@@ -51,24 +78,16 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        MusicVolume = rememberVolumeSettings
-            ? PlayerPrefs.GetFloat(MusicVolumeKey, defaultMusicVolume)
-            : defaultMusicVolume;
-
-        SfxVolume = rememberVolumeSettings
-            ? PlayerPrefs.GetFloat(SfxVolumeKey, defaultSfxVolume)
-            : defaultSfxVolume;
-
-        _musicSource = gameObject.AddComponent<AudioSource>();
-        _musicSource.playOnAwake = false;
-        _musicSource.loop = true;
-
-        _oneShotSource = gameObject.AddComponent<AudioSource>();
-        _oneShotSource.playOnAwake = false;
+        EnsureSoundBank();
+        LoadSavedVolumes();
+        CreateOutputSources();
+        EnsureSingleAudioListener();
 
         SceneManager.sceneLoaded += OnSceneLoaded;
-        RegisterSceneSources();
+
+        PlaySceneMusic(SceneManager.GetActiveScene());
         RegisterSceneButtons();
+        ApplyVolumes();
     }
 
     private void OnDestroy()
@@ -81,9 +100,15 @@ public class AudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        RegisterSceneSources();
+        EnsureSingleAudioListener();
+        PlaySceneMusic(scene);
         RegisterSceneButtons();
         ApplyVolumes();
+    }
+
+    private void Update()
+    {
+        KeepExpectedMusicPlaying();
     }
 
     public void SetMusicVolume(float volume)
@@ -100,11 +125,45 @@ public class AudioManager : MonoBehaviour
         ApplyVolumes();
     }
 
+    public float GetSoundVolume(SoundId soundId)
+    {
+        if (soundId == SoundId.None) return 1f;
+
+        return _soundVolumeOverrides.TryGetValue(soundId, out float volume)
+            ? volume
+            : soundBank ? soundBank.GetVolume(soundId) : 1f;
+    }
+
+    public void SetSoundVolume(SoundId soundId, float volume)
+    {
+        if (soundId == SoundId.None) return;
+
+        volume = Mathf.Clamp01(volume);
+        _soundVolumeOverrides[soundId] = volume;
+
+        if (rememberVolumeSettings)
+        {
+            PlayerPrefs.SetFloat(SoundVolumeKey(soundId), volume);
+            PlayerPrefs.Save();
+        }
+
+        ApplyVolumes();
+    }
+
     [ContextMenu("Reset Saved Volumes")]
     public void ResetSavedVolumes()
     {
         PlayerPrefs.DeleteKey(MusicVolumeKey);
         PlayerPrefs.DeleteKey(SfxVolumeKey);
+
+        foreach (SoundId soundId in Enum.GetValues(typeof(SoundId)))
+        {
+            if (soundId == SoundId.None) continue;
+
+            PlayerPrefs.DeleteKey(SoundVolumeKey(soundId));
+        }
+
+        _soundVolumeOverrides.Clear();
         MusicVolume = defaultMusicVolume;
         SfxVolume = defaultSfxVolume;
         ApplyVolumes();
@@ -112,36 +171,123 @@ public class AudioManager : MonoBehaviour
 
     public void RegisterSource(AudioSource source, AudioChannelType channelType)
     {
-        RegisterSource(source, channelType, source ? source.volume : 1f);
+        RegisterSource(source, channelType, source ? source.volume : 1f, SoundId.None);
     }
 
     public void RegisterSource(AudioSource source, AudioChannelType channelType, float baseVolume)
     {
+        RegisterSource(source, channelType, baseVolume, SoundId.None);
+    }
+
+    public void RegisterSource(AudioSource source, AudioChannelType channelType, float baseVolume, SoundId soundId)
+    {
         if (!source) return;
 
-        if (!_sources.ContainsKey(source))
-        {
-            _sources.Add(source, new SourceSettings(Mathf.Clamp01(baseVolume), channelType));
-        }
-        else
-        {
-            _sources[source] = new SourceSettings(Mathf.Clamp01(baseVolume), channelType);
-        }
-
+        _sources[source] = new SourceSettings(Mathf.Clamp01(baseVolume), channelType, soundId);
+        source.priority = channelType == AudioChannelType.Music ? musicPriority : SfxPriority(soundId, source.loop);
         ApplyVolume(source);
     }
 
     public void PlaySfx(AudioClip clip, float volumeScale = 1f)
     {
-        if (!clip) return;
-
-        _oneShotSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale) * SfxVolume);
+        PlayOneShot(clip, SoundId.None, volumeScale, 1f);
     }
 
-    public void PlayButtonClick(AudioClip overrideClip = null, float volumeScale = 1f)
+    public bool PlaySfx(SoundId soundId, float volumeScale = 1f, float pitchScale = 1f)
     {
-        AudioClip clip = overrideClip ? overrideClip : defaultButtonClickSound;
-        PlaySfx(clip, defaultButtonClickVolume * volumeScale);
+        if (!TryGetSound(soundId, out SoundBankEntry sound)) return false;
+
+        if (sound.ChannelType == AudioChannelType.Music)
+        {
+            return PlayMusic(soundId, volumeScale);
+        }
+
+        return PlayOneShot(sound.Clip, soundId, volumeScale, sound.Pitch * pitchScale);
+    }
+
+    public bool PlaySfxOnSource(AudioSource source, SoundId soundId, float volumeScale = 1f, float pitchScale = 1f)
+    {
+        if (!source || !TryGetSound(soundId, out SoundBankEntry sound)) return false;
+
+        if (!_sources.TryGetValue(source, out SourceSettings settings) || settings.SoundId != soundId)
+        {
+            RegisterSource(source, AudioChannelType.Sfx, 1f, soundId);
+        }
+
+        source.priority = SfxPriority(soundId, source.loop);
+        source.clip = sound.Clip;
+        source.pitch = Mathf.Max(0f, sound.Pitch * pitchScale);
+        ApplyVolume(source, Mathf.Clamp01(volumeScale));
+        source.Play();
+        return true;
+    }
+
+    public void PlayButtonClick(float volumeScale = 1f)
+    {
+        PlayButtonClick(SoundId.None, volumeScale);
+    }
+
+    public void PlayButtonClick(SoundId overrideSoundId, float volumeScale = 1f)
+    {
+        SoundId soundId = overrideSoundId == SoundId.None ? defaultButtonClickSoundId : overrideSoundId;
+        PlaySfx(soundId, defaultButtonClickVolume * volumeScale);
+    }
+
+    public void PlayButtonClick(AudioClip overrideClip, float volumeScale = 1f)
+    {
+        PlaySfx(overrideClip, defaultButtonClickVolume * volumeScale);
+    }
+
+    public AudioSource CreateSfxSource(
+        SoundId soundId,
+        Transform parent = null,
+        bool loop = false,
+        float baseVolume = 1f,
+        float spatialBlend = 0f)
+    {
+        AudioSource source = CreateManagedAudioSource(SourceName(soundId), parent, loop, spatialBlend);
+
+        if (soundId == SoundId.None)
+        {
+            RegisterSource(source, AudioChannelType.Sfx, baseVolume);
+            return source;
+        }
+
+        ConfigureSfxSource(source, soundId, baseVolume, loop, 1f, spatialBlend);
+        return source;
+    }
+
+    public AudioSource CreateSfxSource(
+        string sourceName,
+        Transform parent = null,
+        bool loop = false,
+        float baseVolume = 1f,
+        float spatialBlend = 0f)
+    {
+        AudioSource source = CreateManagedAudioSource(sourceName, parent, loop, spatialBlend);
+        RegisterSource(source, AudioChannelType.Sfx, baseVolume);
+        return source;
+    }
+
+    public bool ConfigureSfxSource(
+        AudioSource source,
+        SoundId soundId,
+        float baseVolume = 1f,
+        bool loop = false,
+        float pitchScale = 1f,
+        float spatialBlend = 0f)
+    {
+        if (!source || !TryGetSound(soundId, out SoundBankEntry sound)) return false;
+
+        source.playOnAwake = false;
+        source.loop = loop || sound.Loop;
+        source.clip = sound.Clip;
+        source.pitch = Mathf.Max(0f, sound.Pitch * pitchScale);
+        source.spatialBlend = Mathf.Clamp01(spatialBlend);
+        source.priority = SfxPriority(soundId, source.loop);
+
+        RegisterSource(source, AudioChannelType.Sfx, baseVolume, soundId);
+        return true;
     }
 
     public void PauseMusic()
@@ -160,14 +306,55 @@ public class AudioManager : MonoBehaviour
         _musicPaused = false;
     }
 
-    public void PlayMusic(AudioClip clip, float baseVolume = 1f, bool loop = true)
+    public void StopMusic()
     {
-        if (!clip) return;
+        StopMusicFade();
+        _musicPaused = false;
+        _musicShouldKeepPlaying = false;
+        _currentMusicSoundId = SoundId.None;
+
+        if (_musicSource)
+        {
+            _musicSource.Stop();
+        }
+    }
+
+    public bool PlayMusic(SoundId soundId, float volumeScale = 1f, bool? loopOverride = null)
+    {
+        if (!TryGetSound(soundId, out SoundBankEntry sound)) return false;
 
         StopMusicFade();
         _musicPaused = false;
-        _currentMusicBaseVolume = baseVolume;
+        _musicShouldKeepPlaying = true;
+        _currentMusicSoundId = soundId;
+        _currentMusicBaseVolume = Mathf.Clamp01(volumeScale);
+        _musicSource.loop = loopOverride ?? sound.Loop;
+        _musicSource.priority = musicPriority;
+
+        if (_musicSource.clip == sound.Clip && _musicSource.isPlaying)
+        {
+            ApplyMusicVolume();
+            return true;
+        }
+
+        _musicSource.clip = sound.Clip;
+        _musicSource.time = 0f;
+        ApplyMusicVolume();
+        _musicSource.Play();
+        return true;
+    }
+
+    public void PlayMusic(AudioClip clip, float baseVolume = 1f, bool loop = true)
+    {
+        if (!clip || !_musicSource) return;
+
+        StopMusicFade();
+        _musicPaused = false;
+        _musicShouldKeepPlaying = true;
+        _currentMusicSoundId = SoundId.None;
+        _currentMusicBaseVolume = Mathf.Clamp01(baseVolume);
         _musicSource.loop = loop;
+        _musicSource.priority = musicPriority;
 
         if (_musicSource.clip == clip && _musicSource.isPlaying)
         {
@@ -186,28 +373,118 @@ public class AudioManager : MonoBehaviour
         if (!_musicSource || !_musicSource.isPlaying) return;
 
         StopMusicFade();
+        _musicShouldKeepPlaying = false;
         _musicFadeRoutine = StartCoroutine(FadeOutMusicRoutine(duration));
     }
 
-    private void RegisterSceneSources()
+    private void EnsureSoundBank()
     {
-        foreach (AudioSource source in FindObjectsByType<AudioSource>(FindObjectsInactive.Include))
+        if (soundBank) return;
+
+        soundBank = Resources.Load<SoundBank>(DefaultSoundBankResourcePath);
+    }
+
+    private void LoadSavedVolumes()
+    {
+        MusicVolume = rememberVolumeSettings
+            ? PlayerPrefs.GetFloat(MusicVolumeKey, defaultMusicVolume)
+            : defaultMusicVolume;
+
+        SfxVolume = rememberVolumeSettings
+            ? PlayerPrefs.GetFloat(SfxVolumeKey, defaultSfxVolume)
+            : defaultSfxVolume;
+
+        if (!rememberVolumeSettings) return;
+
+        foreach (SoundId soundId in Enum.GetValues(typeof(SoundId)))
         {
-            if (!source || IsManagerSource(source) || _sources.ContainsKey(source)) continue;
+            if (soundId == SoundId.None) continue;
 
-            AudioChannel channel = source.GetComponent<AudioChannel>();
-            AudioChannelType channelType = channel ? channel.ChannelType : GuessChannelType(source);
-
-            if (channelType == AudioChannelType.Music)
+            string key = SoundVolumeKey(soundId);
+            if (PlayerPrefs.HasKey(key))
             {
-                PlayMusic(source.clip, source.volume, source.loop);
-                source.Stop();
-                source.playOnAwake = false;
-                continue;
+                _soundVolumeOverrides[soundId] = PlayerPrefs.GetFloat(key);
             }
-
-            _sources.Add(source, new SourceSettings(source.volume, channelType));
         }
+    }
+
+    private void CreateOutputSources()
+    {
+        _musicSource = gameObject.AddComponent<AudioSource>();
+        _musicSource.playOnAwake = false;
+        _musicSource.loop = true;
+        _musicSource.priority = musicPriority;
+
+        _sfxSource = gameObject.AddComponent<AudioSource>();
+        _sfxSource.playOnAwake = false;
+        _sfxSource.loop = false;
+        _sfxSource.spatialBlend = 0f;
+        _sfxSource.priority = oneShotSfxPriority;
+
+        _oneShotSources.Add(_sfxSource);
+    }
+
+    private AudioSource CreateManagedAudioSource(string sourceName, Transform parent, bool loop, float spatialBlend)
+    {
+        GameObject sourceObject = new(string.IsNullOrWhiteSpace(sourceName) ? "Audio Source" : sourceName);
+        sourceObject.transform.SetParent(parent ? parent : transform, false);
+
+        AudioSource source = sourceObject.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = loop;
+        source.spatialBlend = Mathf.Clamp01(spatialBlend);
+        source.priority = oneShotSfxPriority;
+        return source;
+    }
+
+    private bool PlayOneShot(AudioClip clip, SoundId soundId, float volumeScale, float pitch)
+    {
+        if (!clip) return false;
+
+        AudioSource source = GetAvailableOneShotSource();
+        if (!source) return false;
+
+        source.Stop();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.clip = clip;
+        source.pitch = Mathf.Max(0f, pitch);
+        source.spatialBlend = 0f;
+        source.priority = oneShotSfxPriority;
+
+        RegisterSource(source, AudioChannelType.Sfx, volumeScale, soundId);
+        source.Play();
+        return true;
+    }
+
+    private AudioSource GetAvailableOneShotSource()
+    {
+        foreach (AudioSource source in _oneShotSources)
+        {
+            if (source && !source.isPlaying) return source;
+        }
+
+        if (_oneShotSources.Count >= maxOneShotSources) return null;
+
+        AudioSource newSource = CreateManagedAudioSource("One Shot SFX Source", transform, false, 0f);
+        _oneShotSources.Add(newSource);
+        return newSource;
+    }
+
+    private void PlaySceneMusic(Scene scene)
+    {
+        if (!playSceneMusicFromSoundBank || !soundBank) return;
+        if (!soundBank.TryGetSceneMusic(scene.name, scene.path, out SceneMusicEntry cue)) return;
+
+        if (cue.StopCurrentMusic)
+        {
+            StopMusic();
+            return;
+        }
+
+        if (cue.Music == SoundId.None) return;
+
+        PlayMusic(cue.Music, cue.Volume, cue.Loop);
     }
 
     private void RegisterSceneButtons()
@@ -222,29 +499,88 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private static AudioChannelType GuessChannelType(AudioSource source)
+    private void EnsureSingleAudioListener()
     {
-        string sourceName = source.name.ToLowerInvariant();
-        string clipName = source.clip ? source.clip.name.ToLowerInvariant() : string.Empty;
+        if (!enforceSingleAudioListener) return;
 
-        if (sourceName.Contains("sfx") || sourceName.Contains("sound") || sourceName.Contains("alarm"))
+        AudioListener[] listeners = FindObjectsByType<AudioListener>(FindObjectsInactive.Include);
+        if (listeners.Length == 0) return;
+
+        AudioListener preferredListener = FindPreferredAudioListener(listeners);
+        foreach (AudioListener listener in listeners)
         {
-            return AudioChannelType.Sfx;
+            if (!listener) continue;
+
+            bool shouldEnable = listener == preferredListener && listener.gameObject.activeInHierarchy;
+            if (listener.enabled != shouldEnable)
+            {
+                listener.enabled = shouldEnable;
+            }
+        }
+    }
+
+    private static AudioListener FindPreferredAudioListener(AudioListener[] listeners)
+    {
+        AudioListener preferredListener = FindMainOutputListener(listeners, requireEnabled: true);
+        if (preferredListener) return preferredListener;
+
+        foreach (AudioListener listener in listeners)
+        {
+            if (listener && listener.enabled && IsUsableOutputListener(listener)) return listener;
         }
 
-        if (clipName.Contains("sfx") || clipName.Contains("sound") || clipName.Contains("alarm"))
+        Camera mainCamera = Camera.main;
+        if (mainCamera
+            && !mainCamera.targetTexture
+            && mainCamera.TryGetComponent(out AudioListener mainListener)
+            && IsUsableOutputListener(mainListener))
         {
-            return AudioChannelType.Sfx;
+            return mainListener;
         }
 
-        if (sourceName.Contains("music") || sourceName.Contains("theme")) return AudioChannelType.Music;
-        if (clipName.Contains("music") || clipName.Contains("theme")) return AudioChannelType.Music;
-        if (sourceName.Contains("conflicted") || sourceName.Contains("waiting")) return AudioChannelType.Music;
-        if (clipName.Contains("conflicted") || clipName.Contains("waiting")) return AudioChannelType.Music;
-        if (sourceName.Contains("gameplay") || sourceName.Contains("menu")) return AudioChannelType.Music;
-        if (clipName.Contains("gameplay") || clipName.Contains("menu")) return AudioChannelType.Music;
+        preferredListener = FindMainOutputListener(listeners, requireEnabled: false);
+        if (preferredListener) return preferredListener;
 
-        return AudioChannelType.Sfx;
+        foreach (AudioListener listener in listeners)
+        {
+            if (IsUsableOutputListener(listener)) return listener;
+        }
+
+        foreach (AudioListener listener in listeners)
+        {
+            if (listener && listener.gameObject.activeInHierarchy) return listener;
+        }
+
+        return listeners.Length > 0 ? listeners[0] : null;
+    }
+
+    private static AudioListener FindMainOutputListener(AudioListener[] listeners, bool requireEnabled)
+    {
+        foreach (AudioListener listener in listeners)
+        {
+            if (requireEnabled && (!listener || !listener.enabled)) continue;
+            if (!IsUsableOutputListener(listener)) continue;
+            if (listener.TryGetComponent(out Camera camera) && camera.CompareTag("MainCamera")) return listener;
+        }
+
+        return null;
+    }
+
+    private static bool IsUsableOutputListener(AudioListener listener)
+    {
+        if (!listener || !listener.gameObject.activeInHierarchy) return false;
+
+        return !listener.TryGetComponent(out Camera camera) || !camera.targetTexture;
+    }
+
+    private bool TryGetSound(SoundId soundId, out SoundBankEntry sound)
+    {
+        EnsureSoundBank();
+        sound = null;
+
+        if (soundId == SoundId.None || !soundBank) return false;
+
+        return soundBank.TryGetSound(soundId, out sound);
     }
 
     private void SaveVolume(string key, float volume)
@@ -267,19 +603,31 @@ public class AudioManager : MonoBehaviour
         ApplyMusicVolume();
     }
 
-    private void ApplyVolume(AudioSource source)
+    private void ApplyVolume(AudioSource source, float volumeScale = 1f)
     {
         if (!source || !_sources.TryGetValue(source, out SourceSettings settings)) return;
 
         float channelVolume = settings.ChannelType == AudioChannelType.Music ? MusicVolume : SfxVolume;
-        source.volume = settings.BaseVolume * channelVolume;
+        float soundVolume = settings.SoundId == SoundId.None ? 1f : GetSoundVolume(settings.SoundId);
+        source.volume = settings.BaseVolume * soundVolume * channelVolume * volumeScale;
     }
 
     private void ApplyMusicVolume()
     {
         if (!_musicSource) return;
 
-        _musicSource.volume = _currentMusicBaseVolume * MusicVolume;
+        float soundVolume = _currentMusicSoundId == SoundId.None ? 1f : GetSoundVolume(_currentMusicSoundId);
+        _musicSource.volume = _currentMusicBaseVolume * soundVolume * MusicVolume;
+    }
+
+    private void KeepExpectedMusicPlaying()
+    {
+        if (!_musicShouldKeepPlaying || _musicPaused || _musicFadeRoutine != null) return;
+        if (!_musicSource || !_musicSource.clip || _musicSource.isPlaying) return;
+        if (!_musicSource.loop) return;
+
+        ApplyMusicVolume();
+        _musicSource.Play();
     }
 
     private IEnumerator FadeOutMusicRoutine(float duration)
@@ -297,6 +645,8 @@ public class AudioManager : MonoBehaviour
 
         _musicSource.volume = 0f;
         _musicSource.Stop();
+        _currentMusicSoundId = SoundId.None;
+        _musicShouldKeepPlaying = false;
         _musicFadeRoutine = null;
     }
 
@@ -310,7 +660,9 @@ public class AudioManager : MonoBehaviour
 
     private bool IsManagerSource(AudioSource source)
     {
-        return source == _musicSource || source == _oneShotSource;
+        return source == _musicSource
+               || source == _sfxSource
+               || source.transform.IsChildOf(transform);
     }
 
     private void CleanupMissingSources()
@@ -333,15 +685,41 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private static string SoundVolumeKey(SoundId soundId)
+    {
+        return SoundVolumeKeyPrefix + soundId;
+    }
+
+    private static string SourceName(SoundId soundId)
+    {
+        return soundId == SoundId.None ? "SFX Source" : $"{soundId} SFX Source";
+    }
+
+    private int SfxPriority(SoundId soundId, bool loop)
+    {
+        if (IsImportantSfx(soundId)) return importantSfxPriority;
+        return loop ? loopingSfxPriority : oneShotSfxPriority;
+    }
+
+    private static bool IsImportantSfx(SoundId soundId)
+    {
+        return soundId == SoundId.Alarm
+               || soundId == SoundId.Flatline
+               || soundId == SoundId.Oxygen;
+    }
+
     private struct SourceSettings
     {
         public readonly float BaseVolume;
-        public AudioChannelType ChannelType;
+        public readonly AudioChannelType ChannelType;
+        public readonly SoundId SoundId;
 
-        public SourceSettings(float baseVolume, AudioChannelType channelType)
+        public SourceSettings(float baseVolume, AudioChannelType channelType, SoundId soundId)
         {
             BaseVolume = baseVolume;
             ChannelType = channelType;
+            SoundId = soundId;
         }
     }
+
 }

@@ -23,8 +23,8 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private float selectMoveDuration = 0.25f;
 
     [Header("Paper Audio")]
-    [SerializeField] private AudioClip hoverSound;
-    [SerializeField] private AudioClip selectSound;
+    [SerializeField] private SoundId hoverSound = SoundId.PaperHover;
+    [SerializeField] private SoundId selectSound = SoundId.PaperSelect;
     [SerializeField, Range(0f, 1f)] private float hoverVolume = 1f;
     [SerializeField, Range(0f, 1f)] private float selectVolume = 1f;
     
@@ -128,10 +128,10 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         _onSelect?.Invoke(_shownPatient);
     }
 
-    private static void PlaySfx(AudioClip clip, float volume)
+    private static void PlaySfx(SoundId soundId, float volume)
     {
-        if (!AudioManager.Instance || !clip) return;
+        if (!AudioManager.Instance || soundId == SoundId.None) return;
 
-        AudioManager.Instance.PlaySfx(clip, volume);
+        AudioManager.Instance.PlaySfx(soundId, volume);
     }
 }

@@ -62,9 +62,9 @@ public class WordleManager : MiniGameBase
     [Header("Feedback Reveal")]
     [SerializeField, Min(0f)] private float feedbackRevealDelay = 0.15f;
     [SerializeField, Range(0f, 1f)] private float feedbackSfxVolume = 1f;
-    [SerializeField] private AudioClip stableSfx;
-    [SerializeField] private AudioClip unstableSfx;
-    [SerializeField] private AudioClip rejectedSfx;
+    [SerializeField] private SoundId stableSfx = SoundId.Stable;
+    [SerializeField] private SoundId unstableSfx = SoundId.Unstable;
+    [SerializeField] private SoundId rejectedSfx = SoundId.Rejected;
 
     [Header("Rules")]
     [SerializeField] private bool useWordleStyleFeedback = true;
@@ -119,15 +119,6 @@ public class WordleManager : MiniGameBase
     {
         UnsubscribeInput();
     }
-
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        stableSfx ??= UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sfx/sfx_Stable.wav");
-        unstableSfx ??= UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sfx/sfx_Unstable.wav");
-        rejectedSfx ??= UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Sfx/sfx_Rejected.wav");
-    }
-#endif
 
     public void PickColor(int colorIndex)
     {
@@ -356,7 +347,7 @@ public class WordleManager : MiniGameBase
         yield return RevealFeedbackRow(2, rejectedCount, rejectedColor, rejectedSfx);
     }
 
-    private IEnumerator RevealFeedbackRow(int rowIndex, int count, Color color, AudioClip clip)
+    private IEnumerator RevealFeedbackRow(int rowIndex, int count, Color color, SoundId soundId)
     {
         if (rowIndex < 0 || rowIndex >= resultTexts.Length) yield break;
 
@@ -368,7 +359,7 @@ public class WordleManager : MiniGameBase
             if (!markers[i]) continue;
 
             markers[i].color = color;
-            PlayFeedbackSfx(clip);
+            PlayFeedbackSfx(soundId);
 
             if (feedbackRevealDelay > 0f)
             {
@@ -381,18 +372,11 @@ public class WordleManager : MiniGameBase
         }
     }
 
-    private void PlayFeedbackSfx(AudioClip clip)
+    private void PlayFeedbackSfx(SoundId soundId)
     {
-        if (!clip) return;
+        if (soundId == SoundId.None) return;
 
-        if (AudioManager.Instance)
-        {
-            AudioManager.Instance.PlaySfx(clip, feedbackSfxVolume);
-        }
-        else
-        {
-            AudioSource.PlayClipAtPoint(clip, transform.position, feedbackSfxVolume);
-        }
+        AudioManager.Instance?.PlaySfx(soundId, feedbackSfxVolume);
     }
 
     private void StoreFeedback(int storageRowIndex, int stableCount, int unstableCount, int rejectedCount, FeedbackState[] feedbackStates)

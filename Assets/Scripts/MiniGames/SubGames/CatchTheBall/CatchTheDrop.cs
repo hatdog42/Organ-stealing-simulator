@@ -16,7 +16,7 @@ namespace MiniGames.SubGames.CatchTheBall
         
         //Drops
         [Header("Drop"), SerializeField] private GameObject drop;
-        [SerializeField] private AudioClip sfxDrop;
+        [SerializeField] private SoundId sfxDrop = SoundId.Drop;
         [SerializeField, Range(0f, 1f)] private float dropSoundVolume = 1f;
         
         //Drop Spawners

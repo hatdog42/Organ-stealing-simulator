@@ -13,12 +13,13 @@ namespace MiniGames.Base
         [Header("Warning Sprites"), SerializeField] private GameObject warningFaceScreen;
         [SerializeField] private GameObject warningFaceOutside;
         
-        [Header("Audio"), SerializeField] private AudioSource warningAudio;
+        [Header("Audio"), SerializeField] private SoundId warningSound = SoundId.Alarm;
         [SerializeField, Range(0f, 1f)] private float warningAudioVolume = 0.2f;
+        private AudioSource warningAudio;
 
         protected virtual void Awake()
         {
-            RegisterWarningAudio();
+            SetupWarningAudio();
             DisplayWarning(false);
         }
 
@@ -66,8 +67,13 @@ namespace MiniGames.Base
 
                 if (warningAudio && !warningAudio.isPlaying)
                 {
-                    RegisterWarningAudio();
+                    SetupWarningAudio();
                     warningAudio.Play();
+                }
+                else if (!warningAudio)
+                {
+                    SetupWarningAudio();
+                    warningAudio?.Play();
                 }
             }
             else
@@ -85,12 +91,15 @@ namespace MiniGames.Base
             return newValue;
         }
 
-        private void RegisterWarningAudio()
+        private void SetupWarningAudio()
         {
-            if (!warningAudio) return;
+            if (warningAudio || warningSound == SoundId.None || !AudioManager.Instance) return;
 
-            warningAudio.volume = warningAudioVolume;
-            AudioManager.Instance?.RegisterSource(warningAudio, AudioChannelType.Sfx, warningAudioVolume);
+            warningAudio = AudioManager.Instance.CreateSfxSource(
+                warningSound,
+                transform,
+                loop: true,
+                baseVolume: warningAudioVolume);
         }
     }
 }

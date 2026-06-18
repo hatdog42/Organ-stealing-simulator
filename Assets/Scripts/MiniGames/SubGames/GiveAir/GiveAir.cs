@@ -22,11 +22,11 @@ namespace MiniGames.SubGames.GiveAir
         private bool _pressingAir;
 
         [Header("Oxygen Audio")]
-        [SerializeField] private AudioClip sfxOxygen;
-        [SerializeField] private AudioSource oxygenAudioSource;
+        [SerializeField] private SoundId sfxOxygen = SoundId.Oxygen;
         [SerializeField, Range(0f, 1f)] private float oxygenSoundVolume = 1f;
         [SerializeField, Min(0f)] private float lowOxygenPitch = 0.6f;
         [SerializeField, Min(0f)] private float highOxygenPitch = 1.4f;
+        private AudioSource oxygenAudioSource;
 
         private void Start()
         {
@@ -137,26 +137,26 @@ namespace MiniGames.SubGames.GiveAir
 
         private void SetupOxygenAudio()
         {
-            if (!sfxOxygen) return;
+            if (sfxOxygen == SoundId.None || !AudioManager.Instance) return;
 
-            if (!oxygenAudioSource) oxygenAudioSource = GetComponent<AudioSource>();
-            if (!oxygenAudioSource) oxygenAudioSource = gameObject.AddComponent<AudioSource>();
-
-            oxygenAudioSource.playOnAwake = false;
-            oxygenAudioSource.loop = true;
-            oxygenAudioSource.clip = sfxOxygen;
-            oxygenAudioSource.volume = oxygenSoundVolume;
-
-            AudioManager.Instance?.RegisterSource(oxygenAudioSource, AudioChannelType.Sfx, oxygenSoundVolume);
+            oxygenAudioSource = AudioManager.Instance.CreateSfxSource(
+                sfxOxygen,
+                transform,
+                loop: true,
+                baseVolume: oxygenSoundVolume);
         }
 
         private void PlayOxygenAudio()
         {
-            if (!sfxOxygen) return;
+            if (sfxOxygen == SoundId.None) return;
             if (!oxygenAudioSource) SetupOxygenAudio();
             if (!oxygenAudioSource) return;
 
-            oxygenAudioSource.clip = sfxOxygen;
+            AudioManager.Instance?.ConfigureSfxSource(
+                oxygenAudioSource,
+                sfxOxygen,
+                oxygenSoundVolume,
+                loop: true);
             UpdateOxygenAudioPitch(Mathf.Clamp01(_currentTimer / airTimer));
 
             if (!oxygenAudioSource.isPlaying)

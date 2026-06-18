@@ -2118,7 +2118,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917772396424068085}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!114 &6525133293285303374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2448,9 +2448,9 @@ MonoBehaviour:
   checkStorageEmptyColor: {r: 0, g: 0, b: 0, a: 1}
   feedbackRevealDelay: 0.5
   feedbackSfxVolume: 1
-  stableSfx: {fileID: 8300000, guid: be6f7e52aaa445542bc10f3870bc1b76, type: 3}
-  unstableSfx: {fileID: 8300000, guid: 3accf9f374f75da4382a86707150e979, type: 3}
-  rejectedSfx: {fileID: 8300000, guid: 801859d1924907646a9ff8283dda9f09, type: 3}
+  stableSfx: 19
+  unstableSfx: 21
+  rejectedSfx: 17
   allowRepeatedColorsInAnswer: 0
 --- !u!1 &2291433467796234979
 GameObject:
