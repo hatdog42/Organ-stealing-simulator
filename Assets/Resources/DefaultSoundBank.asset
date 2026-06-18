@@ -39,6 +39,102 @@ MonoBehaviour:
     pitch: 1
     loop: 1
   sfxEntries:
+  - id: 0
+    clip: {fileID: 8300000, guid: c056520506b78e645be0059021fb179a, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 285c6257ebb521745af7e96e0144df0b, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 25eef765efc58d640b76a3c84b6b5d32, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: ae43b0382a75eec40a7347537731ad56, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: c1f5436d35114514f9ec0140619480c5, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: c4de752bb55eeaa4d9a086479ab9d5d6, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 3970cfce272b00a40bf3a81333205618, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 685ac6bafbdffcd47a4cd1ed237b0680, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 52805b04fd26ccd4da09fdc14d0f2ee5, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 4f7a6d2cc663cd946a2bcb577720c2c8, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 67d6f976431ef66478dd08613504fa48, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 638b3c5421ad97843bbc79b0a27fd6e8, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 846fbdf5141fd0b4f8b898edf249d96a, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 5721c8e6a937d6f479e762bd3d5ea175, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 93204feddbe6bd4459676916d0ecd2d9, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 44ddb4b9097e9b444a05c0c97be6aa9c, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
   - id: 1
     clip: {fileID: 8300000, guid: c90e92111f9eeaf4a86782cd4770e1ab, type: 3}
     channelType: 1
@@ -163,6 +259,42 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 3accf9f374f75da4382a86707150e979, type: 3}
     channelType: 1
     volume: 1
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 76c7aa6805e436147ba2be095fead105, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 9098243a048f72f4e8b4d9087151e75d, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 198b7557407edf449a32defd44c5abbe, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: b23e9c98f20eb4b408993154a9243a3f, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 0d404f53c3a2bbd4cbb01e851f95155f, type: 3}
+    channelType: 1
+    volume: 0.5
+    pitch: 1
+    loop: 0
+  - id: 0
+    clip: {fileID: 8300000, guid: 80f71015b9988434c85537e845522037, type: 3}
+    channelType: 1
+    volume: 0.5
     pitch: 1
     loop: 0
   sceneMusicEntries:

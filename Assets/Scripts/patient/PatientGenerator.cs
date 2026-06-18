@@ -73,7 +73,16 @@ public class PatientGenerator : MonoBehaviour
         p.majorMiniGame = majorMiniGame.type;
         p.majorMiniGameName = majorMiniGame.displayName;
 
+        AssignPatientVoice(p);
+
         return p;
+    }
+
+    private static void AssignPatientVoice(Patient patient)
+    {
+        if (patient == null || !AudioManager.Instance) return;
+
+        patient.voiceClip = AudioManager.Instance.GetRandomPatientVoice(patient.sex);
     }
 
     private MajorMiniGameOption PickMajorMiniGame()
@@ -146,6 +155,7 @@ public class Patient
     public PatientTrait traitProfile;
     public int baseOrganMoney;
     public string sex;
+    public AudioClip voiceClip;
     public Sprite face;
     public Sprite body;
     public MiniGames.MajorMiniGameType majorMiniGame;

@@ -30,22 +30,25 @@ public class FishingRodController : MonoBehaviour
     [Header("Mouse Pull")]
     [SerializeField] private float hookedMouseReelForce = 4f;
     [SerializeField] private float emptyMouseReelForce = 1f;
-    [SerializeField] private float minMousePullDistance = 0.75f;
-    [SerializeField] private float maxMousePullDistance = 1.8f;
+    [SerializeField, Min(0f)] private float minMousePullPixels = 12f;
+    [SerializeField, Min(1f)] private float maxMousePullPixels = 120f;
+
+    [Header("Mouse Pull Visual")]
+    [SerializeField] private bool showMousePullVisual = true;
+    [SerializeField, Min(0f)] private float mousePullAnchorRadius = 0.12f;
+    [SerializeField, Min(0.001f)] private float mousePullVisualWidth = 0.025f;
+    [SerializeField] private Color mousePullAnchorColor = Color.white;
+    [SerializeField] private Color mousePullLineColor = Color.cyan;
 
     [Header("Counter Pull")]
     [SerializeField] private float counterPullAngle = 10f;
-    [SerializeField] private float counterPullAssistAngle = 35f;
-    [SerializeField] private float counterPullForceMultiplier = 2.5f;
+    [SerializeField] private float counterPullAssistAngle = 32f;
+    [SerializeField] private float counterPullForceMultiplier = 2f;
+    [SerializeField, Range(0f, 1f)] private float counterPullTensionMultiplier = 0.3f;
 
     [Header("Fight / Rest Reeling")]
-    [SerializeField] private float fightingReelMultiplier = 0.2f;
-    [SerializeField] private float restingReelMultiplier = 0.45f;
-
-    [Header("Landing Assist")]
-    [SerializeField] private float landingAssistDistance = 1.25f;
-    [SerializeField] private float landingReelMultiplier = 1.4f;
-    [SerializeField] private float landingMaxReelSpeed = 4f;
+    [SerializeField] private float fightingReelMultiplier = 0.28f;
+    [SerializeField] private float restingReelMultiplier = 0.38f;
 
     [Header("Reel Timing")]
     [SerializeField] private float reelStartDelay = 0.3f;
@@ -68,9 +71,11 @@ public class FishingRodController : MonoBehaviour
     private LineRenderer _pullForceIndicator;
 
     [Header("Line Tension")]
-    [SerializeField] private float tensionBuildSpeed = 0.7f;
-    [SerializeField] private float tensionRecoverSpeed = 0.8f;
-    [SerializeField] private float lineSnapTension = 1f;
+    [SerializeField] private float tensionBuildSpeed = 0.75f;
+    [SerializeField] private float tensionRecoverSpeed = 0.75f;
+    [SerializeField, Min(0f)] private float gentlePullTensionRecoverMultiplier = 1.15f;
+    [SerializeField, Range(0f, 1f)] private float gentlePullMaxStrength = 0.55f;
+    [SerializeField] private float lineSnapTension = 1.05f;
     [SerializeField] private float highTensionLineWidth = 0.015f;
     [SerializeField] private Color highTensionLineColor = Color.red;
 
@@ -78,6 +83,8 @@ public class FishingRodController : MonoBehaviour
     [SerializeField] private float fishEscapeFadeDuration = 0.45f;
     [SerializeField] private float fishEscapeSinkSpeed = 0.6f;
     [SerializeField] private float bobRespawnDelay = 0.35f;
+    [SerializeField] private float rejectedLandingPushDistance = 0.85f;
+    [SerializeField] private float rejectedLandingPushImpulse = 3.5f;
 
     [Header("Fishing Audio")]
     [SerializeField] private SoundId sfxReelClick = SoundId.ReelTick;
@@ -100,12 +107,12 @@ public class FishingRodController : MonoBehaviour
     [SerializeField] private float cameraBoundsPadding = 0.2f;
     [SerializeField] private bool keepBobAboveFishingPoint = true;
     [SerializeField] private float minFishingPointYOffset = 0.05f;
-    [SerializeField] private float sideBoundaryReelMultiplier = 0.1f;
-    [SerializeField] private float sideBoundaryTensionBuildSpeed = 1.25f;
+    [SerializeField] private float sideBoundaryReelMultiplier = 0.4f;
+    [SerializeField] private float sideBoundaryTensionBuildSpeed = 0.75f;
     [SerializeField] private float sideBoundaryReleaseForce = 8f;
 
-    [Header("Counter Pull Debug")]
-    [SerializeField] private bool showCounterPullGuide = false;
+    [Header("Counter Pull Guide")]
+    [SerializeField] private bool showCounterPullGuide = true;
     [SerializeField] private float counterPullGuideLength = 1.5f;
     [SerializeField] private float counterPullGuideWidth = 0.025f;
     [SerializeField] private Color perfectCounterGuideColor = Color.green;
@@ -147,6 +154,10 @@ public class FishingRodController : MonoBehaviour
     private bool _relayPointerPressedThisFrame = false;
     private bool _hasRelayPointerPosition = false;
     private Vector2 _relayPointerWorldPosition = Vector2.zero;
+    private bool _hasMousePullAnchor = false;
+    private Vector2 _mousePullAnchorScreenPosition = Vector2.zero;
+    private LineRenderer _mousePullAnchorCircle;
+    private LineRenderer _mousePullLine;
     private float _nextReelClickTime = 0f;
     private bool _castMovedAwayFromFishingPoint = false;
     private bool _splashPlayedThisThrow = false;
@@ -217,6 +228,7 @@ public class FishingRodController : MonoBehaviour
         ConfigureFishingLine();
         ConfigureCounterPullGuide();
         ConfigurePullForceIndicator();
+        ConfigureMousePullVisual();
         ConfigureFishingAudio();
         SetInputFocus(false);
     }
@@ -266,6 +278,15 @@ public class FishingRodController : MonoBehaviour
         }
 
         _isReeling = _isMouseButtonHeld && CanStartReeling();
+        if (_isReeling)
+        {
+            UpdateMousePullAnchor();
+        }
+        else
+        {
+            ClearMousePullAnchor();
+        }
+
         ClearFrameInput();
     }
 
@@ -329,6 +350,7 @@ public class FishingRodController : MonoBehaviour
     {
         UpdateFishingLine();
         UpdatePullForceIndicator();
+        UpdateMousePullVisual();
         UpdateCounterPullGuide();
     }
 
@@ -373,6 +395,12 @@ public class FishingRodController : MonoBehaviour
 
         if (_inputReady && _bobHasLeftFishingPoint && IsBobAtFishingPoint())
         {
+            if (_hookedFish && !_hookedFish.CanBeLanded)
+            {
+                RejectLandingAttempt();
+                return;
+            }
+
             ResetBobForThrow();
         }
     }
@@ -389,6 +417,7 @@ public class FishingRodController : MonoBehaviour
         _hasStartedReelingThisThrow = false;
         _bobHasLeftFishingPoint = false;
         ClearLineDistanceLock();
+        ClearMousePullAnchor();
         _reelReadyTime = Time.time + reelStartDelay;
         ResetFishingAudioState();
 
@@ -449,6 +478,7 @@ public class FishingRodController : MonoBehaviour
         _lastAppliedBobForce = Vector2.zero;
         _pinnedToSideBoundary = false;
         _sideBoundaryReleaseDirection = Vector2.zero;
+        ClearMousePullAnchor();
         HidePullForceIndicator();
 
         if (_bobRb)
@@ -493,6 +523,34 @@ public class FishingRodController : MonoBehaviour
         {
             fishingMiniGame.RegisterCaughtFish();
         }
+    }
+
+    private void RejectLandingAttempt()
+    {
+        if (!_bobRb || !fishingPoint)
+        {
+            return;
+        }
+
+        _hookedFish?.RejectLandingAttempt();
+
+        Vector2 escapeDirection = _hookedFish ? _hookedFish.LandingEscapeDirection : Vector2.zero;
+        if (escapeDirection == Vector2.zero)
+        {
+            escapeDirection = Vector2.up;
+        }
+
+        ClearLineDistanceLock();
+        ClearMousePullAnchor();
+        _bobHasLeftFishingPoint = true;
+        _hasStartedReelingThisThrow = false;
+        _reelReadyTime = Time.time + reelStartDelay;
+
+        Vector2 fishingPointPosition = fishingPoint.transform.position;
+        _bobRb.position = fishingPointPosition + escapeDirection.normalized * Mathf.Max(readyDistance, rejectedLandingPushDistance);
+        _bobRb.linearVelocity = Vector2.zero;
+        _bobRb.angularVelocity = 0f;
+        _bobRb.AddForce(escapeDirection.normalized * rejectedLandingPushImpulse, ForceMode2D.Impulse);
     }
 
     private void ReturnHookedFish()
@@ -548,6 +606,26 @@ public class FishingRodController : MonoBehaviour
     {
         _pullForceIndicator = CreateCounterPullGuideLine("Pull Force Indicator", pullForceIndicatorColor);
         HidePullForceIndicator();
+    }
+
+    private void ConfigureMousePullVisual()
+    {
+        _mousePullAnchorCircle = CreateLineRenderer(
+            "Mouse Pull Anchor",
+            mousePullAnchorColor,
+            mousePullVisualWidth,
+            lineSortingOrder + 2);
+        _mousePullAnchorCircle.loop = true;
+        _mousePullAnchorCircle.positionCount = 32;
+
+        _mousePullLine = CreateLineRenderer(
+            "Mouse Pull Line",
+            mousePullLineColor,
+            mousePullVisualWidth,
+            lineSortingOrder + 2);
+        _mousePullLine.positionCount = 2;
+
+        HideMousePullVisual();
     }
 
     private void ConfigureFishingAudio()
@@ -703,17 +781,22 @@ public class FishingRodController : MonoBehaviour
 
     private LineRenderer CreateCounterPullGuideLine(string lineName, Color color)
     {
+        return CreateLineRenderer(lineName, color, counterPullGuideWidth, lineSortingOrder + 1);
+    }
+
+    private LineRenderer CreateLineRenderer(string lineName, Color color, float width, int sortingOrder)
+    {
         GameObject lineObject = new GameObject(lineName);
         lineObject.transform.SetParent(transform, false);
 
         LineRenderer line = lineObject.AddComponent<LineRenderer>();
         line.useWorldSpace = true;
         line.positionCount = 2;
-        line.startWidth = counterPullGuideWidth;
-        line.endWidth = counterPullGuideWidth;
+        line.startWidth = width;
+        line.endWidth = width;
         line.startColor = color;
         line.endColor = color;
-        line.sortingOrder = lineSortingOrder + 1;
+        line.sortingOrder = sortingOrder;
 
         Shader shader = Shader.Find("Sprites/Default");
         if (shader)
@@ -782,9 +865,34 @@ public class FishingRodController : MonoBehaviour
             pullForceIndicatorWidth);
     }
 
+    private void UpdateMousePullVisual()
+    {
+        if (!showMousePullVisual || !_isReeling || !_hasMousePullAnchor || !bob || !bob.activeInHierarchy)
+        {
+            HideMousePullVisual();
+            return;
+        }
+
+        if (!TryGetWorldPositionFromScreen(_mousePullAnchorScreenPosition, bob.transform.position.z, out Vector2 anchorPosition))
+        {
+            HideMousePullVisual();
+            return;
+        }
+
+        Vector2 pointerScreenPosition = GetClampedPullScreenPosition();
+        if (!TryGetWorldPositionFromScreen(pointerScreenPosition, bob.transform.position.z, out Vector2 pointerPosition))
+        {
+            HideMousePullVisual();
+            return;
+        }
+
+        SetMousePullAnchorCircle(anchorPosition);
+        SetMousePullLine(anchorPosition, pointerPosition, GetMousePullLineColor());
+    }
+
     private void UpdateCounterPullGuide()
     {
-        if (!showCounterPullGuide || !_hookedFish || !_hookedFish.IsFighting || !bob)
+        if (!showCounterPullGuide || !_hookedFish || !_hookedFish.IsFighting || !bob || !_hasMousePullAnchor)
         {
             HideCounterPullGuide();
             return;
@@ -797,16 +905,30 @@ public class FishingRodController : MonoBehaviour
             return;
         }
 
-        Vector2 guideOrigin = bob.transform.position;
-        MousePullInput mousePullInput = GetMousePullFromBob();
-        Color pullColor = Color.Lerp(Color.red, perfectCounterGuideColor, GetCounterPullStrength(mousePullInput.Direction));
+        if (!TryGetWorldPositionFromScreen(_mousePullAnchorScreenPosition, bob.transform.position.z, out Vector2 guideOrigin))
+        {
+            HideCounterPullGuide();
+            return;
+        }
 
-        SetGuideLine(_perfectCounterGuide, guideOrigin, perfectCounterDirection, perfectCounterGuideColor, counterPullGuideLength);
-        SetGuideLine(_perfectCounterLeftGuide, guideOrigin, Rotate(perfectCounterDirection, counterPullAngle), perfectCounterGuideColor, counterPullGuideLength);
-        SetGuideLine(_perfectCounterRightGuide, guideOrigin, Rotate(perfectCounterDirection, -counterPullAngle), perfectCounterGuideColor, counterPullGuideLength);
-        SetGuideLine(_assistCounterLeftGuide, guideOrigin, Rotate(perfectCounterDirection, counterPullAssistAngle), assistCounterGuideColor, counterPullGuideLength * 0.85f);
-        SetGuideLine(_assistCounterRightGuide, guideOrigin, Rotate(perfectCounterDirection, -counterPullAssistAngle), assistCounterGuideColor, counterPullGuideLength * 0.85f);
-        SetGuideLine(_currentPullGuide, guideOrigin, mousePullInput.Direction, pullColor, counterPullGuideLength * mousePullInput.Strength);
+        float guideLength = GetWorldDistanceFromScreenPixels(maxMousePullPixels, bob.transform.position.z);
+        MousePullInput mousePullInput = GetMousePullInput();
+        Color pullColor = GetCounterPullColor(GetCounterPullStrength(mousePullInput.Direction));
+
+        SetGuideLineEnabled(_perfectCounterGuide, false);
+        SetGuideLine(_perfectCounterLeftGuide, guideOrigin, Rotate(perfectCounterDirection, counterPullAngle), perfectCounterGuideColor, guideLength);
+        SetGuideLine(_perfectCounterRightGuide, guideOrigin, Rotate(perfectCounterDirection, -counterPullAngle), perfectCounterGuideColor, guideLength);
+        SetGuideLine(_assistCounterLeftGuide, guideOrigin, Rotate(perfectCounterDirection, counterPullAssistAngle), assistCounterGuideColor, guideLength * 0.85f);
+        SetGuideLine(_assistCounterRightGuide, guideOrigin, Rotate(perfectCounterDirection, -counterPullAssistAngle), assistCounterGuideColor, guideLength * 0.85f);
+
+        if (_hasMousePullAnchor && showMousePullVisual)
+        {
+            SetGuideLineEnabled(_currentPullGuide, false);
+        }
+        else
+        {
+            SetGuideLine(_currentPullGuide, guideOrigin, mousePullInput.Direction, pullColor, guideLength * mousePullInput.Strength);
+        }
     }
 
     private void SetGuideLine(LineRenderer line, Vector2 origin, Vector2 direction, Color color, float length, float width = -1f)
@@ -850,6 +972,79 @@ public class FishingRodController : MonoBehaviour
         _smoothedPullIndicatorLength = 0f;
     }
 
+    private void HideMousePullVisual()
+    {
+        SetGuideLineEnabled(_mousePullAnchorCircle, false);
+        SetGuideLineEnabled(_mousePullLine, false);
+    }
+
+    private void SetMousePullAnchorCircle(Vector2 center)
+    {
+        if (!_mousePullAnchorCircle)
+        {
+            return;
+        }
+
+        int pointCount = Mathf.Max(8, _mousePullAnchorCircle.positionCount);
+        _mousePullAnchorCircle.enabled = true;
+        _mousePullAnchorCircle.positionCount = pointCount;
+        _mousePullAnchorCircle.startWidth = mousePullVisualWidth;
+        _mousePullAnchorCircle.endWidth = mousePullVisualWidth;
+        _mousePullAnchorCircle.startColor = mousePullAnchorColor;
+        _mousePullAnchorCircle.endColor = mousePullAnchorColor;
+
+        float radius = Mathf.Max(0f, mousePullAnchorRadius);
+        for (int i = 0; i < pointCount; i++)
+        {
+            float angle = (float)i / pointCount * Mathf.PI * 2f;
+            Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+            _mousePullAnchorCircle.SetPosition(i, center + offset);
+        }
+    }
+
+    private void SetMousePullLine(Vector2 anchorPosition, Vector2 pointerPosition, Color lineColor)
+    {
+        if (!_mousePullLine)
+        {
+            return;
+        }
+
+        bool hasLength = Vector2.Distance(anchorPosition, pointerPosition) > 0.001f;
+        _mousePullLine.enabled = hasLength;
+        if (!hasLength)
+        {
+            return;
+        }
+
+        _mousePullLine.startWidth = mousePullVisualWidth;
+        _mousePullLine.endWidth = mousePullVisualWidth;
+        _mousePullLine.startColor = lineColor;
+        _mousePullLine.endColor = lineColor;
+        _mousePullLine.SetPosition(0, anchorPosition);
+        _mousePullLine.SetPosition(1, pointerPosition);
+    }
+
+    private Color GetMousePullLineColor()
+    {
+        if (!_hookedFish || !_hookedFish.IsFighting || _currentPullDirection == Vector2.zero)
+        {
+            return mousePullLineColor;
+        }
+
+        return GetCounterPullColor(_counterPullStrength);
+    }
+
+    private Color GetCounterPullColor(float counterStrength)
+    {
+        counterStrength = Mathf.Clamp01(counterStrength);
+        if (counterStrength < 0.5f)
+        {
+            return Color.Lerp(Color.red, assistCounterGuideColor, counterStrength * 2f);
+        }
+
+        return Color.Lerp(assistCounterGuideColor, perfectCounterGuideColor, (counterStrength - 0.5f) * 2f);
+    }
+
     private void SetGuideLineEnabled(LineRenderer line, bool enabled)
     {
         if (line)
@@ -884,11 +1079,11 @@ public class FishingRodController : MonoBehaviour
     private Vector2 GetReelForce()
     {
         Vector2 fishingPointDirection = GetFishingPointDirection();
-        MousePullInput mousePullInput = GetMousePullFromBob();
+        MousePullInput mousePullInput = GetMousePullInput();
         _currentPullDirection = mousePullInput.Direction;
         _currentPullStrength = mousePullInput.Strength;
         _counterPullStrength = GetCounterPullStrength(_currentPullDirection);
-        _counterPullingThisFrame = _counterPullStrength > 0f;
+        _counterPullingThisFrame = _currentPullStrength > 0f && _counterPullStrength > 0f;
 
         float mouseForce = _hookedFish ? hookedMouseReelForce : emptyMouseReelForce;
         mouseForce *= _currentPullStrength;
@@ -908,7 +1103,7 @@ public class FishingRodController : MonoBehaviour
             mouseForce *= sideBoundaryReelMultiplier;
         }
 
-        return fishingPointDirection * (reelForce * GetLandingAssistMultiplier()) + _currentPullDirection * mouseForce;
+        return fishingPointDirection * reelForce + _currentPullDirection * mouseForce;
     }
 
     private float GetReelMultiplier()
@@ -921,23 +1116,6 @@ public class FishingRodController : MonoBehaviour
         return _hookedFish.IsFighting ? fightingReelMultiplier : restingReelMultiplier;
     }
 
-    private float GetLandingAssistMultiplier()
-    {
-        if (!_hookedFish || !bob || !fishingPoint || landingAssistDistance <= readyDistance)
-        {
-            return 1f;
-        }
-
-        float distanceToFishingPoint = Vector2.Distance(bob.transform.position, fishingPoint.transform.position);
-        if (distanceToFishingPoint >= landingAssistDistance)
-        {
-            return 1f;
-        }
-
-        float landingProgress = 1f - Mathf.InverseLerp(readyDistance, landingAssistDistance, distanceToFishingPoint);
-        return Mathf.Lerp(1f, landingReelMultiplier, landingProgress);
-    }
-
     private float GetMaxBobSpeed()
     {
         if (!_hookedFish)
@@ -945,52 +1123,36 @@ public class FishingRodController : MonoBehaviour
             return maxReelSpeed;
         }
 
-        float maxHookedSpeed = Mathf.Lerp(hookedMaxReelSpeed, counterPullMaxReelSpeed, _counterPullStrength);
-
-        if (IsInLandingAssistRange())
-        {
-            maxHookedSpeed = Mathf.Max(maxHookedSpeed, landingMaxReelSpeed);
-        }
-
-        return maxHookedSpeed;
+        return Mathf.Lerp(hookedMaxReelSpeed, counterPullMaxReelSpeed, _counterPullStrength);
     }
 
-    private bool IsInLandingAssistRange()
+    private MousePullInput GetMousePullInput()
     {
-        if (!_hookedFish || !bob || !fishingPoint)
-        {
-            return false;
-        }
-
-        return Vector2.Distance(bob.transform.position, fishingPoint.transform.position) <= landingAssistDistance;
-    }
-
-    private MousePullInput GetMousePullFromBob()
-    {
-        if (!bob)
+        if (!bob || !_hasMousePullAnchor)
         {
             return MousePullInput.None;
         }
 
-        if (!TryGetPointerWorldPosition(bob.transform.position.z, out Vector2 mouseWorldPosition))
+        if (!TryGetPointerScreenPosition(out _))
         {
             return MousePullInput.None;
         }
 
-        Vector2 bobPosition = bob.transform.position;
-        Vector2 mouseOffset = mouseWorldPosition - bobPosition;
-        float pullDistance = mouseOffset.magnitude;
+        Vector2 pointerScreenPosition = GetClampedPullScreenPosition();
+        Vector2 pullOffset = pointerScreenPosition - _mousePullAnchorScreenPosition;
+        float pullDistance = pullOffset.magnitude;
 
-        if (pullDistance <= 0f || maxMousePullDistance <= 0f)
+        if (pullDistance <= 0f || maxMousePullPixels <= 0f)
         {
             return MousePullInput.None;
         }
 
-        float minDistance = Mathf.Max(0f, minMousePullDistance);
-        float maxDistance = Mathf.Max(minDistance + 0.01f, maxMousePullDistance);
+        float minDistance = Mathf.Max(0f, minMousePullPixels);
+        float maxDistance = Mathf.Max(minDistance + 1f, maxMousePullPixels);
         float pullStrength = Mathf.InverseLerp(minDistance, maxDistance, pullDistance);
+        Vector2 pullDirection = GetWorldDirectionFromScreenDelta(pullOffset, bob.transform.position.z);
 
-        return new MousePullInput(mouseOffset / pullDistance, pullStrength);
+        return new MousePullInput(pullDirection, pullStrength);
     }
 
     private float GetCounterPullStrength(Vector2 pullDirection)
@@ -1033,7 +1195,7 @@ public class FishingRodController : MonoBehaviour
             return;
         }
 
-        if (!_isReeling || !_hookedFish.IsFighting)
+        if (!_isReeling)
         {
             UpdateBoundaryTension(deltaTime);
             RecoverLineTension(deltaTime);
@@ -1041,14 +1203,50 @@ public class FishingRodController : MonoBehaviour
             return;
         }
 
-        _lineTension += _currentPullStrength * _hookedFish.FightIntensity * tensionBuildSpeed * deltaTime;
+        if (!_hookedFish.IsFighting)
+        {
+            UpdateBoundaryTension(deltaTime);
+            RecoverLineTension(deltaTime, GetGentlePullTensionRecoveryMultiplier());
+            ClampTensionAndSnapIfNeeded();
+            return;
+        }
+
+        float counterTensionMultiplier = Mathf.Lerp(1f, counterPullTensionMultiplier, _counterPullStrength);
+        _lineTension += _currentPullStrength
+                        * _hookedFish.FightIntensity
+                        * tensionBuildSpeed
+                        * counterTensionMultiplier
+                        * GetHookedFishTensionMultiplier()
+                        * deltaTime;
         UpdateBoundaryTension(deltaTime);
+        RecoverLineTension(deltaTime, GetGentlePullTensionRecoveryMultiplier());
         ClampTensionAndSnapIfNeeded();
     }
 
     private void RecoverLineTension(float deltaTime)
     {
-        _lineTension = Mathf.Max(0f, _lineTension - tensionRecoverSpeed * deltaTime);
+        RecoverLineTension(deltaTime, 1f);
+    }
+
+    private void RecoverLineTension(float deltaTime, float multiplier)
+    {
+        if (multiplier <= 0f)
+        {
+            return;
+        }
+
+        _lineTension = Mathf.Max(0f, _lineTension - tensionRecoverSpeed * multiplier * deltaTime);
+    }
+
+    private float GetGentlePullTensionRecoveryMultiplier()
+    {
+        if (gentlePullMaxStrength <= 0f)
+        {
+            return 0f;
+        }
+
+        float gentlePullPercent = 1f - Mathf.InverseLerp(0f, gentlePullMaxStrength, _currentPullStrength);
+        return gentlePullPercent * gentlePullTensionRecoverMultiplier;
     }
 
     private void ClampTensionAndSnapIfNeeded()
@@ -1069,7 +1267,16 @@ public class FishingRodController : MonoBehaviour
         }
 
         float intensity = _hookedFish.IsFighting ? _hookedFish.FightIntensity : 0.5f;
-        _lineTension += _currentPullStrength * intensity * sideBoundaryTensionBuildSpeed * deltaTime;
+        _lineTension += _currentPullStrength
+                        * intensity
+                        * sideBoundaryTensionBuildSpeed
+                        * GetHookedFishTensionMultiplier()
+                        * deltaTime;
+    }
+
+    private float GetHookedFishTensionMultiplier()
+    {
+        return _hookedFish ? _hookedFish.TensionDamageMultiplier : 1f;
     }
 
     private void SnapLine()
@@ -1091,6 +1298,7 @@ public class FishingRodController : MonoBehaviour
         _lineTension = 0f;
         ClearLineDistanceLock();
         ResetFishingAudioState();
+        ClearMousePullAnchor();
         HideCounterPullGuide();
         HidePullForceIndicator();
 
@@ -1429,6 +1637,164 @@ public class FishingRodController : MonoBehaviour
         return Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
     }
 
+    private void UpdateMousePullAnchor()
+    {
+        if (!TryGetPointerScreenPosition(out Vector2 pointerScreenPosition))
+        {
+            ClearMousePullAnchor();
+            return;
+        }
+
+        if (!_hasMousePullAnchor)
+        {
+            _mousePullAnchorScreenPosition = pointerScreenPosition;
+            _hasMousePullAnchor = true;
+            return;
+        }
+
+        LockPointerToMaxPullDistance(pointerScreenPosition);
+    }
+
+    private void ClearMousePullAnchor()
+    {
+        _hasMousePullAnchor = false;
+        _mousePullAnchorScreenPosition = Vector2.zero;
+        HideMousePullVisual();
+    }
+
+    private bool TryGetPointerScreenPosition(out Vector2 screenPosition)
+    {
+        if (_crtInputRelay)
+        {
+            if (!_hasRelayPointerPosition)
+            {
+                screenPosition = default;
+                return false;
+            }
+
+            if (!_camera)
+            {
+                ResolveCamera();
+            }
+
+            if (_camera)
+            {
+                screenPosition = _camera.WorldToScreenPoint(_relayPointerWorldPosition);
+                return true;
+            }
+
+            screenPosition = _relayPointerWorldPosition;
+            return true;
+        }
+
+        if (Mouse.current == null)
+        {
+            screenPosition = default;
+            return false;
+        }
+
+        screenPosition = Mouse.current.position.ReadValue();
+        return true;
+    }
+
+    private Vector2 GetClampedPullScreenPosition()
+    {
+        if (!_hasMousePullAnchor || !TryGetPointerScreenPosition(out Vector2 pointerScreenPosition))
+        {
+            return _mousePullAnchorScreenPosition;
+        }
+
+        Vector2 pullOffset = pointerScreenPosition - _mousePullAnchorScreenPosition;
+        float maxDistance = Mathf.Max(1f, maxMousePullPixels);
+        if (pullOffset.magnitude <= maxDistance)
+        {
+            return pointerScreenPosition;
+        }
+
+        return _mousePullAnchorScreenPosition + pullOffset.normalized * maxDistance;
+    }
+
+    private void LockPointerToMaxPullDistance(Vector2 pointerScreenPosition)
+    {
+        if (!_hasMousePullAnchor)
+        {
+            return;
+        }
+
+        Vector2 pullOffset = pointerScreenPosition - _mousePullAnchorScreenPosition;
+        float maxDistance = Mathf.Max(1f, maxMousePullPixels);
+        if (pullOffset.magnitude <= maxDistance)
+        {
+            return;
+        }
+
+        Vector2 lockedScreenPosition = _mousePullAnchorScreenPosition + pullOffset.normalized * maxDistance;
+        if (_crtInputRelay)
+        {
+            float targetZ = bob ? bob.transform.position.z : transform.position.z;
+            if (TryGetWorldPositionFromScreen(lockedScreenPosition, targetZ, out Vector2 lockedWorldPosition))
+            {
+                _relayPointerWorldPosition = lockedWorldPosition;
+            }
+
+            return;
+        }
+
+        Mouse.current?.WarpCursorPosition(lockedScreenPosition);
+    }
+
+    private bool TryGetWorldPositionFromScreen(Vector2 screenPosition, float targetZ, out Vector2 worldPosition)
+    {
+        if (!_camera)
+        {
+            ResolveCamera();
+        }
+
+        if (!_camera)
+        {
+            worldPosition = default;
+            return false;
+        }
+
+        float cameraDistance = Mathf.Abs(_camera.transform.position.z - targetZ);
+        Vector3 screenPoint = new Vector3(screenPosition.x, screenPosition.y, cameraDistance);
+        worldPosition = _camera.ScreenToWorldPoint(screenPoint);
+        return true;
+    }
+
+    private float GetWorldDistanceFromScreenPixels(float pixels, float targetZ)
+    {
+        if (!_hasMousePullAnchor)
+        {
+            return counterPullGuideLength;
+        }
+
+        if (!TryGetWorldPositionFromScreen(_mousePullAnchorScreenPosition, targetZ, out Vector2 startPosition)
+            || !TryGetWorldPositionFromScreen(_mousePullAnchorScreenPosition + Vector2.right * pixels, targetZ, out Vector2 endPosition))
+        {
+            return counterPullGuideLength;
+        }
+
+        return Mathf.Max(0.01f, Vector2.Distance(startPosition, endPosition));
+    }
+
+    private Vector2 GetWorldDirectionFromScreenDelta(Vector2 screenDelta, float targetZ)
+    {
+        if (screenDelta == Vector2.zero)
+        {
+            return Vector2.zero;
+        }
+
+        if (!TryGetWorldPositionFromScreen(_mousePullAnchorScreenPosition, targetZ, out Vector2 anchorWorldPosition)
+            || !TryGetWorldPositionFromScreen(_mousePullAnchorScreenPosition + screenDelta, targetZ, out Vector2 pointerWorldPosition))
+        {
+            return screenDelta.normalized;
+        }
+
+        Vector2 worldDelta = pointerWorldPosition - anchorWorldPosition;
+        return worldDelta == Vector2.zero ? Vector2.zero : worldDelta.normalized;
+    }
+
     private bool TryGetPointerWorldPosition(float targetZ, out Vector2 worldPosition)
     {
         if (_crtInputRelay)
@@ -1534,5 +1900,6 @@ public class FishingRodController : MonoBehaviour
         _counterPullingThisFrame = false;
         _counterPullStrength = 0f;
         _lastAppliedBobForce = Vector2.zero;
+        ClearMousePullAnchor();
     }
 }

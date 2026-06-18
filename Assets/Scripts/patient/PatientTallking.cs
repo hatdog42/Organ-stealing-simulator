@@ -19,6 +19,10 @@ public class PatientTallking : DialogueBase
      [Header("Timing")]
      [SerializeField, Min(0f)] private float waitBeforeDialogue = 1f;
 
+     [Header("Voice")]
+     [SerializeField, Range(0f, 1f)] private float patientVoiceVolume = 1f;
+
+     private Patient selectedPatient;
      private string currentPatientName;
 
      protected override bool ShowTextBoxAtTop => false;
@@ -32,7 +36,7 @@ public class PatientTallking : DialogueBase
 
     void Start()
     {
-        var selectedPatient = HealthBars.Instance?.SelectedPatient;
+        selectedPatient = HealthBars.Instance?.SelectedPatient;
 
         if (selectedPatient == null)
         {
@@ -50,6 +54,19 @@ public class PatientTallking : DialogueBase
         string line = patientData.GetRandomLine(selectedPatient.personality);
 
         StartCoroutine(PatientDialogue(line));
+    }
+
+    protected override void OnDialogueLineStarted(string line)
+    {
+        AudioManager audioManager = AudioManager.Instance;
+        if (!audioManager || selectedPatient == null) return;
+
+        if (!selectedPatient.voiceClip)
+        {
+            selectedPatient.voiceClip = audioManager.GetRandomPatientVoice(selectedPatient.sex);
+        }
+
+        audioManager.PlayPatientVoice(selectedPatient.sex, selectedPatient.voiceClip, patientVoiceVolume);
     }
 
     private IEnumerator PatientDialogue(string line)

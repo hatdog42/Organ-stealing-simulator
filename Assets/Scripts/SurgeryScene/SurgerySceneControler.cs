@@ -12,6 +12,10 @@ public class SurgerySceneControler : MonoBehaviour
     [Header("Major MiniGames")]
     [SerializeField] private MajorMiniGameBinding[] majorMiniGames;
 
+    [Header("Direct Surgery Debug")]
+    [SerializeField] private bool useDirectSurgeryFallbackMiniGame = true;
+    [SerializeField] private MajorMiniGameType directSurgeryFallbackMiniGame = MajorMiniGameType.Fishing;
+
     private MajorMiniGameBinding _discoveredMaze;
     private MajorMiniGameBinding _discoveredDebugButtons;
     private MajorMiniGameBinding _discoveredWordle;
@@ -25,14 +29,26 @@ public class SurgerySceneControler : MonoBehaviour
 
     private void Start()
     {
-        Patient selectedPatient = HealthBars.Instance?.SelectedPatient;
-        MajorMiniGameType selectedMiniGame = selectedPatient?.majorMiniGame ?? MajorMiniGameType.Maze;
+        MajorMiniGameType selectedMiniGame = ResolveSelectedMiniGameType();
 
         ApplyMajorMiniGameSelection(selectedMiniGame);
         _selectedMajorMiniGameCamera = ResolveMajorMiniGameCamera(selectedMiniGame);
 
         if (_selectedMajorMiniGameCamera && TVController.Instance)
             TVController.Instance.RegisterMiniGameCamera(_selectedMajorMiniGameCamera);
+    }
+
+    private MajorMiniGameType ResolveSelectedMiniGameType()
+    {
+        Patient selectedPatient = HealthBars.Instance?.SelectedPatient;
+        if (selectedPatient != null)
+        {
+            return selectedPatient.majorMiniGame;
+        }
+
+        return useDirectSurgeryFallbackMiniGame
+            ? directSurgeryFallbackMiniGame
+            : MajorMiniGameType.Maze;
     }
 
     public Camera SelectedMajorMiniGameCameraOrDefault(Camera fallbackCamera)

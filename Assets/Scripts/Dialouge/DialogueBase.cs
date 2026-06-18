@@ -19,6 +19,7 @@ public class DialogueBase : TypewriterBase
     protected virtual bool ShowTextBoxAtTop => showTextBoxAtTop;
     protected virtual bool HideTextBoxAfterLine => hideTextBoxAfterLine;
     protected virtual string DialogueSpeakerName => null;
+    protected virtual void OnDialogueLineStarted(string line) { }
 
     protected virtual void Awake()
     {
@@ -45,6 +46,7 @@ public class DialogueBase : TypewriterBase
         if (dialogueBox)
         {
             dialogueBox.SetSpeakerName(DialogueSpeakerName);
+            OnDialogueLineStarted(line);
             yield return dialogueBox.PlayLine(
                 line,
                 CurrentTypewriterSettings,

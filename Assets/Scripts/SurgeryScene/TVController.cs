@@ -12,6 +12,10 @@ public class TVController : MonoBehaviour
     [SerializeField]private RenderTexture screenRT;
     [SerializeField] private TVInputRelay inputRelay; 
     [SerializeField]private Camera[] miniGameCameras;
+
+    [Header("Direct Surgery Debug")]
+    [SerializeField] private bool useDirectSurgeryFallbackMiniGame = true;
+    [SerializeField] private MajorMiniGameType directSurgeryFallbackMiniGame = MajorMiniGameType.Fishing;
     
     private readonly List<Camera> _registeredCameras = new();
     private MiniGameBase _activeGame;
@@ -138,15 +142,13 @@ public class TVController : MonoBehaviour
     {
         if (!HealthBars.Instance)
         {
-            Debug.LogError("Cannot open selected major minigame because HealthBars.Instance is missing.");
-            return null;
+            return ResolveDirectSurgeryFallbackCamera("HealthBars.Instance is missing");
         }
 
         Patient selectedPatient = HealthBars.Instance?.SelectedPatient;
         if (selectedPatient == null)
         {
-            Debug.LogError("Cannot open selected major minigame because no patient has been selected. Select a patient before entering Surgery.");
-            return null;
+            return ResolveDirectSurgeryFallbackCamera("no patient has been selected");
         }
 
         Camera selectedCamera = FindMajorMiniGameCamera(selectedPatient.majorMiniGame);
@@ -158,6 +160,25 @@ public class TVController : MonoBehaviour
 
         Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}'.");
         return selectedCamera;
+    }
+
+    private Camera ResolveDirectSurgeryFallbackCamera(string reason)
+    {
+        if (!useDirectSurgeryFallbackMiniGame)
+        {
+            Debug.LogError($"Cannot open selected major minigame because {reason}. Select a patient before entering Surgery.");
+            return null;
+        }
+
+        Camera fallbackCamera = FindMajorMiniGameCamera(directSurgeryFallbackMiniGame);
+        if (!fallbackCamera)
+        {
+            Debug.LogError($"Cannot open direct Surgery fallback minigame '{directSurgeryFallbackMiniGame}' because no camera was found for it.");
+            return null;
+        }
+
+        Debug.LogWarning($"Opening direct Surgery fallback minigame '{directSurgeryFallbackMiniGame}' because {reason}.");
+        return fallbackCamera;
     }
 
     private Camera FindMajorMiniGameCamera(MajorMiniGameType majorMiniGameType)

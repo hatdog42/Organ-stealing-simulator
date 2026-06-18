@@ -34,15 +34,15 @@ public class Fish : MonoBehaviour
     [SerializeField] private Transform _hookPoint;
 
     [Header("Fight Force")]
-    [SerializeField] private float _fightForce = 2f;
-    [SerializeField] private float _restForceMultiplier = 0.25f;
-    [SerializeField, Range(0f, 1f)] private float _minimumSideForce = 0.7f;
+    [SerializeField] private float _fightForce = 10f;
+    [SerializeField] private float _restForceMultiplier = 0.35f;
+    [SerializeField, Range(0f, 1f)] private float _minimumSideForce = 0.5f;
     [SerializeField] private float _directionChangeKickMultiplier = 1.25f;
     [SerializeField] private float _directionChangeKickDuration = 0.15f;
 
     [Header("Edge Escape")]
     [SerializeField, Min(0f)] private float _edgeAvoidanceDistance = 0.75f;
-    [SerializeField, Min(1f)] private float _edgeBoostMultiplier = 1.8f;
+    [SerializeField, Min(1f)] private float _edgeBoostMultiplier = 1.5f;
 
     [Header("Fight Direction")]
     [SerializeField, Range(0f, 200f)] private float _fightArc = 180f;
@@ -56,17 +56,28 @@ public class Fish : MonoBehaviour
 
     [Header("Stamina Cycle")]
     [SerializeField] private float _maxStamina = 1f;
-    [SerializeField] private Vector2 _fightDuration = new Vector2(1.2f, 3f);
-    [SerializeField] private Vector2 _restDuration = new Vector2(0.8f, 1.8f);
+    [SerializeField] private Vector2 _fightDuration = new Vector2(1.1f, 2.4f);
+    [SerializeField] private Vector2 _restDuration = new Vector2(0.75f, 1.4f);
     [SerializeField] private Vector2 _fightStaminaUseRate = new Vector2(0.2f, 0.55f);
-    [SerializeField] private Vector2 _fightIntensity = new Vector2(0.85f, 1.25f);
+    [SerializeField] private Vector2 _fightIntensity = new Vector2(0.85f, 1.2f);
     [SerializeField] private float _staminaRecoveryRate = 0.65f;
-    [SerializeField, Range(0f, 1f)] private float _minStaminaToFight = 0.55f;
+    [SerializeField, Range(0f, 1f)] private float _minStaminaToFight = 0.5f;
 
     [Header("Counter Pull Effects")]
-    [SerializeField] private float _counterPullStaminaDrain = 0.8f;
-    [SerializeField, Range(0f, 1f)] private float _counterPullFightSlowMultiplier = 0.9f;
-    [SerializeField] private float _counterPullSlowDuration = 0.15f;
+    [SerializeField] private float _counterPullStaminaDrain = 0.9f;
+    [SerializeField, Range(0f, 1f)] private float _counterPullFightSlowMultiplier = 0.75f;
+    [SerializeField] private float _counterPullSlowDuration = 0.18f;
+
+    [Header("Landing")]
+    [SerializeField, Min(0)] private int _exhaustionsBeforeLanding = 2;
+    [SerializeField, Min(0f)] private float _landingPanicDistance = 1.5f;
+    [SerializeField, Range(0f, 1f)] private float _landingPanicChance = 0.9f;
+    [SerializeField, Min(0f)] private float _landingPanicRetryDelay = 0.2f;
+    [SerializeField] private Vector2 _landingPanicDuration = new Vector2(0.8f, 1.5f);
+    [SerializeField, Range(0f, 1f)] private float _landingPanicStaminaRestore = 0.65f;
+    [SerializeField, Min(1f)] private float _landingPanicIntensityMultiplier = 1.6f;
+    [SerializeField, Min(1f)] private float _landingPanicTensionMultiplier = 1.6f;
+    [SerializeField, Min(0f)] private float _landingPanicCooldown = 0.75f;
 
     [Header("Escape")]
     [SerializeField] private float _escapeFadeDuration = 0.45f;
@@ -107,6 +118,9 @@ public class Fish : MonoBehaviour
     private float _activeFightIntensity = 1f;
     private float _directionChangeKickTimer;
     private float _counterPullSlowTimer;
+    private int _exhaustionCount;
+    private float _landingPanicCooldownTimer;
+    private bool _landingPanicActive;
     private bool _escaping;
     private float _escapeTimer;
     private float _activeEscapeFadeDuration;
@@ -122,6 +136,9 @@ public class Fish : MonoBehaviour
 
     public bool IsFighting => _hooked && _fightMode == FightMode.Fighting;
     public Vector2 FightDirection => _hooked ? GetActiveFightForceDirection(out _) : Vector2.zero;
+    public Vector2 LandingEscapeDirection => _hooked ? GetActiveFightForceDirection(out _) : Vector2.zero;
+    public bool CanBeLanded => !_hooked || _exhaustionCount >= _exhaustionsBeforeLanding;
+    public float TensionDamageMultiplier => _hooked && _landingPanicActive ? _landingPanicTensionMultiplier : 1f;
     public float FightIntensity => IsFighting ? _activeFightIntensity : _restForceMultiplier;
     public float StaminaPercent => _maxStamina <= 0f ? 0f : Mathf.Clamp01(_stamina / _maxStamina);
 
@@ -384,7 +401,9 @@ public class Fish : MonoBehaviour
             return;
         }
 
+        UpdateLandingPanicCooldown();
         UpdateFightMode();
+        TryStartLandingPanic();
 
         if (_waitingAtFightAngle)
         {
@@ -442,7 +461,7 @@ public class Fish : MonoBehaviour
 
         if (_stamina <= 0f)
         {
-            StartRestMode();
+            StartRestMode(true);
         }
     }
 
@@ -453,9 +472,10 @@ public class Fish : MonoBehaviour
             _fightModeTimer -= Time.deltaTime;
             _stamina = Mathf.Max(0f, _stamina - _activeStaminaUseRate * Time.deltaTime);
 
-            if (_fightModeTimer <= 0f || _stamina <= 0f)
+            bool exhausted = _stamina <= 0f;
+            if (_fightModeTimer <= 0f || exhausted)
             {
-                StartRestMode();
+                StartRestMode(exhausted);
             }
 
             return;
@@ -470,29 +490,94 @@ public class Fish : MonoBehaviour
         }
     }
 
-    private void StartFightMode()
+    private void StartFightMode(bool landingPanic = false)
     {
         _fightMode = FightMode.Fighting;
-        _fightModeTimer = RandomFromRange(_fightDuration);
+        _landingPanicActive = landingPanic;
+        _fightModeTimer = RandomFromRange(landingPanic ? _landingPanicDuration : _fightDuration);
         _activeStaminaUseRate = RandomFromRange(_fightStaminaUseRate);
         _activeFightIntensity = RandomFromRange(_fightIntensity);
+        if (landingPanic)
+        {
+            _activeFightIntensity *= _landingPanicIntensityMultiplier;
+        }
+
         UpdateAnimationState();
         PickNewFightDirection();
     }
 
-    private void StartRestMode()
+    private void StartRestMode(bool exhausted)
     {
         if (_fightMode == FightMode.Resting)
         {
             return;
         }
 
+        if (exhausted)
+        {
+            _exhaustionCount++;
+        }
+
         _fightMode = FightMode.Resting;
+        _landingPanicActive = false;
         _fightModeTimer = RandomFromRange(_restDuration);
         _activeStaminaUseRate = 0f;
         _activeFightIntensity = _restForceMultiplier;
         UpdateAnimationState();
         PickNewFightDirection();
+    }
+
+    private void UpdateLandingPanicCooldown()
+    {
+        if (_landingPanicCooldownTimer > 0f)
+        {
+            _landingPanicCooldownTimer = Mathf.Max(0f, _landingPanicCooldownTimer - Time.deltaTime);
+        }
+    }
+
+    private void TryStartLandingPanic()
+    {
+        if (!_hooked
+            || CanBeLanded
+            || _fightMode != FightMode.Resting
+            || _landingPanicDistance <= 0f
+            || _landingPanicCooldownTimer > 0f
+            || !_rod
+            || !_hookTarget)
+        {
+            return;
+        }
+
+        float distanceToLanding = Vector2.Distance(_hookTarget.position, _rod.FishingPointPosition);
+        if (distanceToLanding > _landingPanicDistance)
+        {
+            return;
+        }
+
+        if (Random.value <= _landingPanicChance)
+        {
+            StartLandingPanic();
+            return;
+        }
+
+        _landingPanicCooldownTimer = _landingPanicRetryDelay;
+    }
+
+    private void StartLandingPanic()
+    {
+        _stamina = Mathf.Max(_stamina, _maxStamina * _landingPanicStaminaRestore);
+        _landingPanicCooldownTimer = _landingPanicCooldown;
+        StartFightMode(true);
+    }
+
+    public void RejectLandingAttempt()
+    {
+        if (!_hooked)
+        {
+            return;
+        }
+
+        StartLandingPanic();
     }
 
     private void CacheAnimationStateHashes()
@@ -800,6 +885,9 @@ public class Fish : MonoBehaviour
         _hooked = true;
         _hookTarget = bobTransform;
         _stamina = _maxStamina;
+        _exhaustionCount = 0;
+        _landingPanicCooldownTimer = 0f;
+        _landingPanicActive = false;
         StartFightMode();
 
         transform.SetParent(bobTransform, true);
@@ -822,6 +910,9 @@ public class Fish : MonoBehaviour
     {
         _hooked = false;
         _hookTarget = null;
+        _exhaustionCount = 0;
+        _landingPanicCooldownTimer = 0f;
+        _landingPanicActive = false;
         _escaping = true;
         _escapeTimer = 0f;
         _activeEscapeFadeDuration = fadeDuration > 0f ? fadeDuration : _escapeFadeDuration;
@@ -873,6 +964,9 @@ public class Fish : MonoBehaviour
         _activeFightIntensity = 1f;
         _directionChangeKickTimer = 0f;
         _counterPullSlowTimer = 0f;
+        _exhaustionCount = 0;
+        _landingPanicCooldownTimer = 0f;
+        _landingPanicActive = false;
         _escaping = false;
         _escapeTimer = 0f;
         _activeEscapeFadeDuration = _escapeFadeDuration;

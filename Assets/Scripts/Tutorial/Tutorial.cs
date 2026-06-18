@@ -13,6 +13,9 @@ public class Tutorial : DialogueBase
     [SerializeField] private string speakerName = "Dr. Shad Iman";
     [SerializeField] private bool hidePatientChoicesDuringTutorial = true;
 
+    [Header("Voice")]
+    [SerializeField, Range(0f, 1f)] private float shadImanVoiceVolume = 1f;
+
     [SerializeField, TextArea(2, 4)] private string[] choosePatientLines =
     {
         "I presume you are the new doctor. I am Dr. Shad Iman. Your first charts are on the desk. Read them closely.",
@@ -34,6 +37,11 @@ public class Tutorial : DialogueBase
     protected override string DialogueSpeakerName => speakerName;
     protected override bool ShowTextBoxAtTop => false;
     protected override bool HideTextBoxAfterLine => false;
+
+    protected override void OnDialogueLineStarted(string line)
+    {
+        AudioManager.Instance?.PlayShadImanVoice(shadImanVoiceVolume);
+    }
 
     protected override void Awake()
     {

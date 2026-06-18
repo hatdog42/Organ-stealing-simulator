@@ -27,6 +27,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float defaultButtonClickVolume = 1f;
     [SerializeField] private bool addClickSoundToButtons = true;
 
+    [Header("Dialogue Voices")]
+    [SerializeField] private AudioClip[] maleVoiceClips;
+    [SerializeField] private AudioClip[] femaleVoiceClips;
+    [SerializeField] private AudioClip[] shadImanVoiceClips;
+    [SerializeField, Range(0f, 1f)] private float defaultVoiceVolume = 1f;
+
     [Header("Scene Music")]
     [FormerlySerializedAs("playDefaultSceneMusic")]
     [SerializeField] private bool playSceneMusicFromSoundBank = true;
@@ -51,6 +57,13 @@ public class AudioManager : MonoBehaviour
     private float _currentMusicBaseVolume = 1f;
     private bool _musicPaused;
     private bool _musicShouldKeepPlaying;
+
+    private enum DialogueVoicePool
+    {
+        MalePatient,
+        FemalePatient,
+        ShadIman
+    }
 
     public static AudioManager Instance { get; private set; }
 
@@ -191,6 +204,37 @@ public class AudioManager : MonoBehaviour
     public void PlaySfx(AudioClip clip, float volumeScale = 1f)
     {
         PlayOneShot(clip, SoundId.None, volumeScale, 1f);
+    }
+
+    public AudioClip GetRandomPatientVoice(string patientSex)
+    {
+        if (IsMaleSex(patientSex)) return GetRandomVoiceClip(DialogueVoicePool.MalePatient);
+        if (IsFemaleSex(patientSex)) return GetRandomVoiceClip(DialogueVoicePool.FemalePatient);
+
+        return GetRandomVoiceClip(
+            UnityEngine.Random.value < 0.5f
+                ? DialogueVoicePool.MalePatient
+                : DialogueVoicePool.FemalePatient);
+    }
+
+    public AudioClip GetRandomShadImanVoice()
+    {
+        return GetRandomVoiceClip(DialogueVoicePool.ShadIman);
+    }
+
+    public bool PlayPatientVoice(string patientSex, AudioClip voiceClip = null, float volumeScale = 1f)
+    {
+        return PlayVoice(voiceClip ? voiceClip : GetRandomPatientVoice(patientSex), volumeScale);
+    }
+
+    public bool PlayShadImanVoice(float volumeScale = 1f)
+    {
+        return PlayVoice(GetRandomShadImanVoice(), volumeScale);
+    }
+
+    public bool PlayVoice(AudioClip voiceClip, float volumeScale = 1f)
+    {
+        return PlayOneShot(voiceClip, SoundId.None, defaultVoiceVolume * volumeScale, 1f);
     }
 
     public bool PlaySfx(SoundId soundId, float volumeScale = 1f, float pitchScale = 1f)
@@ -581,6 +625,122 @@ public class AudioManager : MonoBehaviour
         if (soundId == SoundId.None || !soundBank) return false;
 
         return soundBank.TryGetSound(soundId, out sound);
+    }
+
+    private AudioClip GetRandomVoiceClip(DialogueVoicePool pool)
+    {
+        AudioClip[] directPool = pool switch
+        {
+            DialogueVoicePool.MalePatient => maleVoiceClips,
+            DialogueVoicePool.FemalePatient => femaleVoiceClips,
+            DialogueVoicePool.ShadIman => shadImanVoiceClips,
+            _ => null
+        };
+
+        if (TryGetRandomClip(directPool, out AudioClip clip)) return clip;
+
+        return GetRandomSoundBankVoiceClip(pool);
+    }
+
+    private AudioClip GetRandomSoundBankVoiceClip(DialogueVoicePool pool)
+    {
+        EnsureSoundBank();
+        if (!soundBank) return null;
+
+        AudioClip selectedClip = null;
+        int matchingClipCount = 0;
+
+        foreach (SoundBankEntry entry in soundBank.Entries)
+        {
+            if (entry == null || entry.ChannelType != AudioChannelType.Sfx || !entry.Clip) continue;
+            if (!IsVoicePoolClip(entry.Clip.name, pool)) continue;
+
+            matchingClipCount++;
+            if (UnityEngine.Random.Range(0, matchingClipCount) == 0)
+            {
+                selectedClip = entry.Clip;
+            }
+        }
+
+        return selectedClip;
+    }
+
+    private static bool TryGetRandomClip(AudioClip[] clips, out AudioClip clip)
+    {
+        clip = null;
+        if (clips == null || clips.Length == 0) return false;
+
+        int validClipCount = 0;
+        foreach (AudioClip candidate in clips)
+        {
+            if (candidate) validClipCount++;
+        }
+
+        if (validClipCount == 0) return false;
+
+        int targetIndex = UnityEngine.Random.Range(0, validClipCount);
+        foreach (AudioClip candidate in clips)
+        {
+            if (!candidate) continue;
+            if (targetIndex-- != 0) continue;
+
+            clip = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsVoicePoolClip(string clipName, DialogueVoicePool pool)
+    {
+        string normalizedName = NormalizeVoiceName(clipName);
+        bool isShadImanVoice = normalizedName.Contains("shadimanvoice");
+        bool isFemaleVoice = normalizedName.Contains("femalevoice")
+                             || normalizedName.Contains("femalevoise")
+                             || normalizedName.Contains("femalevoize");
+        bool isMaleVoice = !isFemaleVoice
+                           && (normalizedName.Contains("malevoice")
+                               || normalizedName.Contains("malevoise")
+                               || normalizedName.Contains("malevoize")
+                               || normalizedName.Contains("mlaevoice"));
+
+        return pool switch
+        {
+            DialogueVoicePool.MalePatient => isMaleVoice,
+            DialogueVoicePool.FemalePatient => isFemaleVoice,
+            DialogueVoicePool.ShadIman => isShadImanVoice,
+            _ => false
+        };
+    }
+
+    private static string NormalizeVoiceName(string value)
+    {
+        if (string.IsNullOrEmpty(value)) return string.Empty;
+
+        char[] buffer = new char[value.Length];
+        int count = 0;
+
+        foreach (char character in value)
+        {
+            if (!char.IsLetterOrDigit(character)) continue;
+
+            buffer[count] = char.ToLowerInvariant(character);
+            count++;
+        }
+
+        return new string(buffer, 0, count);
+    }
+
+    private static bool IsMaleSex(string sex)
+    {
+        return string.Equals(sex, "M", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(sex, "Male", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsFemaleSex(string sex)
+    {
+        return string.Equals(sex, "F", StringComparison.OrdinalIgnoreCase)
+               || string.Equals(sex, "Female", StringComparison.OrdinalIgnoreCase);
     }
 
     private void SaveVolume(string key, float volume)
