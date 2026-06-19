@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class OrganControler : MonoBehaviour
 {
@@ -166,7 +167,7 @@ public class OrganControler : MonoBehaviour
     {
         if (clickFeedbackDuration > 0f)
         {
-            yield return new WaitForSeconds(clickFeedbackDuration);
+            yield return new WaitForSecondsRealtime(clickFeedbackDuration);
         }
 
         choose?.Invoke();
@@ -185,15 +186,45 @@ public class OrganControler : MonoBehaviour
 
     private void OrganBoxChosen()
     {
-        HealthBars.Instance.ApplyKilledPatient(stoleOrgans: false);
-        HealthBars.Instance.bChooseOrganBox = true;
-        SceneController.Instance.LoadNextOrLoop(); 
+        ApplyChoice(stoleOrgans: false, choseOrganBox: true);
     }
 
     private void MopBucketChosen()
     {
-        HealthBars.Instance.ApplyKilledPatient(stoleOrgans: true);
-        HealthBars.Instance.bChooseOrganBox = false;
-        SceneController.Instance.LoadNextOrLoop(); 
+        ApplyChoice(stoleOrgans: true, choseOrganBox: false);
+    }
+
+    private void ApplyChoice(bool stoleOrgans, bool choseOrganBox)
+    {
+        if (HealthBars.Instance)
+        {
+            HealthBars.Instance.ApplyKilledPatient(stoleOrgans);
+            HealthBars.Instance.bChooseOrganBox = choseOrganBox;
+        }
+        else
+        {
+            Debug.LogError($"{nameof(OrganControler)} could not find {nameof(HealthBars)} while applying organ choice.", this);
+        }
+
+        LoadNextScene();
+    }
+
+    private void LoadNextScene()
+    {
+        if (SceneController.Instance)
+        {
+            SceneController.Instance.LoadNextOrLoop();
+            return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(nextScene))
+        {
+            SceneManager.LoadScene(nextScene);
+            return;
+        }
+
+        Debug.LogError($"{nameof(OrganControler)} cannot continue because no {nameof(SceneController)} exists and nextScene is empty.", this);
+        _choiceMade = false;
+        if (_spriteRenderer) _spriteRenderer.enabled = true;
     }
 }

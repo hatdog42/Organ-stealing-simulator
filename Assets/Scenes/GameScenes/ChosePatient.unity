@@ -4349,11 +4349,11 @@ MonoBehaviour:
   forcedMiniGame: 3
   majorMiniGamePool:
   - type: 0
-    displayName: Maze
+    displayName: Artery Navigation
   - type: 2
-    displayName: Wordle
+    displayName: Organ Sequencing
   - type: 3
-    displayName: Fishing
+    displayName: Bacteria Fishing
 --- !u!4 &1532961151
 Transform:
   m_ObjectHideFlags: 0

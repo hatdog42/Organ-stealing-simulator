@@ -151,6 +151,15 @@ public class TVController : MonoBehaviour
             return ResolveDirectSurgeryFallbackCamera("no patient has been selected");
         }
 
+        Camera sceneSelectedCamera = SurgerySceneControler.Instance
+            ? SurgerySceneControler.Instance.SelectedMajorMiniGameCameraOrDefault(null)
+            : null;
+        if (sceneSelectedCamera)
+        {
+            Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}'.");
+            return sceneSelectedCamera;
+        }
+
         Camera selectedCamera = FindMajorMiniGameCamera(selectedPatient.majorMiniGame);
         if (!selectedCamera)
         {
@@ -232,8 +241,14 @@ public class TVController : MonoBehaviour
             return null;
         }
 
-        Transform miniGameRoot = miniGame.transform.root;
-        Camera miniGameCamera = miniGameRoot ? miniGameRoot.GetComponentInChildren<Camera>(true) : null;
+        Camera miniGameCamera = root
+            ? root.GetComponentInChildren<Camera>(true)
+            : miniGame.GetComponentInChildren<Camera>(true);
+        if (!miniGameCamera && miniGame.transform.root)
+        {
+            miniGameCamera = miniGame.transform.root.GetComponentInChildren<Camera>(true);
+        }
+
         if (miniGameCamera) return miniGameCamera;
 
         Debug.LogError($"{displayName} minigame '{miniGame.name}' exists, but no child Camera was found.");

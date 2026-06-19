@@ -7,6 +7,14 @@ public class ScreenFader : MonoBehaviour
 
     private void Awake()
     {
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas)
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = short.MaxValue;
+        }
+
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 0;
         _canvasGroup.interactable = false;

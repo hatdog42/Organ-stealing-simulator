@@ -661,7 +661,7 @@ public class FishingRodController : MonoBehaviour
 
     private void UpdateFishingAudio()
     {
-        if (!_hasInputFocus || !_bobRb || !bob || !fishingPoint)
+        if (PauseMenueControler.IsPaused || !_hasInputFocus || !_bobRb || !bob || !fishingPoint)
         {
             return;
         }
@@ -1449,15 +1449,23 @@ public class FishingRodController : MonoBehaviour
         if (_bobRb)
         {
             Vector2 velocity = _bobRb.linearVelocity;
+            bool hitBoundary = clampedPosition != bobPosition;
 
-            if (!Mathf.Approximately(clampedPosition.x, bobPosition.x))
+            if (!_hookedFish && hitBoundary)
             {
-                velocity.x = 0f;
+                velocity = Vector2.zero;
             }
-
-            if (!Mathf.Approximately(clampedPosition.y, bobPosition.y))
+            else
             {
-                velocity.y = 0f;
+                if (!Mathf.Approximately(clampedPosition.x, bobPosition.x))
+                {
+                    velocity.x = 0f;
+                }
+
+                if (!Mathf.Approximately(clampedPosition.y, bobPosition.y))
+                {
+                    velocity.y = 0f;
+                }
             }
 
             _bobRb.position = clampedPosition;
@@ -1565,7 +1573,15 @@ public class FishingRodController : MonoBehaviour
         }
 
         Vector2 fishingPointPosition = fishingPoint ? fishingPoint.transform.position : transform.position;
-        Vector2 throwVector = mouseWorldPosition - fishingPointPosition;
+        Vector2 throwTarget = mouseWorldPosition;
+
+        if (TryGetPlayableArea(out float minX, out float maxX, out float minY, out float maxY))
+        {
+            throwTarget.x = Mathf.Clamp(throwTarget.x, minX, maxX);
+            throwTarget.y = Mathf.Clamp(throwTarget.y, minY, maxY);
+        }
+
+        Vector2 throwVector = throwTarget - fishingPointPosition;
 
         _throwDir = throwVector.normalized;
         _throwForce = _throwDir * (throwVector.magnitude * throwForceMultiplier);

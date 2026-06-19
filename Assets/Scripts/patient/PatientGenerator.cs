@@ -15,13 +15,14 @@ public class PatientGenerator : MonoBehaviour
     [SerializeField] private MajorMiniGameType forcedMiniGame = MajorMiniGameType.DebugButtons;
     [SerializeField] private MajorMiniGameOption[] majorMiniGamePool =
     {
-        new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze"),
-        new MajorMiniGameOption(MajorMiniGameType.Wordle, "Wordle"),
-        new MajorMiniGameOption(MajorMiniGameType.Fishing, "Fishing")
+        new MajorMiniGameOption(MajorMiniGameType.Maze, "Artery Navigation"),
+        new MajorMiniGameOption(MajorMiniGameType.Wordle, "Organ Sequencing"),
+        new MajorMiniGameOption(MajorMiniGameType.Fishing, "Bacteria Fishing")
     };
 
     private Patient _patient1;
     private Patient _patient2;
+    private bool _selectionStarted;
 
 
     void Start()
@@ -29,8 +30,8 @@ public class PatientGenerator : MonoBehaviour
         _patient1 = GeneratePatient();
         _patient2 = GeneratePatient();
         
-        patient1UI.Bind(_patient1, OnPatientSelected);
-        patient2UI.Bind(_patient2, OnPatientSelected);
+        patient1UI.Bind(_patient1, OnPatientSelected, () => OnPatientSelectionStarted(_patient1));
+        patient2UI.Bind(_patient2, OnPatientSelected, () => OnPatientSelectionStarted(_patient2));
     }
     public Patient GeneratePatient()
     {
@@ -94,7 +95,7 @@ public class PatientGenerator : MonoBehaviour
 
         if (majorMiniGamePool == null || majorMiniGamePool.Length == 0)
         {
-            return new MajorMiniGameOption(MajorMiniGameType.Maze, "Maze");
+            return new MajorMiniGameOption(MajorMiniGameType.Maze, GetDefaultMiniGameDisplayName(MajorMiniGameType.Maze));
         }
 
         return majorMiniGamePool[Random.Range(0, majorMiniGamePool.Length)];
@@ -121,13 +122,13 @@ public class PatientGenerator : MonoBehaviour
         switch (type)
         {
             case MajorMiniGameType.Maze:
-                return "Maze";
+                return "Artery Navigation";
             case MajorMiniGameType.DebugButtons:
                 return "Debug Buttons";
             case MajorMiniGameType.Wordle:
-                return "Wordle";
+                return "Organ Sequencing";
             case MajorMiniGameType.Fishing:
-                return "Fishing";
+                return "Bacteria Fishing";
             default:
                 return type.ToString();
         }
@@ -135,9 +136,22 @@ public class PatientGenerator : MonoBehaviour
 
     private void OnPatientSelected(Patient chosen)
     {
-        HealthBars.Instance.SetSelectedPatient(chosen);
+        if (HealthBars.Instance?.SelectedPatient == null)
+        {
+            HealthBars.Instance?.SetSelectedPatient(chosen);
+        }
         
         SceneController.Instance.LoadScene("TalkToPatient");
+    }
+
+    private void OnPatientSelectionStarted(Patient chosen)
+    {
+        if (_selectionStarted) return;
+
+        _selectionStarted = true;
+        patient1UI?.SetSelectionEnabled(false);
+        patient2UI?.SetSelectionEnabled(false);
+        HealthBars.Instance?.SetSelectedPatient(chosen);
     }
 }
 

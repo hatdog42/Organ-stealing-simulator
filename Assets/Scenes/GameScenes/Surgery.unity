@@ -2008,11 +2008,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6283849822402075053, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.54
+      value: -14.81
       objectReference: {fileID: 0}
     - target: {fileID: 6283849822402075053, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.87
+      value: -8.48
       objectReference: {fileID: 0}
     - target: {fileID: 6283849822402075053, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2052,11 +2052,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: sfxSplash
-      value: 0
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: sfxReelClick
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: splashVolume

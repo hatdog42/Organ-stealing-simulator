@@ -30,10 +30,12 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     
     private Patient _shownPatient;
     private System.Action<Patient> _onSelect;
+    private System.Action _onSelectionStarted;
     private RectTransform _rectTransform;
     private Vector2 _restingPosition;
     private Coroutine _moveRoutine;
     private bool _isSelected;
+    private bool _selectionLocked;
 
     private void Awake()
     {
@@ -41,11 +43,13 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (_rectTransform) _restingPosition = _rectTransform.anchoredPosition;
     }
 
-    public void Bind(Patient patient, System.Action<Patient> onSelect)
+    public void Bind(Patient patient, System.Action<Patient> onSelect, System.Action onSelectionStarted = null)
     {
         _shownPatient = patient;
         _onSelect = onSelect;
+        _onSelectionStarted = onSelectionStarted;
         _isSelected = false;
+        _selectionLocked = false;
 
         if (!_rectTransform) _rectTransform = transform as RectTransform;
         if (_rectTransform) _rectTransform.anchoredPosition = _restingPosition;
@@ -67,9 +71,19 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (buttonClickSound) buttonClickSound.enabled = false;
     }
 
+    public void SetSelectionEnabled(bool enabled)
+    {
+        _selectionLocked = !enabled;
+
+        if (_selectionLocked && !_isSelected)
+        {
+            MoveTo(_restingPosition, hoverMoveDuration);
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_isSelected) return;
+        if (_isSelected || _selectionLocked) return;
 
         PlaySfx(hoverSound, hoverVolume);
         MoveTo(_restingPosition + Vector2.up * hoverLift, hoverMoveDuration);
@@ -77,17 +91,17 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_isSelected) return;
+        if (_isSelected || _selectionLocked) return;
 
         MoveTo(_restingPosition, hoverMoveDuration);
     }
 
     private void SelectPatient()
     {
-        if (_isSelected) return;
+        if (_isSelected || _selectionLocked) return;
 
         _isSelected = true;
-        selectButton.interactable = false;
+        _onSelectionStarted?.Invoke();
         PlaySfx(selectSound, selectVolume);
         MoveTo(_restingPosition + Vector2.down * selectDropDistance, selectMoveDuration, InvokeSelect);
     }

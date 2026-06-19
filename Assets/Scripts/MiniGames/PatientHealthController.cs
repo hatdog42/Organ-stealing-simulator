@@ -38,6 +38,7 @@ namespace MiniGames
         private float _nextHeartBeepTime;
         private AudioSource _flatlineSource;
         private bool _failed;
+        private bool _flatlinePausedByPause;
 
         public static PatientHealthController Instance { get; private set; }
         public float Health01 => Mathf.Clamp01(_currentHealth / maxHealth);
@@ -60,6 +61,17 @@ namespace MiniGames
         private void OnDestroy()
         {
             if (Instance == this) Instance = null;
+        }
+
+        private void OnEnable()
+        {
+            PauseMenueControler.PauseChanged += OnPauseChanged;
+            if (PauseMenueControler.IsPaused) OnPauseChanged(true);
+        }
+
+        private void OnDisable()
+        {
+            PauseMenueControler.PauseChanged -= OnPauseChanged;
         }
 
         private void Update()
@@ -117,6 +129,12 @@ namespace MiniGames
 
         private void PlayHeartbeat()
         {
+            if (PauseMenueControler.IsPaused)
+            {
+                _nextHeartBeepTime = Mathf.Max(_nextHeartBeepTime, Time.unscaledTime + 0.05f);
+                return;
+            }
+
             if (heartBeepSound == SoundId.None || Time.unscaledTime < _nextHeartBeepTime) return;
 
             AudioManager.Instance?.PlaySfx(heartBeepSound, heartBeepVolume);
@@ -135,7 +153,7 @@ namespace MiniGames
         {
             PlayFlatline();
 
-            yield return new WaitForSecondsRealtime(flatlineHoldBeforeLose);
+            yield return WaitForUnpausedSeconds(flatlineHoldBeforeLose);
 
             TriggerGameLose();
 
@@ -144,6 +162,12 @@ namespace MiniGames
 
             while (_flatlineSource && elapsed < flatlineFadeOutDuration)
             {
+                if (PauseMenueControler.IsPaused)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 elapsed += Time.unscaledDeltaTime;
                 float progress = flatlineFadeOutDuration <= 0f ? 1f : Mathf.Clamp01(elapsed / flatlineFadeOutDuration);
                 _flatlineSource.volume = Mathf.Lerp(startVolume, 0f, progress);
@@ -205,6 +229,37 @@ namespace MiniGames
                 flatlineVolume,
                 loop: true);
             _flatlineSource.Play();
+        }
+
+        private static IEnumerator WaitForUnpausedSeconds(float seconds)
+        {
+            float elapsed = 0f;
+            while (elapsed < seconds)
+            {
+                if (!PauseMenueControler.IsPaused)
+                {
+                    elapsed += Time.unscaledDeltaTime;
+                }
+
+                yield return null;
+            }
+        }
+
+        private void OnPauseChanged(bool paused)
+        {
+            if (!_flatlineSource) return;
+
+            if (paused)
+            {
+                _flatlinePausedByPause = _flatlineSource.isPlaying;
+                if (_flatlinePausedByPause) _flatlineSource.Pause();
+                return;
+            }
+
+            if (!_flatlinePausedByPause) return;
+
+            _flatlineSource.UnPause();
+            _flatlinePausedByPause = false;
         }
     }
 }
