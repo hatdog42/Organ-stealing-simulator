@@ -9,6 +9,13 @@ public class Fish : MonoBehaviour
         Resting
     }
 
+    private enum BiteState
+    {
+        Roaming,
+        Curious,
+        Scared
+    }
+
     [Header("Movement")]
     [SerializeField] private float _speed = 2f;
     private Vector2 _direction = Vector2.right;
@@ -19,24 +26,33 @@ public class Fish : MonoBehaviour
 
    
     [Header("Visibility / Depth")]
-    [SerializeField] private float lifeTime = 5f;
+    [SerializeField] private float lifeTime = 8f;
     [SerializeField] private float maxOpacity = 0.8f;
     [SerializeField, Range(0f, 1f)] private float _minAttractOpacity = 0.35f;
     [SerializeField, Range(0f, 1f)] private float _maxAttractOpacity = 0.75f;
 
     [Header("Attraction")]
-    [SerializeField] private float _attractionRadius = 2f;
-    [SerializeField] private float _attractionSpeed = 2.5f;
-    [SerializeField] private float _hookDistance = 0.15f;
+    [SerializeField] private float _attractionRadius = 1.8f;
+    [SerializeField] private float _attractionSpeed = 2.1f;
+    [SerializeField] private float _hookDistance = 0.22f;
     [SerializeField] private float _turnSpeed = 720f;
+
+    [Header("Bite Behavior")]
+    [SerializeField, Min(0f)] private float _scareRadius = 0.5f;
+    [SerializeField, Min(0f)] private float _scaredDuration = 1.4f;
+    [SerializeField, Min(0f)] private float _scaredSpeedMultiplier = 2.4f;
+    [SerializeField, Range(0f, 1f)] private float _curiousBiteChance = 0.6f;
+    [SerializeField] private Vector2 _curiousBiteDelay = new Vector2(0.35f, 0.9f);
+    [SerializeField, Min(0f)] private float _curiousTimeout = 2.5f;
+    [SerializeField, Min(0f)] private float _curiousSpeedMultiplier = 0.8f;
 
     [Header("Hook Point")]
     [SerializeField] private Transform _hookPoint;
 
     [Header("Fight Force")]
-    [SerializeField] private float _fightForce = 10f;
+    [SerializeField] private float _fightForce = 10.5f;
     [SerializeField] private float _restForceMultiplier = 0.35f;
-    [SerializeField, Range(0f, 1f)] private float _minimumSideForce = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float _minimumSideForce = 0.15f;
     [SerializeField] private float _directionChangeKickMultiplier = 1.25f;
     [SerializeField] private float _directionChangeKickDuration = 0.15f;
 
@@ -45,39 +61,39 @@ public class Fish : MonoBehaviour
     [SerializeField, Min(1f)] private float _edgeBoostMultiplier = 1.5f;
 
     [Header("Fight Direction")]
-    [SerializeField, Range(0f, 200f)] private float _fightArc = 180f;
-    [SerializeField] private float _directionChangeSpeedMultiplier = 2.5f;
+    [SerializeField, Range(0f, 200f)] private float _fightArc = 150f;
+    [SerializeField] private float _directionChangeSpeedMultiplier = 1.6f;
 
     [Header("Fight Rotation")]
     [SerializeField] private float _fightTurnSpeed = 540f;
     [SerializeField] private Vector2 _fightTurnDuration = new Vector2(0.08f, 0.25f);
     [SerializeField] private float _fightAngleReachedThreshold = 2f;
-    [SerializeField] private Vector2 _fightWaitTime = new Vector2(0.25f, 0.8f);
+    [SerializeField] private Vector2 _fightWaitTime = new Vector2(0.8f, 1.8f);
 
     [Header("Stamina Cycle")]
-    [SerializeField] private float _maxStamina = 1f;
-    [SerializeField] private Vector2 _fightDuration = new Vector2(1.1f, 2.4f);
-    [SerializeField] private Vector2 _restDuration = new Vector2(0.75f, 1.4f);
-    [SerializeField] private Vector2 _fightStaminaUseRate = new Vector2(0.2f, 0.55f);
-    [SerializeField] private Vector2 _fightIntensity = new Vector2(0.85f, 1.2f);
-    [SerializeField] private float _staminaRecoveryRate = 0.65f;
-    [SerializeField, Range(0f, 1f)] private float _minStaminaToFight = 0.5f;
+    [SerializeField] private float _maxStamina = 2.2f;
+    [SerializeField] private Vector2 _fightDuration = new Vector2(4f, 6f);
+    [SerializeField] private Vector2 _restDuration = new Vector2(2.2f, 3.2f);
+    [SerializeField] private Vector2 _fightStaminaUseRate = new Vector2(0.25f, 0.4f);
+    [SerializeField] private Vector2 _fightIntensity = new Vector2(0.85f, 1.1f);
+    [SerializeField] private float _staminaRecoveryRate = 0.2f;
+    [SerializeField, Range(0f, 1f)] private float _minStaminaToFight = 0.35f;
 
     [Header("Counter Pull Effects")]
-    [SerializeField] private float _counterPullStaminaDrain = 0.9f;
+    [SerializeField] private float _counterPullStaminaDrain = 0.55f;
     [SerializeField, Range(0f, 1f)] private float _counterPullFightSlowMultiplier = 0.75f;
     [SerializeField] private float _counterPullSlowDuration = 0.18f;
 
     [Header("Landing")]
     [SerializeField, Min(0)] private int _exhaustionsBeforeLanding = 2;
-    [SerializeField, Min(0f)] private float _landingPanicDistance = 1.5f;
-    [SerializeField, Range(0f, 1f)] private float _landingPanicChance = 0.9f;
-    [SerializeField, Min(0f)] private float _landingPanicRetryDelay = 0.2f;
-    [SerializeField] private Vector2 _landingPanicDuration = new Vector2(0.8f, 1.5f);
-    [SerializeField, Range(0f, 1f)] private float _landingPanicStaminaRestore = 0.65f;
-    [SerializeField, Min(1f)] private float _landingPanicIntensityMultiplier = 1.6f;
-    [SerializeField, Min(1f)] private float _landingPanicTensionMultiplier = 1.6f;
-    [SerializeField, Min(0f)] private float _landingPanicCooldown = 0.75f;
+    [SerializeField, Min(0f)] private float _landingPanicDistance = 1.35f;
+    [SerializeField, Range(0f, 1f)] private float _landingPanicChance = 0.65f;
+    [SerializeField, Min(0f)] private float _landingPanicRetryDelay = 0.35f;
+    [SerializeField] private Vector2 _landingPanicDuration = new Vector2(1f, 1.8f);
+    [SerializeField, Range(0f, 1f)] private float _landingPanicStaminaRestore = 0.45f;
+    [SerializeField, Min(1f)] private float _landingPanicIntensityMultiplier = 1.4f;
+    [SerializeField, Min(1f)] private float _landingPanicTensionMultiplier = 1.35f;
+    [SerializeField, Min(0f)] private float _landingPanicCooldown = 1.2f;
 
     [Header("Escape")]
     [SerializeField] private float _escapeFadeDuration = 0.45f;
@@ -89,6 +105,7 @@ public class Fish : MonoBehaviour
     [SerializeField] private string _fightAnimationState = "FishFightAnimation";
     [SerializeField, Min(0f)] private float _restAnimationSpeed = 1f;
     [SerializeField, Min(0f)] private float _fightAnimationSpeed = 1.75f;
+    [SerializeField, Min(0f)] private float _scaredAnimationSpeed = 2.25f;
 
     [Header("Animation Audio")]
     [SerializeField] private SoundId _sloshBlobSfx = SoundId.SloshBlob;
@@ -129,6 +146,13 @@ public class Fish : MonoBehaviour
     private bool _willPassiveDeflect;
     private bool _hasPassiveDeflected;
     private float _passiveDeflectTime;
+    private BiteState _biteState = BiteState.Roaming;
+    private int _activeBiteCastId = -1;
+    private int _ignoredCastId = -1;
+    private bool _willBiteThisCast;
+    private float _curiousTimer;
+    private float _curiousBiteTimer;
+    private float _scaredTimer;
     private int _idleAnimationStateHash;
     private int _fightAnimationStateHash;
     private int _currentAnimationStateHash;
@@ -170,8 +194,11 @@ public class Fish : MonoBehaviour
     {
         _restAnimationSpeed = Mathf.Max(0f, _restAnimationSpeed);
         _fightAnimationSpeed = Mathf.Max(0f, _fightAnimationSpeed);
+        _scaredAnimationSpeed = Mathf.Max(0f, _scaredAnimationSpeed);
         _idleSloshPitch = Mathf.Max(0.01f, _idleSloshPitch);
         _fightSloshPitch = Mathf.Max(0.01f, _fightSloshPitch);
+        _curiousBiteDelay.x = Mathf.Max(0f, _curiousBiteDelay.x);
+        _curiousBiteDelay.y = Mathf.Max(0f, _curiousBiteDelay.y);
         CacheAnimationStateHashes();
     }
 
@@ -199,6 +226,8 @@ public class Fish : MonoBehaviour
         _activeEscapeFadeDuration = _escapeFadeDuration;
         _activeEscapeSinkSpeed = _escapeSinkSpeed;
         _escapeStartOpacity = 0f;
+        ResetBiteState();
+        _ignoredCastId = -1;
         SchedulePassiveDeflection();
         _rod = FishingRodController.ActiveRod;
         SetOpacity(0f);
@@ -327,6 +356,7 @@ public class Fish : MonoBehaviour
 
         if (!_rod || !_rod.CanAttractFish)
         {
+            ResetBiteState();
             return false;
         }
 
@@ -335,24 +365,151 @@ public class Fish : MonoBehaviour
         Vector2 bobPos = _rod.BobPosition;
         Vector2 directionToBob = bobPos - hookPos;
         float distanceToBob = Vector2.Distance(hookPos, bobPos);
+        int castId = _rod.CastId;
+
+        if (_activeBiteCastId >= 0 && _activeBiteCastId != castId)
+        {
+            ResetBiteState();
+        }
+
+        if (_biteState == BiteState.Scared)
+        {
+            return UpdateScaredMovement(bobPos, castId);
+        }
+
+        if (_ignoredCastId == castId)
+        {
+            return false;
+        }
+
+        if (_biteState == BiteState.Curious)
+        {
+            return UpdateCuriousMovement(fishPos, directionToBob, distanceToBob, castId);
+        }
 
         if (distanceToBob > _attractionRadius)
         {
             return false;
         }
 
-        FaceDirection(directionToBob);
-
-        if (distanceToBob <= _hookDistance && _rod.TryHookFish(this))
+        if (distanceToBob <= _scareRadius)
         {
-            HookTo(_rod.BobTransform);
+            StartScared(castId);
             return true;
         }
 
+        StartCurious(castId);
+        return UpdateCuriousMovement(fishPos, directionToBob, distanceToBob, castId);
+    }
+
+    private bool UpdateCuriousMovement(Vector2 fishPos, Vector2 directionToBob, float distanceToBob, int castId)
+    {
+        if (distanceToBob > _attractionRadius)
+        {
+            IgnoreCast(castId);
+            return false;
+        }
+
+        _curiousTimer -= Time.deltaTime;
+        _curiousBiteTimer -= Time.deltaTime;
+        FaceDirection(directionToBob);
+
+        if (distanceToBob <= _hookDistance)
+        {
+            if (_willBiteThisCast && _curiousBiteTimer <= 0f && _rod.TryHookFish(this))
+            {
+                HookTo(_rod.BobTransform);
+                return true;
+            }
+
+            if (!_willBiteThisCast || _curiousTimer <= 0f)
+            {
+                IgnoreCast(castId);
+                return false;
+            }
+
+            return true;
+        }
+
+        if (_curiousTimer <= 0f)
+        {
+            IgnoreCast(castId);
+            return false;
+        }
+
         Vector2 moveDirection = directionToBob.normalized;
-        transform.position = fishPos + moveDirection * (_attractionSpeed * Time.deltaTime);
+        float speedMultiplier = _willBiteThisCast ? _curiousSpeedMultiplier : _curiousSpeedMultiplier * 0.55f;
+        transform.position = fishPos + moveDirection * (_attractionSpeed * speedMultiplier * Time.deltaTime);
 
         return true;
+    }
+
+    private bool UpdateScaredMovement(Vector2 bobPos, int castId)
+    {
+        _scaredTimer -= Time.deltaTime;
+
+        Vector2 awayFromBob = (Vector2)transform.position - bobPos;
+        if (awayFromBob == Vector2.zero)
+        {
+            awayFromBob = GetRandomDirection();
+        }
+
+        FaceDirection(awayFromBob);
+        transform.position += (Vector3)(awayFromBob.normalized * (_speed * _scaredSpeedMultiplier * Time.deltaTime));
+
+        if (_scaredTimer <= 0f)
+        {
+            IgnoreCast(castId);
+        }
+
+        return true;
+    }
+
+    private void StartCurious(int castId)
+    {
+        _biteState = BiteState.Curious;
+        _activeBiteCastId = castId;
+        _willBiteThisCast = Random.value <= _curiousBiteChance;
+        _curiousTimer = _curiousTimeout;
+        _curiousBiteTimer = RandomFromRange(_curiousBiteDelay);
+    }
+
+    private void StartScared(int castId)
+    {
+        _biteState = BiteState.Scared;
+        _activeBiteCastId = castId;
+        _ignoredCastId = castId;
+        _willBiteThisCast = false;
+        _scaredTimer = _scaredDuration;
+        UpdateAnimationState();
+    }
+
+    private void IgnoreCast(int castId)
+    {
+        _ignoredCastId = castId;
+        ResetBiteState();
+    }
+
+    private void ResetBiteState()
+    {
+        bool wasScared = _biteState == BiteState.Scared;
+        _biteState = BiteState.Roaming;
+        _activeBiteCastId = -1;
+        _willBiteThisCast = false;
+        _curiousTimer = 0f;
+        _curiousBiteTimer = 0f;
+        _scaredTimer = 0f;
+
+        if (wasScared)
+        {
+            UpdateAnimationState();
+        }
+    }
+
+    private Vector2 GetRandomDirection()
+    {
+        Vector2 direction = Random.insideUnitCircle;
+        return direction == Vector2.zero ? Vector2.right : direction.normalized;
     }
 
     private Vector2 GetHookPosition()
@@ -607,7 +764,7 @@ public class Fish : MonoBehaviour
             _currentAnimationStateHash = stateHash;
         }
 
-        float animationSpeed = IsFighting ? _fightAnimationSpeed : _restAnimationSpeed;
+        float animationSpeed = GetTargetAnimationSpeed();
         if (force || !Mathf.Approximately(_currentAnimationSpeed, animationSpeed))
         {
             _animator.speed = animationSpeed;
@@ -697,6 +854,11 @@ public class Fish : MonoBehaviour
 
     private float GetTargetAnimationSpeed()
     {
+        if (!_hooked && _biteState == BiteState.Scared)
+        {
+            return _scaredAnimationSpeed;
+        }
+
         return IsFighting ? _fightAnimationSpeed : _restAnimationSpeed;
     }
 
@@ -888,6 +1050,7 @@ public class Fish : MonoBehaviour
         _exhaustionCount = 0;
         _landingPanicCooldownTimer = 0f;
         _landingPanicActive = false;
+        ResetBiteState();
         StartFightMode();
 
         transform.SetParent(bobTransform, true);
@@ -913,6 +1076,7 @@ public class Fish : MonoBehaviour
         _exhaustionCount = 0;
         _landingPanicCooldownTimer = 0f;
         _landingPanicActive = false;
+        ResetBiteState();
         _escaping = true;
         _escapeTimer = 0f;
         _activeEscapeFadeDuration = fadeDuration > 0f ? fadeDuration : _escapeFadeDuration;
@@ -972,6 +1136,8 @@ public class Fish : MonoBehaviour
         _activeEscapeFadeDuration = _escapeFadeDuration;
         _activeEscapeSinkSpeed = _escapeSinkSpeed;
         _escapeStartOpacity = 0f;
+        ResetBiteState();
+        _ignoredCastId = -1;
         UpdateAnimationState(true);
 
         if (_pool)

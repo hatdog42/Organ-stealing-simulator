@@ -550,21 +550,21 @@ MonoBehaviour:
   fishingMiniGame: {fileID: 0}
   throwForceMultiplier: 2
   maxReelSpeed: 2
-  hookedMaxReelSpeed: 3.2
-  counterPullMaxReelSpeed: 4.2
+  hookedMaxReelSpeed: 2.8
+  counterPullMaxReelSpeed: 3.4
   reelAcceleration: 10
-  hookedMouseReelForce: 5
+  hookedMouseReelForce: 4
   emptyMouseReelForce: 4
   minMousePullDistance: 0.75
   maxMousePullDistance: 5
   minMousePullPixels: 12
   maxMousePullPixels: 120
-  counterPullAngle: 10
-  counterPullAssistAngle: 32
-  counterPullForceMultiplier: 2
+  counterPullAngle: 14
+  counterPullAssistAngle: 42
+  counterPullForceMultiplier: 1.5
   counterPullTensionMultiplier: 0.3
-  fightingReelMultiplier: 0.28
-  restingReelMultiplier: 0.48
+  fightingReelMultiplier: 0.18
+  restingReelMultiplier: 0.52
   landingAssistDistance: 1.25
   landingReelMultiplier: 1.4
   landingMaxReelSpeed: 4
@@ -579,24 +579,24 @@ MonoBehaviour:
   pullForceIndicatorWidth: 0.035
   pullForceIndicatorSmoothSpeed: 18
   pullForceIndicatorColor: {r: 0, g: 0, b: 0, a: 1}
-  tensionBuildSpeed: 0.75
-  tensionRecoverSpeed: 0.75
+  tensionBuildSpeed: 0.65
+  tensionRecoverSpeed: 0.85
   gentlePullTensionRecoverMultiplier: 1.15
-  gentlePullMaxStrength: 0.55
-  lineSnapTension: 1.05
+  gentlePullMaxStrength: 0.6
+  lineSnapTension: 1.15
   highTensionLineWidth: 0.015
   highTensionLineColor: {r: 1, g: 0, b: 0, a: 1}
   fishEscapeFadeDuration: 0.45
   fishEscapeSinkSpeed: 0.6
   bobRespawnDelay: 0.35
-  rejectedLandingPushDistance: 0.85
-  rejectedLandingPushImpulse: 3.5
+  rejectedLandingPushDistance: 0.8
+  rejectedLandingPushImpulse: 3
   keepBobInsideCamera: 1
   cameraBoundsPadding: 0.2
   keepBobAboveFishingPoint: 1
   minFishingPointYOffset: 0.05
-  sideBoundaryReelMultiplier: 0.4
-  sideBoundaryTensionBuildSpeed: 0.75
+  sideBoundaryReelMultiplier: 0.55
+  sideBoundaryTensionBuildSpeed: 0.45
   sideBoundaryReleaseForce: 8
   showCounterPullGuide: 1
   counterPullGuideLength: 1.5
@@ -888,7 +888,7 @@ MonoBehaviour:
   warningFaceOutside: {fileID: 0}
   warningAudio: {fileID: 0}
   warningAudioVolume: 0.2
-  _fishQuota: 5
+  _fishQuota: 3
   _bacteriaPrefab: {fileID: 6737267853126196349, guid: 2b85774ae78221946a7691ec2a078600, type: 3}
   _petriDish: {fileID: 5456178045761469577}
   _petriDishBounds: {fileID: 2680077770084941139}

@@ -1954,6 +1954,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1643291446423135206, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -5953702078517765517, guid: d43dd7441058be44893025a24fa3898f, type: 3}
     - target: {fileID: 1670985679233633253, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_Name
       value: FishingCamera
@@ -1968,7 +1972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2241813845874820222, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_Color.a
-      value: 0.39607844
+      value: 0.41960785
       objectReference: {fileID: 0}
     - target: {fileID: 2241813845874820222, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_SortingOrder
@@ -1993,6 +1997,10 @@ PrefabInstance:
     - target: {fileID: 5526452928177759377, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.030629992
+      objectReference: {fileID: 0}
+    - target: {fileID: 5862654100383147976, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: m_Color.a
+      value: 0.46666667
       objectReference: {fileID: 0}
     - target: {fileID: 5862654100383147976, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_SortingOrder
@@ -2077,6 +2085,10 @@ PrefabInstance:
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: splashAudioSource
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: tensionBuildSpeed
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: highReelClickPitch

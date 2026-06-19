@@ -17,6 +17,8 @@ public class TVInputRelay : MonoBehaviour
     
     private bool _dragging;
 
+    public bool IsPointerActive => _dragging || (Mouse.current != null && Mouse.current.leftButton.isPressed);
+
 
     void Awake()
     {

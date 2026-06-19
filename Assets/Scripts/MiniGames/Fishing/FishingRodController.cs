@@ -22,9 +22,9 @@ public class FishingRodController : MonoBehaviour
     
     [Header("Reel Speed")]
     [FormerlySerializedAs("realInSpeed")]
-    [SerializeField] private float maxReelSpeed = 4f;
-    [SerializeField] private float hookedMaxReelSpeed = 2.6f;
-    [SerializeField] private float counterPullMaxReelSpeed = 3.2f;
+    [SerializeField] private float maxReelSpeed = 2f;
+    [SerializeField] private float hookedMaxReelSpeed = 2.8f;
+    [SerializeField] private float counterPullMaxReelSpeed = 3.4f;
     [SerializeField] private float reelAcceleration = 10f;
 
     [Header("Mouse Pull")]
@@ -41,14 +41,14 @@ public class FishingRodController : MonoBehaviour
     [SerializeField] private Color mousePullLineColor = Color.cyan;
 
     [Header("Counter Pull")]
-    [SerializeField] private float counterPullAngle = 10f;
-    [SerializeField] private float counterPullAssistAngle = 32f;
-    [SerializeField] private float counterPullForceMultiplier = 2f;
+    [SerializeField] private float counterPullAngle = 14f;
+    [SerializeField] private float counterPullAssistAngle = 42f;
+    [SerializeField] private float counterPullForceMultiplier = 1.5f;
     [SerializeField, Range(0f, 1f)] private float counterPullTensionMultiplier = 0.3f;
 
     [Header("Fight / Rest Reeling")]
-    [SerializeField] private float fightingReelMultiplier = 0.28f;
-    [SerializeField] private float restingReelMultiplier = 0.38f;
+    [SerializeField] private float fightingReelMultiplier = 0.18f;
+    [SerializeField] private float restingReelMultiplier = 0.52f;
 
     [Header("Reel Timing")]
     [SerializeField] private float reelStartDelay = 0.3f;
@@ -71,11 +71,11 @@ public class FishingRodController : MonoBehaviour
     private LineRenderer _pullForceIndicator;
 
     [Header("Line Tension")]
-    [SerializeField] private float tensionBuildSpeed = 0.75f;
-    [SerializeField] private float tensionRecoverSpeed = 0.75f;
+    [SerializeField] private float tensionBuildSpeed = 0.65f;
+    [SerializeField] private float tensionRecoverSpeed = 0.85f;
     [SerializeField, Min(0f)] private float gentlePullTensionRecoverMultiplier = 1.15f;
-    [SerializeField, Range(0f, 1f)] private float gentlePullMaxStrength = 0.55f;
-    [SerializeField] private float lineSnapTension = 1.05f;
+    [SerializeField, Range(0f, 1f)] private float gentlePullMaxStrength = 0.6f;
+    [SerializeField] private float lineSnapTension = 1.15f;
     [SerializeField] private float highTensionLineWidth = 0.015f;
     [SerializeField] private Color highTensionLineColor = Color.red;
 
@@ -83,8 +83,8 @@ public class FishingRodController : MonoBehaviour
     [SerializeField] private float fishEscapeFadeDuration = 0.45f;
     [SerializeField] private float fishEscapeSinkSpeed = 0.6f;
     [SerializeField] private float bobRespawnDelay = 0.35f;
-    [SerializeField] private float rejectedLandingPushDistance = 0.85f;
-    [SerializeField] private float rejectedLandingPushImpulse = 3.5f;
+    [SerializeField] private float rejectedLandingPushDistance = 0.8f;
+    [SerializeField] private float rejectedLandingPushImpulse = 3f;
 
     [Header("Fishing Audio")]
     [SerializeField] private SoundId sfxReelClick = SoundId.ReelTick;
@@ -107,8 +107,8 @@ public class FishingRodController : MonoBehaviour
     [SerializeField] private float cameraBoundsPadding = 0.2f;
     [SerializeField] private bool keepBobAboveFishingPoint = true;
     [SerializeField] private float minFishingPointYOffset = 0.05f;
-    [SerializeField] private float sideBoundaryReelMultiplier = 0.4f;
-    [SerializeField] private float sideBoundaryTensionBuildSpeed = 0.75f;
+    [SerializeField] private float sideBoundaryReelMultiplier = 0.55f;
+    [SerializeField] private float sideBoundaryTensionBuildSpeed = 0.45f;
     [SerializeField] private float sideBoundaryReleaseForce = 8f;
 
     [Header("Counter Pull Guide")]
@@ -163,6 +163,7 @@ public class FishingRodController : MonoBehaviour
     private bool _splashPlayedThisThrow = false;
     private AudioSource reelClickAudioSource;
     private AudioSource splashAudioSource;
+    private int _castId = 0;
 
     public bool CanAttractFish => IsFishingActive && _bobHasLeftFishingPoint && !_hookedFish && bob;
     public Transform BobTransform => bob ? bob.transform : null;
@@ -172,6 +173,7 @@ public class FishingRodController : MonoBehaviour
     public bool IsLineLocked => ShouldLockLineDistance();
     public bool IsFishingActive => _thrown && !_snapInProgress;
     public bool HasInputFocus => _hasInputFocus;
+    public int CastId => _castId;
 
     public bool TryGetEdgeEscapeDirection(Vector2 position, float edgeDistance, out Vector2 escapeDirection, out float edgePressure)
     {
@@ -305,9 +307,7 @@ public class FishingRodController : MonoBehaviour
         }
 
         _crtInputRelay = relay;
-        _relayPointerHeld = false;
-        _relayPointerPressedThisFrame = false;
-        _hasRelayPointerPosition = false;
+        ResetRelayPointerState();
 
         if (_crtInputRelay)
         {
@@ -413,6 +413,7 @@ public class FishingRodController : MonoBehaviour
         }
 
         _thrown = true;
+        _castId++;
         _isReeling = false;
         _hasStartedReelingThisThrow = false;
         _bobHasLeftFishingPoint = false;
@@ -480,6 +481,7 @@ public class FishingRodController : MonoBehaviour
         _sideBoundaryReleaseDirection = Vector2.zero;
         ClearMousePullAnchor();
         HidePullForceIndicator();
+        PrepareInputForNextThrow();
 
         if (_bobRb)
         {
@@ -1616,7 +1618,7 @@ public class FishingRodController : MonoBehaviour
     {
         if (_crtInputRelay)
         {
-            if (Mouse.current != null && !Mouse.current.leftButton.isPressed)
+            if (!_crtInputRelay.IsPointerActive)
             {
                 _relayPointerHeld = false;
             }
@@ -1885,15 +1887,16 @@ public class FishingRodController : MonoBehaviour
 
     private bool IsAnyPointerHeld()
     {
-        return Mouse.current != null && Mouse.current.leftButton.isPressed;
+        return _relayPointerHeld
+               || (_crtInputRelay && _crtInputRelay.IsPointerActive)
+               || (Mouse.current != null && Mouse.current.leftButton.isPressed);
     }
 
     private void StopActiveInput()
     {
         _isMouseButtonHeld = false;
         _isReeling = false;
-        _relayPointerHeld = false;
-        _relayPointerPressedThisFrame = false;
+        ResetRelayPointerState();
         HidePullForceIndicator();
         _currentPullStrength = 0f;
         _currentPullDirection = Vector2.zero;
@@ -1901,5 +1904,36 @@ public class FishingRodController : MonoBehaviour
         _counterPullStrength = 0f;
         _lastAppliedBobForce = Vector2.zero;
         ClearMousePullAnchor();
+    }
+
+    private void PrepareInputForNextThrow()
+    {
+        bool pointerWasHeld = IsAnyPointerHeld();
+        ResetRelayPointerState();
+
+        if (!_hasInputFocus)
+        {
+            _inputReady = false;
+            _waitingForPointerRelease = false;
+            _inputUnlockTime = 0f;
+            return;
+        }
+
+        _waitingForPointerRelease = pointerWasHeld;
+        if (!_waitingForPointerRelease)
+        {
+            return;
+        }
+
+        _inputReady = false;
+        _inputUnlockTime = Time.unscaledTime + focusInputDelay;
+    }
+
+    private void ResetRelayPointerState()
+    {
+        _relayPointerHeld = false;
+        _relayPointerPressedThisFrame = false;
+        _hasRelayPointerPosition = false;
+        _relayPointerWorldPosition = Vector2.zero;
     }
 }

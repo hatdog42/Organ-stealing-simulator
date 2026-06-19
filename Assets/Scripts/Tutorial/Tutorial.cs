@@ -11,7 +11,7 @@ public class Tutorial : DialogueBase
     [SerializeField] private bool playOncePerSession = true;
     [SerializeField, Min(0f)] private float waitBeforeFirstLine = 0.5f;
     [SerializeField] private string speakerName = "Dr. Shad Iman";
-    [SerializeField] private bool hidePatientChoicesDuringTutorial = true;
+    private bool _hidePatientChoicesDuringTutorial = true;
 
     [Header("Voice")]
     [SerializeField, Range(0f, 1f)] private float shadImanVoiceVolume = 1f;
@@ -67,7 +67,7 @@ public class Tutorial : DialogueBase
             officeControler.enabled = false;
         }
 
-        if (patientGenerator && hidePatientChoicesDuringTutorial)
+        if (patientGenerator && _hidePatientChoicesDuringTutorial)
         {
             CacheAndSetPatientChoiceVisible(patientGenerator.patient1UI, false, ref patient1Root, ref patient1WasActive);
             CacheAndSetPatientChoiceVisible(patientGenerator.patient2UI, false, ref patient2Root, ref patient2WasActive);
@@ -138,7 +138,7 @@ public class Tutorial : DialogueBase
 
     private void RestorePatientChoices()
     {
-        if (!hidePatientChoicesDuringTutorial) return;
+        if (!_hidePatientChoicesDuringTutorial) return;
 
         if (patient1Root) patient1Root.SetActive(patient1WasActive);
         if (patient2Root) patient2Root.SetActive(patient2WasActive);

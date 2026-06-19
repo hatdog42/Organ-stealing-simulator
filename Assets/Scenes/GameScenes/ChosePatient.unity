@@ -4345,7 +4345,7 @@ MonoBehaviour:
   patientData: {fileID: 11400000, guid: cfebb692385c1304b9ef6dbc526d909d, type: 2}
   patient1UI: {fileID: 1565665313}
   patient2UI: {fileID: 428948810}
-  forceMiniGame: 1
+  forceMiniGame: 0
   forcedMiniGame: 3
   majorMiniGamePool:
   - type: 0
@@ -4395,12 +4395,12 @@ MonoBehaviour:
   textBoxFadeOutDuration: 0.08
   waitForSceneFade: 1
   hideTextBoxAfterLine: 0
-  playTutorial: 0
+  playTutorial: 1
   choosePatientSceneName: ChosePatient
   playOncePerSession: 1
   waitBeforeFirstLine: 0.5
   speakerName: Dr. Shad Iman
-  hidePatientChoicesDuringTutorial: 1
+  shadImanVoiceVolume: 1
   choosePatientLines:
   - I presume you are the new doctor. I am Dr. Shad Iman. Your first charts are on
     the desk. Read them closely.

@@ -4,7 +4,7 @@ using UnityEngine;
 public class FishingMiniGame : MiniGameBase
 {
     [Header("Catch Goal")]
-    [SerializeField] private int _fishQuota = 5;
+    [SerializeField] private int _fishQuota = 3;
 
     [Header("Fishing Controls")]
     [SerializeField] private FishingRodController _rodController;
