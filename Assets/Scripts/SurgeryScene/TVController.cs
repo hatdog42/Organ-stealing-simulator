@@ -156,7 +156,7 @@ public class TVController : MonoBehaviour
             : null;
         if (sceneSelectedCamera)
         {
-            Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}'.");
+            Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}' ({selectedPatient.majorMiniGame}) for patient '{selectedPatient.FullName}' using camera '{sceneSelectedCamera.name}'.");
             return sceneSelectedCamera;
         }
 
@@ -167,7 +167,7 @@ public class TVController : MonoBehaviour
             return null;
         }
 
-        Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}'.");
+        Debug.Log($"Opening selected major minigame '{selectedPatient.majorMiniGameName}' ({selectedPatient.majorMiniGame}) for patient '{selectedPatient.FullName}' using camera '{selectedCamera.name}'.");
         return selectedCamera;
     }
 

@@ -34,6 +34,11 @@ public class WordleManager : MiniGameBase
     [SerializeField] private Transform colorCheckerSlotsRoot;
     [SerializeField] private Transform colorButtonsRoot;
 
+    [Header("Board Size")]
+    [SerializeField, Min(1)] private int boardRows = 5;
+    [SerializeField, Min(1)] private int boardColumns = 5;
+    [SerializeField] private bool hideUnusedBoardSlots = true;
+
     [Header("Board")]
     public GuessRow[] guessRows;
     public FeedbackRow[] resultTexts;
@@ -95,6 +100,7 @@ public class WordleManager : MiniGameBase
     private void Start()
     {
         SetupBoard();
+        ApplyBoardSize();
 
         if (!ValidateSetup())
         {
@@ -473,6 +479,108 @@ public class WordleManager : MiniGameBase
             if (!colorCheckerSlotsRoot) colorCheckerSlotsRoot = FindSceneTransform("Active Feedback Rows");
             if (colorCheckerSlotsRoot) resultTexts = BuildFeedbackRows(colorCheckerSlotsRoot);
         }
+    }
+
+    private void ApplyBoardSize()
+    {
+        int activeRows = Mathf.Max(1, boardRows);
+        int activeColumns = Mathf.Max(1, boardColumns);
+
+        if (hideUnusedBoardSlots)
+        {
+            SetGuessRowsVisibility(guessRows, activeRows, activeColumns);
+            SetFeedbackRowsVisibility(checkStorageRows, activeRows, activeColumns);
+            SetFeedbackRowsVisibility(resultTexts, resultTexts?.Length ?? 0, activeColumns);
+        }
+
+        guessRows = LimitGuessRows(guessRows, activeRows, activeColumns);
+        checkStorageRows = LimitFeedbackRows(checkStorageRows, activeRows, activeColumns);
+        resultTexts = LimitFeedbackRows(resultTexts, resultTexts?.Length ?? 0, activeColumns);
+    }
+
+    private GuessRow[] LimitGuessRows(GuessRow[] rows, int maxRows, int maxColumns)
+    {
+        if (rows == null) return null;
+
+        int rowCount = Mathf.Min(rows.Length, maxRows);
+        GuessRow[] limitedRows = new GuessRow[rowCount];
+
+        for (int i = 0; i < rowCount; i++)
+        {
+            limitedRows[i] = new GuessRow
+            {
+                slots = LimitRenderers(rows[i]?.slots, maxColumns)
+            };
+        }
+
+        return limitedRows;
+    }
+
+    private FeedbackRow[] LimitFeedbackRows(FeedbackRow[] rows, int maxRows, int maxColumns)
+    {
+        if (rows == null) return null;
+
+        int rowCount = Mathf.Min(rows.Length, maxRows);
+        FeedbackRow[] limitedRows = new FeedbackRow[rowCount];
+
+        for (int i = 0; i < rowCount; i++)
+        {
+            limitedRows[i] = new FeedbackRow
+            {
+                markers = LimitRenderers(rows[i]?.markers, maxColumns)
+            };
+        }
+
+        return limitedRows;
+    }
+
+    private SpriteRenderer[] LimitRenderers(SpriteRenderer[] renderers, int maxCount)
+    {
+        if (renderers == null) return Array.Empty<SpriteRenderer>();
+
+        int count = Mathf.Min(renderers.Length, maxCount);
+        SpriteRenderer[] limitedRenderers = new SpriteRenderer[count];
+        Array.Copy(renderers, limitedRenderers, count);
+        return limitedRenderers;
+    }
+
+    private void SetGuessRowsVisibility(GuessRow[] rows, int activeRows, int activeColumns)
+    {
+        if (rows == null) return;
+
+        for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
+        {
+            SpriteRenderer[] slots = rows[rowIndex]?.slots;
+            if (slots == null) continue;
+
+            for (int columnIndex = 0; columnIndex < slots.Length; columnIndex++)
+            {
+                SetRendererVisible(slots[columnIndex], rowIndex < activeRows && columnIndex < activeColumns);
+            }
+        }
+    }
+
+    private void SetFeedbackRowsVisibility(FeedbackRow[] rows, int activeRows, int activeColumns)
+    {
+        if (rows == null) return;
+
+        for (int rowIndex = 0; rowIndex < rows.Length; rowIndex++)
+        {
+            SpriteRenderer[] markers = rows[rowIndex]?.markers;
+            if (markers == null) continue;
+
+            for (int columnIndex = 0; columnIndex < markers.Length; columnIndex++)
+            {
+                SetRendererVisible(markers[columnIndex], rowIndex < activeRows && columnIndex < activeColumns);
+            }
+        }
+    }
+
+    private void SetRendererVisible(SpriteRenderer spriteRenderer, bool visible)
+    {
+        if (!spriteRenderer) return;
+
+        spriteRenderer.gameObject.SetActive(visible);
     }
 
     private GuessRow[] BuildRows(Transform root, bool ignoreTextSprites)

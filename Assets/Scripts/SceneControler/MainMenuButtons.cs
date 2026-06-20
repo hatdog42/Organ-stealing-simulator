@@ -1,3 +1,4 @@
+using MiniGames;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -6,35 +7,74 @@ public class MainMenuButtons : MonoBehaviour
 {
     [SerializeField] private Button startButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private Toggle forceDebugMiniGameToggle;
     [SerializeField] private string firstSceneName = "Exposition";
 
     private void Awake()
     {
-        FindMissingButtons();
-        BindButtons();
+        FindMissingControls();
+        SyncForceDebugMiniGameToggle();
+        BindControls();
     }
 
     private void OnEnable()
     {
-        BindButtons();
+        FindMissingControls();
+        SyncForceDebugMiniGameToggle();
+        BindControls();
     }
 
-    private void FindMissingButtons()
+    private void OnDisable()
     {
-        if (startButton && quitButton) return;
-
-        foreach (Button button in GetComponentsInChildren<Button>(true))
+        if (forceDebugMiniGameToggle)
         {
-            string buttonName = button.name.ToLowerInvariant();
-            if (!startButton && buttonName.Contains("start")) startButton = button;
-            if (!quitButton && buttonName.Contains("quit")) quitButton = button;
+            forceDebugMiniGameToggle.onValueChanged.RemoveListener(SetForceDebugMiniGame);
         }
     }
 
-    private void BindButtons()
+    private void FindMissingControls()
+    {
+        if (!startButton || !quitButton)
+        {
+            foreach (Button button in GetComponentsInChildren<Button>(true))
+            {
+                string buttonName = button.name.ToLowerInvariant();
+                if (!startButton && buttonName.Contains("start")) startButton = button;
+                if (!quitButton && buttonName.Contains("quit")) quitButton = button;
+            }
+        }
+
+        if (forceDebugMiniGameToggle) return;
+
+        foreach (Toggle toggle in GetComponentsInChildren<Toggle>(true))
+        {
+            string toggleName = toggle.name.ToLowerInvariant();
+            if (toggleName.Contains("debug") && toggleName.Contains("minigame"))
+            {
+                forceDebugMiniGameToggle = toggle;
+                return;
+            }
+        }
+    }
+
+    private void SyncForceDebugMiniGameToggle()
+    {
+        if (!forceDebugMiniGameToggle) return;
+
+        if (!MajorMiniGameDebugSettings.HasForceDebugMiniGamePreference)
+        {
+            SetForceDebugMiniGame(forceDebugMiniGameToggle.isOn);
+            return;
+        }
+
+        forceDebugMiniGameToggle.SetIsOnWithoutNotify(MajorMiniGameDebugSettings.ForceDebugMiniGame);
+    }
+
+    private void BindControls()
     {
         ReplaceClickListener(startButton, StartGame);
         ReplaceClickListener(quitButton, QuitGame);
+        ReplaceToggleListener(forceDebugMiniGameToggle, SetForceDebugMiniGame);
     }
 
     private static void ReplaceClickListener(Button button, UnityAction action)
@@ -43,6 +83,19 @@ public class MainMenuButtons : MonoBehaviour
 
         button.onClick.RemoveListener(action);
         button.onClick.AddListener(action);
+    }
+
+    private static void ReplaceToggleListener(Toggle toggle, UnityAction<bool> action)
+    {
+        if (!toggle) return;
+
+        toggle.onValueChanged.RemoveListener(action);
+        toggle.onValueChanged.AddListener(action);
+    }
+
+    private void SetForceDebugMiniGame(bool forceDebugMiniGame)
+    {
+        MajorMiniGameDebugSettings.ForceDebugMiniGame = forceDebugMiniGame;
     }
 
     private void StartGame()

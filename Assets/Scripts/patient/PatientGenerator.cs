@@ -30,8 +30,8 @@ public class PatientGenerator : MonoBehaviour
         _patient1 = GeneratePatient();
         _patient2 = GeneratePatient();
         
-        patient1UI.Bind(_patient1, OnPatientSelected, () => OnPatientSelectionStarted(_patient1));
-        patient2UI.Bind(_patient2, OnPatientSelected, () => OnPatientSelectionStarted(_patient2));
+        patient1UI.Bind(_patient1, OnPatientSelected, OnPatientSelectionStarted);
+        patient2UI.Bind(_patient2, OnPatientSelected, OnPatientSelectionStarted);
     }
     public Patient GeneratePatient()
     {
@@ -88,6 +88,11 @@ public class PatientGenerator : MonoBehaviour
 
     private MajorMiniGameOption PickMajorMiniGame()
     {
+        if (MajorMiniGameDebugSettings.ForceDebugMiniGame)
+        {
+            return GetMajorMiniGameOption(MajorMiniGameType.DebugButtons);
+        }
+
         if (forceMiniGame)
         {
             return GetMajorMiniGameOption(forcedMiniGame);
@@ -136,10 +141,20 @@ public class PatientGenerator : MonoBehaviour
 
     private void OnPatientSelected(Patient chosen)
     {
-        if (HealthBars.Instance?.SelectedPatient == null)
+        if (chosen == null)
         {
-            HealthBars.Instance?.SetSelectedPatient(chosen);
+            Debug.LogError($"{nameof(PatientGenerator)} received an empty patient selection.", this);
+            return;
         }
+
+        if (!HealthBars.Instance)
+        {
+            Debug.LogError($"{nameof(PatientGenerator)} cannot select a patient because no {nameof(HealthBars)} exists.", this);
+            return;
+        }
+
+        HealthBars.Instance.SetSelectedPatient(chosen);
+        Debug.Log($"Selected patient '{chosen.FullName}' with major minigame '{chosen.majorMiniGameName}' ({chosen.majorMiniGame}).", this);
         
         SceneController.Instance.LoadScene("TalkToPatient");
     }

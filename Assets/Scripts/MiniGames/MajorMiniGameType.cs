@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace MiniGames
 {
@@ -24,6 +25,23 @@ namespace MiniGames
         {
             this.type = type;
             this.displayName = displayName;
+        }
+    }
+
+    public static class MajorMiniGameDebugSettings
+    {
+        private const string ForceDebugMiniGameKey = "MajorMiniGame.ForceDebugMiniGame";
+
+        public static bool HasForceDebugMiniGamePreference => PlayerPrefs.HasKey(ForceDebugMiniGameKey);
+
+        public static bool ForceDebugMiniGame
+        {
+            get => PlayerPrefs.GetInt(ForceDebugMiniGameKey, 0) == 1;
+            set
+            {
+                PlayerPrefs.SetInt(ForceDebugMiniGameKey, value ? 1 : 0);
+                PlayerPrefs.Save();
+            }
         }
     }
 }

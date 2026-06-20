@@ -30,7 +30,7 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     
     private Patient _shownPatient;
     private System.Action<Patient> _onSelect;
-    private System.Action _onSelectionStarted;
+    private System.Action<Patient> _onSelectionStarted;
     private RectTransform _rectTransform;
     private Vector2 _restingPosition;
     private Coroutine _moveRoutine;
@@ -43,8 +43,17 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (_rectTransform) _restingPosition = _rectTransform.anchoredPosition;
     }
 
-    public void Bind(Patient patient, System.Action<Patient> onSelect, System.Action onSelectionStarted = null)
+#if UNITY_EDITOR
+    private void OnValidate()
     {
+        ValidatePaperReferences();
+    }
+#endif
+
+    public void Bind(Patient patient, System.Action<Patient> onSelect, System.Action<Patient> onSelectionStarted = null)
+    {
+        ValidatePaperReferences();
+
         _shownPatient = patient;
         _onSelect = onSelect;
         _onSelectionStarted = onSelectionStarted;
@@ -69,6 +78,26 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
         ButtonClickSound buttonClickSound = selectButton.GetComponent<ButtonClickSound>();
         if (buttonClickSound) buttonClickSound.enabled = false;
+    }
+
+    private void ValidatePaperReferences()
+    {
+        WarnIfReferenceOutsidePaper(nameText, nameof(nameText));
+        WarnIfReferenceOutsidePaper(ageText, nameof(ageText));
+        WarnIfReferenceOutsidePaper(jobText, nameof(jobText));
+        WarnIfReferenceOutsidePaper(traitText, nameof(traitText));
+        WarnIfReferenceOutsidePaper(personalityText, nameof(personalityText));
+        WarnIfReferenceOutsidePaper(sexText, nameof(sexText));
+        WarnIfReferenceOutsidePaper(majorMiniGameText, nameof(majorMiniGameText));
+        WarnIfReferenceOutsidePaper(patientImage, nameof(patientImage));
+        WarnIfReferenceOutsidePaper(selectButton, nameof(selectButton));
+    }
+
+    private void WarnIfReferenceOutsidePaper(Component component, string fieldName)
+    {
+        if (!component || component.transform == transform || component.transform.IsChildOf(transform)) return;
+
+        Debug.LogWarning($"{nameof(PatientChartUI)} on '{name}' has {fieldName} assigned outside its paper. This can display another patient's data.", this);
     }
 
     public void SetSelectionEnabled(bool enabled)
@@ -101,7 +130,7 @@ public class PatientChartUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (_isSelected || _selectionLocked) return;
 
         _isSelected = true;
-        _onSelectionStarted?.Invoke();
+        _onSelectionStarted?.Invoke(_shownPatient);
         PlaySfx(selectSound, selectVolume);
         MoveTo(_restingPosition + Vector2.down * selectDropDistance, selectMoveDuration, InvokeSelect);
     }

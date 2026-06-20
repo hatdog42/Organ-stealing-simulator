@@ -2429,6 +2429,10 @@ MonoBehaviour:
   autoFindBoard: 1
   colorGridRoot: {fileID: 0}
   colorCheckerSlotsRoot: {fileID: 0}
+  colorButtonsRoot: {fileID: 0}
+  boardRows: 5
+  boardColumns: 5
+  hideUnusedBoardSlots: 1
   guessRows: []
   resultTexts: []
   checkStorageRows: []

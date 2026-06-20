@@ -166,50 +166,50 @@ MonoBehaviour:
   maxOpacity: 0.8
   _minAttractOpacity: 0.35
   _maxAttractOpacity: 0.75
-  _attractionRadius: 1.8
-  _attractionSpeed: 2.1
-  _hookDistance: 0.22
+  _attractionRadius: 2.8
+  _attractionSpeed: 2.6
+  _hookDistance: 0.35
   _turnSpeed: 720
-  _scareRadius: 0.5
-  _scaredDuration: 1.4
-  _scaredSpeedMultiplier: 2.4
-  _curiousBiteChance: 0.6
-  _curiousBiteDelay: {x: 0.35, y: 0.9}
-  _curiousTimeout: 2.5
-  _curiousSpeedMultiplier: 0.8
+  _scareRadius: 0.25
+  _scaredDuration: 0.6
+  _scaredSpeedMultiplier: 1.2
+  _curiousBiteChance: 0.95
+  _curiousBiteDelay: {x: 0.1, y: 0.3}
+  _curiousTimeout: 4
+  _curiousSpeedMultiplier: 1
   _hookPoint: {fileID: 8710099150538150078}
-  _fightForce: 10.5
-  _restForceMultiplier: 0.35
+  _fightForce: 5.5
+  _restForceMultiplier: 0.2
   _minimumSideForce: 0.15
-  _directionChangeKickMultiplier: 1.2
+  _directionChangeKickMultiplier: 0.8
   _directionChangeKickDuration: 0.15
   _edgeAvoidanceDistance: 0.75
-  _edgeBoostMultiplier: 1.25
-  _fightArc: 150
-  _directionChangeSpeedMultiplier: 1.6
-  _fightTurnSpeed: 320
+  _edgeBoostMultiplier: 1.05
+  _fightArc: 110
+  _directionChangeSpeedMultiplier: 1
+  _fightTurnSpeed: 220
   _fightTurnDuration: {x: 0.08, y: 0.25}
   _fightAngleReachedThreshold: 2
-  _fightWaitTime: {x: 0.8, y: 1.8}
+  _fightWaitTime: {x: 1.3, y: 2.4}
   _maxStamina: 2.2
-  _fightDuration: {x: 4, y: 6}
-  _restDuration: {x: 2.2, y: 3.2}
-  _fightStaminaUseRate: {x: 0.25, y: 0.4}
-  _fightIntensity: {x: 0.85, y: 1.1}
+  _fightDuration: {x: 2, y: 3.5}
+  _restDuration: {x: 3.5, y: 4.5}
+  _fightStaminaUseRate: {x: 0.35, y: 0.55}
+  _fightIntensity: {x: 0.45, y: 0.7}
   _staminaRecoveryRate: 0.2
   _minStaminaToFight: 0.35
-  _counterPullStaminaDrain: 0.55
-  _counterPullFightSlowMultiplier: 0.75
+  _counterPullStaminaDrain: 1.2
+  _counterPullFightSlowMultiplier: 0.45
   _counterPullSlowDuration: 0.18
-  _exhaustionsBeforeLanding: 2
+  _exhaustionsBeforeLanding: 1
   _landingPanicDistance: 1.35
-  _landingPanicChance: 0.65
+  _landingPanicChance: 0.1
   _landingPanicRetryDelay: 0.35
   _landingPanicDuration: {x: 1, y: 1.8}
-  _landingPanicStaminaRestore: 0.45
-  _landingPanicIntensityMultiplier: 1.4
-  _landingPanicTensionMultiplier: 1.35
-  _landingPanicCooldown: 1.2
+  _landingPanicStaminaRestore: 0.15
+  _landingPanicIntensityMultiplier: 1.1
+  _landingPanicTensionMultiplier: 1.1
+  _landingPanicCooldown: 2
   _escapeFadeDuration: 0.45
   _escapeSinkSpeed: 0.6
   _animator: {fileID: 3961979766546463321}

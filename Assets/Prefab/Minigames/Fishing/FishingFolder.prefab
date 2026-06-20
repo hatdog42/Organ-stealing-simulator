@@ -47,10 +47,10 @@ MonoBehaviour:
   _fishPool: {fileID: 3906679371019793455}
   _spawnAreaCenter: {x: 0, y: 1.5}
   _spawnAreaSize: {x: 15, y: 5}
-  _minSpawnInterval: 1
-  _maxSpawnInterval: 5
-  _minSpeed: 0.7
-  _maxSpeed: 1.5
+  _minSpawnInterval: 0.5
+  _maxSpawnInterval: 1.5
+  _minSpeed: 0.45
+  _maxSpeed: 0.9
 --- !u!1 &1670985679233633253
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,28 +548,28 @@ MonoBehaviour:
   bob: {fileID: 3618861216673004178}
   fishingPoint: {fileID: 4927368549431204715}
   fishingMiniGame: {fileID: 0}
-  throwForceMultiplier: 2
-  maxReelSpeed: 2
-  hookedMaxReelSpeed: 2.8
-  counterPullMaxReelSpeed: 3.4
-  reelAcceleration: 10
-  hookedMouseReelForce: 4
-  emptyMouseReelForce: 4
+  throwForceMultiplier: 2.4
+  maxReelSpeed: 3
+  hookedMaxReelSpeed: 4
+  counterPullMaxReelSpeed: 4.8
+  reelAcceleration: 14
+  hookedMouseReelForce: 7
+  emptyMouseReelForce: 5
   minMousePullDistance: 0.75
   maxMousePullDistance: 5
   minMousePullPixels: 12
   maxMousePullPixels: 120
-  counterPullAngle: 14
-  counterPullAssistAngle: 42
-  counterPullForceMultiplier: 1.5
+  counterPullAngle: 22
+  counterPullAssistAngle: 70
+  counterPullForceMultiplier: 1.8
   counterPullTensionMultiplier: 0.3
-  fightingReelMultiplier: 0.18
-  restingReelMultiplier: 0.52
+  fightingReelMultiplier: 0.4
+  restingReelMultiplier: 0.8
   landingAssistDistance: 1.25
   landingReelMultiplier: 1.4
   landingMaxReelSpeed: 4
   reelStartDelay: 0.3
-  readyDistance: 0.5
+  readyDistance: 0.7
   fishingLine: {fileID: 0}
   lineWidth: 0.03
   lineColor: {r: 1, g: 1, b: 1, a: 1}
@@ -579,11 +579,11 @@ MonoBehaviour:
   pullForceIndicatorWidth: 0.035
   pullForceIndicatorSmoothSpeed: 18
   pullForceIndicatorColor: {r: 0, g: 0, b: 0, a: 1}
-  tensionBuildSpeed: 0.65
-  tensionRecoverSpeed: 0.85
+  tensionBuildSpeed: 0.35
+  tensionRecoverSpeed: 1.4
   gentlePullTensionRecoverMultiplier: 1.15
   gentlePullMaxStrength: 0.6
-  lineSnapTension: 1.15
+  lineSnapTension: 2
   highTensionLineWidth: 0.015
   highTensionLineColor: {r: 1, g: 0, b: 0, a: 1}
   fishEscapeFadeDuration: 0.45
@@ -592,11 +592,11 @@ MonoBehaviour:
   rejectedLandingPushDistance: 0.8
   rejectedLandingPushImpulse: 3
   keepBobInsideCamera: 1
-  cameraBoundsPadding: 0.2
+  cameraBoundsPadding: 0.1
   keepBobAboveFishingPoint: 1
   minFishingPointYOffset: 0.05
-  sideBoundaryReelMultiplier: 0.55
-  sideBoundaryTensionBuildSpeed: 0.45
+  sideBoundaryReelMultiplier: 0.8
+  sideBoundaryTensionBuildSpeed: 0.2
   sideBoundaryReleaseForce: 8
   showCounterPullGuide: 1
   counterPullGuideLength: 1.5
@@ -888,7 +888,7 @@ MonoBehaviour:
   warningFaceOutside: {fileID: 0}
   warningAudio: {fileID: 0}
   warningAudioVolume: 0.2
-  _fishQuota: 3
+  _fishQuota: 1
   _bacteriaPrefab: {fileID: 6737267853126196349, guid: 2b85774ae78221946a7691ec2a078600, type: 3}
   _petriDish: {fileID: 5456178045761469577}
   _petriDishBounds: {fileID: 2680077770084941139}

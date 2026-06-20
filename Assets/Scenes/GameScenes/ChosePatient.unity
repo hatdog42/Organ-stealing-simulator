@@ -1489,7 +1489,7 @@ MonoBehaviour:
   traitText: {fileID: 611415734}
   personalityText: {fileID: 1556794144}
   sexText: {fileID: 598808932}
-  majorMiniGameText: {fileID: 192993139}
+  majorMiniGameText: {fileID: 2019993102}
   patientImage: {fileID: 295480767}
   selectButton: {fileID: 428948809}
   hoverLift: 20
@@ -4697,7 +4697,7 @@ MonoBehaviour:
   traitText: {fileID: 1581744752}
   personalityText: {fileID: 2091978830}
   sexText: {fileID: 379525521}
-  majorMiniGameText: {fileID: 2019993102}
+  majorMiniGameText: {fileID: 192993139}
   patientImage: {fileID: 1511750248}
   selectButton: {fileID: 1565665310}
   hoverLift: 20

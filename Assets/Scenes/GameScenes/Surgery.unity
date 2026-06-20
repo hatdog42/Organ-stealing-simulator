@@ -449,11 +449,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
       propertyPath: airGain
-      value: 5
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
+      propertyPath: airLoss
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
       propertyPath: airTimer
-      value: 35
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 2896208713368228964, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
       propertyPath: sfxOxygen
@@ -1101,66 +1105,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b9b359d84c389d4ab453c4a63908a5a, type: 3}
---- !u!1 &858601489
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 858601492}
-  - component: {fileID: 858601491}
-  - component: {fileID: 858601490}
-  m_Layer: 0
-  m_Name: VisualScripting SceneVariables
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &858601490
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858601489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 765181c9ef4b24d32a4f7cbd2ef370dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.SceneVariables
---- !u!114 &858601491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858601489}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e741851cba3ad425c91ecf922cc6b379, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.VisualScripting.Core::Unity.VisualScripting.Variables
-  _data:
-    _json: '{"declarations":{"Kind":"Scene","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
-    _objectReferences: []
---- !u!4 &858601492
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 858601489}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &861887921 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 7545887706628642947, guid: 8ba6b42a9fe03694a8049213f485a753, type: 3}
@@ -1380,6 +1324,22 @@ PrefabInstance:
     - target: {fileID: 7184897049967080256, guid: 3e1c7b182e02167428afa61d2706ad04, type: 3}
       propertyPath: m_Name
       value: WordleFolder
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902393025200188009, guid: 3e1c7b182e02167428afa61d2706ad04, type: 3}
+      propertyPath: boardRows
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902393025200188009, guid: 3e1c7b182e02167428afa61d2706ad04, type: 3}
+      propertyPath: boardColumns
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902393025200188009, guid: 3e1c7b182e02167428afa61d2706ad04, type: 3}
+      propertyPath: guessRows.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7902393025200188009, guid: 3e1c7b182e02167428afa61d2706ad04, type: 3}
+      propertyPath: guessRows.Array.data[0].slots.Array.size
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -1604,11 +1564,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6342956720805502348, guid: 8e2dc2e80278cd94f94b38aacd68055a, type: 3}
       propertyPath: posChangeTimeMax
-      value: 30
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 6342956720805502348, guid: 8e2dc2e80278cd94f94b38aacd68055a, type: 3}
       propertyPath: posChangeTimeMin
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6342956720805502348, guid: 8e2dc2e80278cd94f94b38aacd68055a, type: 3}
       propertyPath: warningFaceScreen
@@ -1963,6 +1923,14 @@ PrefabInstance:
       value: FishingCamera
       objectReference: {fileID: 0}
     - target: {fileID: 2011825188855011088, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: _maxSpawnInterval
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2011825188855011088, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: _minSpawnInterval
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2011825188855011088, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: _spawnAreaCenter.x
       value: 2.5
       objectReference: {fileID: 0}
@@ -1977,6 +1945,10 @@ PrefabInstance:
     - target: {fileID: 2241813845874820222, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_SortingOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2517115004247973848, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.4
       objectReference: {fileID: 0}
     - target: {fileID: 5526452928177759377, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: m_LocalScale.x
@@ -2071,6 +2043,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1691700638}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: counterPullAngle
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: lowReelClickPitch
       value: 1
       objectReference: {fileID: 0}
@@ -2088,7 +2064,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: tensionBuildSpeed
-      value: 0.65
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: highReelClickPitch
@@ -2096,7 +2072,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: maxMousePullPixels
-      value: 50
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: highTensionLineWidth
@@ -2117,6 +2093,10 @@ PrefabInstance:
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: slowReelClickInterval
       value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
+      propertyPath: counterPullAssistAngle
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6887384376750928643, guid: c17fecff0a0833c4798a84c501624478, type: 3}
       propertyPath: highTensionLineColor.b
@@ -3138,4 +3118,3 @@ SceneRoots:
   - {fileID: 1980223039}
   - {fileID: 314159266}
   - {fileID: 1304109034}
-  - {fileID: 858601492}
